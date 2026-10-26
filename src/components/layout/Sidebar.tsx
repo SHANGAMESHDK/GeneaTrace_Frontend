@@ -42,7 +42,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
       path: '/recalls',
       icon: AlertTriangle,
       badge: hasActiveRecall ? 'Active' : undefined,
-      badgeColor: 'bg-[rgba(248,113,113,0.18)] text-[#F87171] border border-[#F87171]/40'
+      badgeColor: 'bg-[#fdf2f1] text-[#b84a44] border-[#b84a44]/40'
     },
     { label: 'Logistics Tracking', path: '/logistics', icon: Truck },
     { label: 'Device Security', path: '/security', icon: ShieldAlert },
@@ -52,25 +52,22 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
 
   return (
     <aside
-      style={{
-        background: 'linear-gradient(180deg, #211B1A 0%, #382A28 52%, #211B1A 100%)'
-      }}
-      className={`fixed top-0 left-0 h-screen z-40 border-r border-[#60433D] transition-all duration-300 flex flex-col font-serif-vintage ${
+      className={`fixed top-0 left-0 h-screen z-40 bg-[#fffcf8] border-r border-[#e5e5e5] transition-all duration-300 flex flex-col font-serif-vintage ${
         collapsed ? 'w-20' : 'w-64'
       }`}
     >
       {/* Brand Header */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-[#60433D] bg-transparent">
+      <div className="h-16 flex items-center justify-between px-4 border-b border-[#e5e5e5] bg-[#fffdf6]">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="w-9 h-9 rounded-sm bg-[#60433D] border border-[#60433D] flex items-center justify-center text-[#C1A094] shrink-0 shadow-sm">
+          <div className="w-9 h-9 rounded-none bg-[#faf3dc] border border-[#413634] flex items-center justify-center text-[#c5716d] shrink-0">
             <Feather size={18} />
           </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="font-normal text-lg tracking-wide text-[#E8D8CE]">
+              <span className="font-normal text-lg tracking-wide text-[#413634]">
                 GeneaTrace
               </span>
-              <span className="text-[11px] font-normal text-[#C1A094] tracking-wider uppercase">
+              <span className="text-[11px] font-normal text-[#8b6c58] tracking-wider uppercase">
                 Digital Passport
               </span>
             </div>
@@ -79,7 +76,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
 
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-1.5 rounded-sm text-[#C1A094] hover:text-[#E8D8CE] hover:bg-[#382A28]/60 transition-colors"
+          className="p-1.5 rounded-none text-[#666666] hover:text-[#413634] hover:bg-[#faf3dc] transition-colors"
           title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
         >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
@@ -89,14 +86,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
       {/* Environment Indicator */}
       {!collapsed && (
         <div className="px-4 pt-3 pb-1">
-          <div className="flex items-center justify-between px-3 py-1.5 rounded-sm bg-[#382A28]/80 border border-[#60433D] text-[11px]">
+          <div className="flex items-center justify-between px-3 py-1.5 rounded-none bg-[#faf3dc] border border-[#e5e5e5] text-[11px]">
             <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#916B60] animate-pulse" />
-              <span className="text-[#E8D8CE] tracking-wider uppercase font-normal text-[10px]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#c5716d]" />
+              <span className="text-[#413634] tracking-wider uppercase font-normal text-[10px]">
                 Demo Network
               </span>
             </div>
-            <span className="text-[#C1A094] font-mono text-[10px]">EVM-Sepolia</span>
+            <span className="text-[#8b6c58] font-mono text-[10px]">EVM-Sepolia</span>
           </div>
         </div>
       )}
@@ -110,39 +107,28 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
               key={item.path}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded-sm text-xs transition-all group ${
+                `flex items-center gap-3 px-3 py-2 rounded-none text-xs transition-all group ${
                   isActive
-                    ? 'bg-[#916B60]/15 text-[#E8D8CE] border-l-2 border-[#C1A094] shadow-[0_0_12px_rgba(193,160,148,0.22)] font-medium'
-                    : 'text-[#C1A094] hover:text-[#E8D8CE] hover:bg-[#382A28]/40'
+                    ? 'bg-[#faf3dc] text-[#c5716d] border-l-2 border-[#c5716d] font-normal'
+                    : 'text-[#413634] hover:text-[#c5716d] hover:bg-[#faf3dc]/60'
                 }`
               }
               title={collapsed ? item.label : undefined}
             >
-              {({ isActive }) => (
-                <>
-                  <Icon
-                    className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-105 ${
-                      isActive ? 'text-[#E8D8CE]' : 'text-[#916B60]'
-                    }`}
-                  />
-                  {!collapsed && (
-                    <div className="flex items-center justify-between w-full overflow-hidden">
-                      <span className="truncate">{item.label}</span>
-                      {item.badge && (
-                        <span
-                          className={`text-[9px] px-1.5 py-0.2 rounded-sm uppercase font-normal border ${
-                            item.badgeColor ||
-                            (isActive
-                              ? 'bg-[#60433D] text-[#C1A094] border-[#916B60]'
-                              : 'bg-[#382A28] text-[#C1A094] border-[#60433D]')
-                          }`}
-                        >
-                          {item.badge}
-                        </span>
-                      )}
-                    </div>
+              <Icon className="w-4 h-4 shrink-0 transition-transform group-hover:scale-105" />
+              {!collapsed && (
+                <div className="flex items-center justify-between w-full overflow-hidden">
+                  <span className="truncate">{item.label}</span>
+                  {item.badge && (
+                    <span
+                      className={`text-[9px] px-1.5 py-0.2 rounded-none uppercase font-normal border ${
+                        item.badgeColor || 'bg-[#fffdf6] text-[#c5716d] border-[#c5716d]/40'
+                      }`}
+                    >
+                      {item.badge}
+                    </span>
                   )}
-                </>
+                </div>
               )}
             </NavLink>
           );
@@ -150,15 +136,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
       </nav>
 
       {/* Footer / User Profile */}
-      <div className="p-3 border-t border-[#60433D] bg-transparent">
-        <div className="flex items-center gap-3 px-2 py-2 rounded-sm bg-[#382A28]/70 border border-[#60433D]">
-          <div className="w-7 h-7 rounded-sm bg-[#60433D] border border-[#60433D] flex items-center justify-center text-xs text-[#C1A094] shrink-0 font-medium">
+      <div className="p-3 border-t border-[#e5e5e5] bg-[#fffdf6]">
+        <div className="flex items-center gap-3 px-2 py-2 rounded-none bg-[#faf3dc] border border-[#e5e5e5]">
+          <div className="w-7 h-7 rounded-none bg-[#fffdf6] border border-[#413634] flex items-center justify-center text-xs text-[#c5716d] shrink-0 font-normal">
             GT
           </div>
           {!collapsed && (
             <div className="flex flex-col min-w-0">
-              <span className="text-xs text-[#E8D8CE] truncate">Lead QA Architect</span>
-              <div className="flex items-center gap-1 text-[10px] text-[#34D399]">
+              <span className="text-xs text-[#413634] truncate">Lead QA Architect</span>
+              <div className="flex items-center gap-1 text-[10px] text-[#2e6b4d]">
                 <ShieldCheck size={11} />
                 <span>Authorized Level 4</span>
               </div>

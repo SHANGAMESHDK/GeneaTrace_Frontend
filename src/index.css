@@ -5,48 +5,33 @@
     --font-serif: 'Baskervville', Georgia, serif;
     --font-mono: 'JetBrains Mono', monospace;
 
-    /* Warm Espresso & Chocolate Mocha Palette Tokens */
-    --color-palette-1: #211B1A;
-    --color-palette-2: #382A28;
-    --color-palette-3: #60433D;
-    --color-palette-4: #916B60;
-    --color-palette-5: #C1A094;
-    --color-palette-6: #E8D8CE;
+    /* Adored Vintage Extracted Design System Tokens */
+    --color-bg: #fffdf6;
+    --color-bg-secondary: #faf3dc;
+    --color-card: #fffcf8;
+    --color-text: #413634;
+    --color-text-secondary: #666666;
+    --color-text-muted: #8b6c58;
+    --color-primary: #c5716d;
+    --color-primary-hover: #b35f5b;
+    --color-border: #e5e5e5;
+    --color-border-dark: #413634;
 
-    --color-bg: #211B1A;
-    --color-sidebar-base: #211B1A;
-    --color-sidebar-mid: #382A28;
-    --color-card: #382A28;
-    --color-card-elevated: #60433D;
-    --color-border: #60433D;
-    --color-border-hover: #916B60;
-    --color-secondary-blue: #916B60;
-    --color-accent: #916B60;
-    --color-primary-highlight: #C1A094;
-    --color-text: #E8D8CE;
-    --color-text-secondary: #C1A094;
-    --color-text-muted: #916B60;
-    --color-primary: #C1A094;
-    --color-primary-hover: #E8D8CE;
-
-    /* Status Tokens */
-    --color-critical: #F87171;
-    --color-critical-bg: rgba(248, 113, 113, 0.12);
-    --color-critical-border: rgba(248, 113, 113, 0.35);
-
-    --color-warning: #FBBF24;
-    --color-warning-bg: rgba(251, 191, 36, 0.12);
-    --color-warning-border: rgba(251, 191, 36, 0.35);
-
-    --color-success: #34D399;
-    --color-success-bg: rgba(52, 211, 153, 0.12);
-    --color-success-border: rgba(52, 211, 153, 0.35);
+    /* Status Vintage Harmonies */
+    --color-success: #2e6b4d;
+    --color-success-bg: #edf6f0;
+    --color-warning: #b87428;
+    --color-warning-bg: #fef7ec;
+    --color-critical: #b84a44;
+    --color-critical-bg: #fdf2f1;
+    --color-accent-blue: #49627d;
+    --color-accent-blue-bg: #f0f4f8;
   }
 
   body {
     font-family: var(--font-serif);
-    background-color: #211B1A;
-    color: #E8D8CE;
+    background-color: var(--color-bg);
+    color: var(--color-text);
     overflow-x: hidden;
     font-size: 13px;
     line-height: 1.6;
@@ -56,7 +41,7 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-serif);
     font-weight: 400;
-    color: #E8D8CE;
+    color: var(--color-text);
   }
 
   /* Crisp Scrollbar */
@@ -65,14 +50,14 @@
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #211B1A;
+    background: #fffdf6;
   }
   ::-webkit-scrollbar-thumb {
-    background: #60433D;
-    border-radius: 2px;
+    background: #e5e5e5;
+    border-radius: 0px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #916B60;
+    background: #c5716d;
   }
 }
 
@@ -84,72 +69,57 @@
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Sidebar Gradient */
-.sidebar-gradient {
-  background: linear-gradient(180deg, #211B1A 0%, #382A28 52%, #211B1A 100%);
-}
-
-/* Primary Button (A7EBF2 cyan highlight) */
-.btn-vintage-primary,
-.btn-primary {
-  background: #C1A094;
-  color: #211B1A;
-  border-radius: 2px;
+/* Editorial Button - Adored Vintage Spec */
+.btn-vintage-primary {
+  background: #faf3dc;
+  color: #413634;
+  border-radius: 0px;
   padding: 6px 16px;
   font-size: 12px;
-  font-weight: 600;
-  border: 1px solid #C1A094;
+  font-weight: 400;
+  border: 0.8px solid rgb(65, 54, 52);
   cursor: pointer;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   transition: all 0.15s ease-in-out;
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
-.btn-vintage-primary:hover,
-.btn-primary:hover {
-  background: #E8D8CE;
-  border-color: #E8D8CE;
-  color: #211B1A;
-  box-shadow: 0 0 12px rgba(193, 160, 148, 0.35);
+.btn-vintage-primary:hover {
+  background: #eee4d5;
+  color: #8b6c58;
 }
 
-/* Accent Button */
-.btn-vintage-accent,
-.btn-accent {
-  background: #916B60;
-  color: #E8D8CE;
-  border-radius: 2px;
+.btn-vintage-accent {
+  background: #c5716d;
+  color: #fffdf6;
+  border-radius: 0px;
   padding: 6px 16px;
   font-size: 12px;
-  font-weight: 500;
-  border: 1px solid #60433D;
+  font-weight: 400;
+  border: 0.8px solid #c5716d;
   cursor: pointer;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   transition: all 0.15s ease-in-out;
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
-.btn-vintage-accent:hover,
-.btn-accent:hover {
-  background: #C1A094;
-  color: #211B1A;
-  border-color: #C1A094;
+.btn-vintage-accent:hover {
+  background: #b35f5b;
+  border-color: #b35f5b;
 }
 
-/* Outline Button */
-.btn-vintage-outline,
-.btn-outline {
-  background: #382A28;
-  color: #E8D8CE;
-  border-radius: 2px;
+.btn-vintage-outline {
+  background: #fffdf6;
+  color: #413634;
+  border-radius: 0px;
   padding: 6px 14px;
   font-size: 12px;
   font-weight: 400;
-  border: 1px solid #60433D;
+  border: 0.8px solid #e5e5e5;
   cursor: pointer;
   transition: all 0.15s ease-in-out;
   display: inline-flex;
@@ -157,26 +127,23 @@
   gap: 6px;
 }
 
-.btn-vintage-outline:hover,
-.btn-outline:hover {
-  background: #60433D;
-  border-color: #916B60;
-  color: #C1A094;
+.btn-vintage-outline:hover {
+  background: #faf3dc;
+  border-color: #413634;
 }
 
-/* Card Specs */
-.vintage-card,
-.dashboard-card {
-  background: #382A28;
-  border: 1px solid #60433D;
-  border-radius: 2px;
-  box-shadow: 0 4px 16px rgba(33, 27, 26, 0.45);
+/* Editorial Card - Adored Vintage Spec */
+.vintage-card {
+  background: #fffcf8;
+  border: 0.8px solid #e5e5e5;
+  border-radius: 0px;
+  box-shadow: rgba(0, 0, 0, 0.04) 0px 2px 6px 0px;
 }
 
 .vintage-card-secondary {
-  background: #60433D;
-  border: 1px solid #60433D;
-  border-radius: 2px;
+  background: #faf3dc;
+  border: 0.8px solid #e5e5e5;
+  border-radius: 0px;
 }
 
 .vintage-table th {
@@ -184,6 +151,6 @@
   font-weight: 400;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #C1A094;
-  background: #60433D;
+  color: #666666;
+  background: #faf3dc;
 }
