@@ -56,7 +56,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
     { label: 'Component Registry', path: '/components', icon: Cpu },
     { label: 'Batch Management', path: '/batches', icon: Layers, badge: 'Core' },
     { label: 'Assembly Tracking', path: '/assembly', icon: Smartphone },
-    { label: 'Digital Product Passport', path: '/passport/GT-DEV-00000851', icon: QrCode },
+    { label: 'Digital Product Passport', path: '/passport', icon: QrCode },
     { label: 'Traceability Explorer', path: '/traceability', icon: Search },
     {
       label: 'Recall Management',
