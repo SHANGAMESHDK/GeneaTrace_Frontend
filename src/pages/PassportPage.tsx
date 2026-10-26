@@ -54,13 +54,13 @@ export const PassportPage: React.FC = () => {
     <div className="space-y-6 font-serif-vintage">
       {/* Top Banner if Recalled */}
       {isRecallFlagged && (
-        <div className="p-4 bg-[#fdf2f1] border border-[#b84a44] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="p-4 bg-[#2D1C22] border border-[#5A2C35] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <AlertTriangle className="text-[#b84a44] shrink-0" size={18} />
+            <AlertTriangle className="text-[#F08C8A] shrink-0" size={18} />
             <div>
-              <span className="font-normal text-sm text-[#413634]">DPP Precision Recall Flag Active</span>
-              <p className="text-xs text-[#666666]">
-                This unit carries Display serial <strong className="font-mono text-[#b84a44]">{product.installedComponents['Display Module']}</strong> from defective Batch ABC.
+              <span className="font-normal text-sm text-[#E2DDE7]">DPP Precision Recall Flag Active</span>
+              <p className="text-xs text-[#AAA2B3]">
+                This unit carries Display serial <strong className="font-mono text-[#F08C8A]">{product.installedComponents['Display Module']}</strong> from defective Batch ABC.
               </p>
             </div>
           </div>
@@ -75,7 +75,7 @@ export const PassportPage: React.FC = () => {
 
       {/* Cross-Sector Showcase Switcher */}
       <div className="p-3 vintage-card-secondary flex flex-wrap items-center justify-between gap-2">
-        <span className="text-xs uppercase tracking-wider text-[#666666]">
+        <span className="text-xs uppercase tracking-wider text-[#AAA2B3]">
           Multi-Industry DPP Showcase:
         </span>
         <div className="flex flex-wrap gap-2">
@@ -96,30 +96,30 @@ export const PassportPage: React.FC = () => {
       </div>
 
       {/* Header and View Mode Toggle */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-[#e5e5e5]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-[#45404F]">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl text-[#413634] flex items-center gap-2">
-              <QrCode className="text-[#c5716d]" size={22} />
+            <h1 className="text-2xl text-[#E2DDE7] flex items-center gap-2">
+              <QrCode className="text-[#AAA2B3]" size={22} />
               <span>Digital Product Passport (DPP)</span>
             </h1>
-            <span className="px-2 py-0.5 text-xs font-mono bg-[#faf3dc] text-[#c5716d] border border-[#e5e5e5]">
+            <span className="px-2 py-0.5 text-xs font-mono bg-[#292531] text-[#E2DDE7] border border-[#45404F]">
               {product.sector}
             </span>
           </div>
-          <p className="text-xs text-[#666666] mt-0.5">
+          <p className="text-xs text-[#AAA2B3] mt-0.5">
             Cryptographic identity, immutable component lineage, and lifecycle passport.
           </p>
         </div>
 
         {/* View Mode Toggle */}
-        <div className="flex items-center p-0.5 bg-[#faf3dc] border border-[#e5e5e5] text-xs">
+        <div className="flex items-center p-0.5 bg-[#292531] border border-[#45404F] text-xs">
           <button
             onClick={() => setViewMode('internal')}
             className={`px-3 py-1 transition-all ${
               viewMode === 'internal'
-                ? 'bg-[#c5716d] text-[#fffdf6]'
-                : 'text-[#413634] hover:text-[#c5716d]'
+                ? 'bg-[#E2DDE7] text-[#17151C] font-medium'
+                : 'text-[#AAA2B3] hover:text-[#E2DDE7]'
             }`}
           >
             Authorized Engineering View
@@ -128,8 +128,8 @@ export const PassportPage: React.FC = () => {
             onClick={() => setViewMode('public')}
             className={`px-3 py-1 transition-all ${
               viewMode === 'public'
-                ? 'bg-[#c5716d] text-[#fffdf6]'
-                : 'text-[#413634] hover:text-[#c5716d]'
+                ? 'bg-[#E2DDE7] text-[#17151C] font-medium'
+                : 'text-[#AAA2B3] hover:text-[#E2DDE7]'
             }`}
           >
             Public Consumer View
@@ -142,13 +142,13 @@ export const PassportPage: React.FC = () => {
         {/* Left: Device Card & QR Code */}
         <div className="lg:col-span-4 space-y-4">
           <div className="p-5 vintage-card text-center space-y-4">
-            <div className="p-2.5 bg-[#faf3dc] border border-[#e5e5e5] flex items-center justify-between text-xs font-mono">
-              <span className="text-[#666666]">{product.productTypeDisplay}</span>
-              <span className="text-[#c5716d]">PASSPORT v2.4</span>
+            <div className="p-2.5 bg-[#292531] border border-[#45404F] flex items-center justify-between text-xs font-mono">
+              <span className="text-[#AAA2B3]">{product.productTypeDisplay}</span>
+              <span className="text-[#E2DDE7]">PASSPORT v2.4</span>
             </div>
 
             {/* Photo / Graphic Container */}
-            <div className="relative mx-auto w-44 h-56 border border-[#413634] bg-[#fffdf6] flex flex-col items-center justify-center p-3 group overflow-hidden">
+            <div className="relative mx-auto w-44 h-56 border border-[#45404F] bg-[#17151C] flex flex-col items-center justify-center p-3 group overflow-hidden">
               {product.sector === 'Consumer Electronics' ? (
                 <img
                   src="/s24ultra.jpg"
@@ -159,34 +159,34 @@ export const PassportPage: React.FC = () => {
                   }}
                 />
               ) : product.sector === 'Automotive & EV Battery' ? (
-                <div className="flex flex-col items-center justify-center text-[#b87428] space-y-3">
+                <div className="flex flex-col items-center justify-center text-[#E8BC7A] space-y-3">
                   <BatteryCharging size={48} />
-                  <span className="text-xs font-mono text-[#413634] text-center">800V 96kWh PACK</span>
-                  <span className="text-[10px] text-[#8b6c58] font-mono">EU Battery 2023/1542</span>
+                  <span className="text-xs font-mono text-[#E2DDE7] text-center">800V 96kWh PACK</span>
+                  <span className="text-[10px] text-[#716879] font-mono">EU Battery 2023/1542</span>
                 </div>
               ) : product.sector === 'Medical Technology' ? (
-                <div className="flex flex-col items-center justify-center text-[#2e6b4d] space-y-3">
+                <div className="flex flex-col items-center justify-center text-[#86D6A6] space-y-3">
                   <HeartPulse size={48} />
-                  <span className="text-xs font-mono text-[#413634] text-center">CardioPulse Implant</span>
-                  <span className="text-[10px] text-[#8b6c58] font-mono">FDA UDI Class III Sterile</span>
+                  <span className="text-xs font-mono text-[#E2DDE7] text-center">CardioPulse Implant</span>
+                  <span className="text-[10px] text-[#716879] font-mono">FDA UDI Class III Sterile</span>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center text-[#49627d] space-y-3">
+                <div className="flex flex-col items-center justify-center text-[#9FBAD8] space-y-3">
                   <Plane size={48} />
-                  <span className="text-xs font-mono text-[#413634] text-center">Avionics DO-254</span>
-                  <span className="text-[10px] text-[#8b6c58] font-mono">Flight Controller DAL-A</span>
+                  <span className="text-xs font-mono text-[#E2DDE7] text-center">Avionics DO-254</span>
+                  <span className="text-[10px] text-[#716879] font-mono">Flight Controller DAL-A</span>
                 </div>
               )}
             </div>
 
             {/* QR Code Section */}
-            <div className="p-4 bg-[#faf3dc] border border-[#e5e5e5] flex flex-col items-center justify-center space-y-3">
-              <div className="p-2 bg-white border border-[#e5e5e5]">
+            <div className="p-4 bg-[#292531] border border-[#45404F] flex flex-col items-center justify-center space-y-3">
+              <div className="p-2 bg-white border border-[#45404F]">
                 <QRCodeSVG value={passportUrl} size={120} level="H" includeMargin />
               </div>
               <div className="text-center">
-                <span className="text-xs text-[#413634]">Scan for Official Proof</span>
-                <p className="text-[10px] text-[#8b6c58] font-mono mt-0.5">{product.productId}</p>
+                <span className="text-xs text-[#E2DDE7]">Scan for Official Proof</span>
+                <p className="text-[10px] text-[#716879] font-mono mt-0.5">{product.productId}</p>
               </div>
               <button
                 onClick={() => copyToClipboard(passportUrl)}
@@ -198,24 +198,24 @@ export const PassportPage: React.FC = () => {
             </div>
 
             {/* Quick Specs */}
-            <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5] text-left text-xs font-mono space-y-2">
+            <div className="p-3 bg-[#292531] border border-[#45404F] text-left text-xs font-mono space-y-2">
               <div className="flex justify-between">
-                <span className="text-[#666666]">Unique ID:</span>
-                <span className="text-[#413634]">{product.productId}</span>
+                <span className="text-[#AAA2B3]">Unique ID:</span>
+                <span className="text-[#E2DDE7]">{product.productId}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#666666]">Identifier / UDI:</span>
-                <span className="text-[#c5716d] truncate max-w-[170px]">{product.imeiMasked}</span>
+                <span className="text-[#AAA2B3]">Identifier / UDI:</span>
+                <span className="text-[#E2DDE7] truncate max-w-[170px]">{product.imeiMasked}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#666666]">Assembly Hub:</span>
-                <span className="text-[#413634] truncate max-w-[170px]">{product.assemblyFacility}</span>
+                <span className="text-[#AAA2B3]">Assembly Hub:</span>
+                <span className="text-[#E2DDE7] truncate max-w-[170px]">{product.assemblyFacility}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#666666]">Shipment ID:</span>
+                <span className="text-[#AAA2B3]">Shipment ID:</span>
                 <button
                   onClick={() => navigate(`/logistics?search=${product.shipmentId}`)}
-                  className="text-[#b87428] hover:underline flex items-center gap-1"
+                  className="text-[#E8BC7A] hover:underline flex items-center gap-1"
                 >
                   <span>{product.shipmentId}</span>
                   <ExternalLink size={10} />
@@ -229,46 +229,46 @@ export const PassportPage: React.FC = () => {
         <div className="lg:col-span-8 space-y-6">
           {/* ESG & Compliance Metric Banner */}
           <div className="p-5 vintage-card space-y-3">
-            <div className="flex items-center justify-between pb-2 border-b border-[#e5e5e5]">
-              <h3 className="text-sm text-[#413634] flex items-center gap-2">
-                <Award className="text-[#c5716d]" size={16} />
+            <div className="flex items-center justify-between pb-2 border-b border-[#45404F]">
+              <h3 className="text-sm text-[#E2DDE7] flex items-center gap-2">
+                <Award className="text-[#AAA2B3]" size={16} />
                 <span>Regulatory Compliance &amp; Sustainability Passport</span>
               </h3>
-              <span className="text-xs font-mono text-[#2e6b4d]">{product.esgScore}</span>
+              <span className="text-xs font-mono text-[#86D6A6]">{product.esgScore}</span>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono pt-1">
-              <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5]">
-                <span className="text-[#666666] flex items-center gap-1">
-                  <Leaf size={12} className="text-[#2e6b4d]" />
+              <div className="p-3 bg-[#292531] border border-[#45404F]">
+                <span className="text-[#AAA2B3] flex items-center gap-1">
+                  <Leaf size={12} className="text-[#86D6A6]" />
                   <span>Carbon Footprint:</span>
                 </span>
-                <p className="text-sm text-[#413634] mt-1">{product.carbonFootprintKg} kg CO₂e</p>
-                <span className="text-[10px] text-[#8b6c58]">Scope 1-3 Assessed</span>
+                <p className="text-sm text-[#E2DDE7] mt-1">{product.carbonFootprintKg} kg CO₂e</p>
+                <span className="text-[10px] text-[#716879]">Scope 1-3 Assessed</span>
               </div>
 
-              <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5]">
-                <span className="text-[#666666] flex items-center gap-1">
-                  <Scale size={12} className="text-[#c5716d]" />
+              <div className="p-3 bg-[#292531] border border-[#45404F]">
+                <span className="text-[#AAA2B3] flex items-center gap-1">
+                  <Scale size={12} className="text-[#AAA2B3]" />
                   <span>Recycled Content:</span>
                 </span>
-                <p className="text-sm text-[#c5716d] mt-1">{product.recycledContentPct}% Verified</p>
-                <span className="text-[10px] text-[#8b6c58]">Secondary Materials</span>
+                <p className="text-sm text-[#E2DDE7] mt-1">{product.recycledContentPct}% Verified</p>
+                <span className="text-[10px] text-[#716879]">Secondary Materials</span>
               </div>
 
               {product.batteryChemistry && (
-                <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5]">
-                  <span className="text-[#666666]">Chemistry:</span>
-                  <p className="text-sm text-[#b87428] mt-1 truncate">{product.batteryChemistry}</p>
-                  <span className="text-[10px] text-[#8b6c58]">Health: {product.stateOfHealth}% SoH</span>
+                <div className="p-3 bg-[#292531] border border-[#45404F]">
+                  <span className="text-[#AAA2B3]">Chemistry:</span>
+                  <p className="text-sm text-[#E8BC7A] mt-1 truncate">{product.batteryChemistry}</p>
+                  <span className="text-[10px] text-[#716879]">Health: {product.stateOfHealth}% SoH</span>
                 </div>
               )}
 
-              <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5]">
-                <span className="text-[#666666]">Compliance Standards:</span>
+              <div className="p-3 bg-[#292531] border border-[#45404F]">
+                <span className="text-[#AAA2B3]">Compliance Standards:</span>
                 <div className="mt-1 flex flex-wrap gap-1">
                   {product.complianceStandards?.map(std => (
-                    <span key={std} className="px-1.5 py-0.2 bg-[#fffdf6] text-[#413634] text-[9px] border border-[#e5e5e5]">
+                    <span key={std} className="px-1.5 py-0.2 bg-[#17151C] text-[#E2DDE7] text-[9px] border border-[#45404F]">
                       {std}
                     </span>
                   ))}
@@ -279,14 +279,14 @@ export const PassportPage: React.FC = () => {
 
           {/* Installed Components BOM */}
           <div className="p-5 vintage-card space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-[#e5e5e5]">
+            <div className="flex items-center justify-between pb-2 border-b border-[#45404F]">
               <div>
-                <h3 className="text-sm text-[#413634]">Bill of Materials (BOM) Component Lineage</h3>
-                <p className="text-xs text-[#666666]">
+                <h3 className="text-sm text-[#E2DDE7]">Bill of Materials (BOM) Component Lineage</h3>
+                <p className="text-xs text-[#AAA2B3]">
                   Every sub-assembly is registered with its source batch and individual unit serial number.
                 </p>
               </div>
-              <span className="text-xs font-mono text-[#c5716d]">{Object.keys(product.installedComponents).length} Modules</span>
+              <span className="text-xs font-mono text-[#AAA2B3]">{Object.keys(product.installedComponents).length} Modules</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-xs">
@@ -297,22 +297,22 @@ export const PassportPage: React.FC = () => {
                     key={moduleName}
                     className={`p-3 border transition-all ${
                       isDefectiveDisplay
-                        ? 'bg-[#fdf2f1] border-[#b84a44]'
-                        : 'bg-[#faf3dc] border-[#e5e5e5] hover:border-[#413634]'
+                        ? 'bg-[#2D1C22] border-[#5A2C35]'
+                        : 'bg-[#292531] border-[#45404F] hover:border-[#AAA2B3]'
                     }`}
                   >
-                    <div className="flex items-center justify-between text-[#666666]">
+                    <div className="flex items-center justify-between text-[#AAA2B3]">
                       <span>{moduleName}</span>
-                      <span className={`text-[10px] ${isDefectiveDisplay ? 'text-[#b84a44] font-bold' : 'text-[#c5716d]'}`}>
+                      <span className={`text-[10px] ${isDefectiveDisplay ? 'text-[#F08C8A] font-bold' : 'text-[#86D6A6]'}`}>
                         {isDefectiveDisplay ? 'Flagged Batch ABC' : 'Verified'}
                       </span>
                     </div>
-                    <div className="text-sm text-[#413634] mt-1">{serial}</div>
-                    <div className="flex items-center justify-between mt-1 pt-1 border-t border-[#e5e5e5] text-[10px] text-[#8b6c58]">
+                    <div className="text-sm text-[#E2DDE7] mt-1">{serial}</div>
+                    <div className="flex items-center justify-between mt-1 pt-1 border-t border-[#45404F] text-[10px] text-[#716879]">
                       <span>Ledger Anchor</span>
                       <button
                         onClick={() => navigate(`/traceability?query=${serial}`)}
-                        className="text-[#c5716d] hover:underline flex items-center gap-0.5"
+                        className="text-[#E2DDE7] hover:underline flex items-center gap-0.5"
                       >
                         <span>Trace</span>
                         <ExternalLink size={9} />
@@ -327,14 +327,14 @@ export const PassportPage: React.FC = () => {
           {/* Manufacturing Operations Timeline */}
           {viewMode === 'internal' && (
             <div className="p-5 vintage-card space-y-4">
-              <div className="flex items-center justify-between pb-2 border-b border-[#e5e5e5]">
+              <div className="flex items-center justify-between pb-2 border-b border-[#45404F]">
                 <div>
-                  <h3 className="text-sm text-[#413634]">Assembly &amp; Quality Inspection Ledger</h3>
-                  <p className="text-xs text-[#666666]">
+                  <h3 className="text-sm text-[#E2DDE7]">Assembly &amp; Quality Inspection Ledger</h3>
+                  <p className="text-xs text-[#AAA2B3]">
                     Chronological verification events recorded by MES &amp; SCADA gateways.
                   </p>
                 </div>
-                <span className="text-xs font-mono text-[#2e6b4d] flex items-center gap-1">
+                <span className="text-xs font-mono text-[#86D6A6] flex items-center gap-1">
                   <CheckCircle2 size={12} />
                   <span>100% Operations Logged</span>
                 </span>
@@ -344,20 +344,20 @@ export const PassportPage: React.FC = () => {
                 {events.map(e => (
                   <div
                     key={e.eventId}
-                    className="p-3 bg-[#faf3dc] border border-[#e5e5e5] flex items-center justify-between text-xs font-mono"
+                    className="p-3 bg-[#292531] border border-[#45404F] flex items-center justify-between text-xs font-mono"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="px-1.5 py-0.5 bg-[#fffdf6] text-[#413634] text-[10px] border border-[#e5e5e5]">{e.operationId}</span>
+                      <span className="px-1.5 py-0.5 bg-[#17151C] text-[#E2DDE7] text-[10px] border border-[#45404F]">{e.operationId}</span>
                       <div>
-                        <span className="text-[#413634] font-normal">{e.operationName}</span>
-                        <div className="text-[#8b6c58] text-[11px] mt-0.5">
+                        <span className="text-[#E2DDE7] font-normal">{e.operationName}</span>
+                        <div className="text-[#716879] text-[11px] mt-0.5">
                           Station: {e.machineId} • Operator: {e.operator}
                         </div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="text-[#2e6b4d]">{e.result}</span>
-                      <div className="text-[10px] text-[#666666]">{e.completionTimestamp}</div>
+                      <span className="text-[#86D6A6]">{e.result}</span>
+                      <div className="text-[10px] text-[#AAA2B3]">{e.completionTimestamp}</div>
                     </div>
                   </div>
                 ))}
@@ -367,25 +367,25 @@ export const PassportPage: React.FC = () => {
 
           {/* Cryptographic Proof Verification Block */}
           <div className="p-5 vintage-card space-y-3 font-mono text-xs">
-            <div className="flex items-center justify-between text-[#413634] pb-2 border-b border-[#e5e5e5]">
+            <div className="flex items-center justify-between text-[#E2DDE7] pb-2 border-b border-[#45404F]">
               <span className="flex items-center gap-2">
-                <Blocks size={14} className="text-[#49627d]" />
+                <Blocks size={14} className="text-[#AAA2B3]" />
                 <span>Merkle-DAG Integrity &amp; Demo Ledger Anchor</span>
               </span>
-              <span className="text-[11px] text-[#8b6c58]">EVM Smart Contract</span>
+              <span className="text-[11px] text-[#716879]">EVM Smart Contract</span>
             </div>
-            <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5] space-y-1.5 text-[11px]">
+            <div className="p-3 bg-[#292531] border border-[#45404F] space-y-1.5 text-[11px]">
               <div className="flex justify-between">
-                <span className="text-[#666666]">Root Merkle Hash:</span>
-                <span className="text-[#413634] truncate max-w-[280px] sm:max-w-none">{product.merkleRoot}</span>
+                <span className="text-[#AAA2B3]">Root Merkle Hash:</span>
+                <span className="text-[#E2DDE7] truncate max-w-[280px] sm:max-w-none">{product.merkleRoot}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#666666]">Transaction ID:</span>
-                <span className="text-[#c5716d] truncate max-w-[280px] sm:max-w-none">{product.blockchainTx}</span>
+                <span className="text-[#AAA2B3]">Transaction ID:</span>
+                <span className="text-[#AAA2B3] truncate max-w-[280px] sm:max-w-none">{product.blockchainTx}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#666666]">Consensus Verification:</span>
-                <span className="text-[#2e6b4d]">12/12 Enterprise Validator Nodes Confirmed</span>
+                <span className="text-[#AAA2B3]">Consensus Verification:</span>
+                <span className="text-[#86D6A6]">12/12 Enterprise Validator Nodes Confirmed</span>
               </div>
             </div>
           </div>

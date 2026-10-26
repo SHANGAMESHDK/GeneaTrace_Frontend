@@ -5,27 +5,35 @@
     --font-serif: 'Baskervville', Georgia, serif;
     --font-mono: 'JetBrains Mono', monospace;
 
-    /* Adored Vintage Extracted Design System Tokens */
-    --color-bg: #fffdf6;
-    --color-bg-secondary: #faf3dc;
-    --color-card: #fffcf8;
-    --color-text: #413634;
-    --color-text-secondary: #666666;
-    --color-text-muted: #8b6c58;
-    --color-primary: #c5716d;
-    --color-primary-hover: #b35f5b;
-    --color-border: #e5e5e5;
-    --color-border-dark: #413634;
+    /* Palette Extracted from User Swatch */
+    --color-palette-1: #17151C;
+    --color-palette-2: #292531;
+    --color-palette-3: #45404F;
+    --color-palette-4: #716879;
+    --color-palette-5: #AAA2B3;
+    --color-palette-6: #E2DDE7;
 
-    /* Status Vintage Harmonies */
-    --color-success: #2e6b4d;
-    --color-success-bg: #edf6f0;
-    --color-warning: #b87428;
-    --color-warning-bg: #fef7ec;
-    --color-critical: #b84a44;
-    --color-critical-bg: #fdf2f1;
-    --color-accent-blue: #49627d;
-    --color-accent-blue-bg: #f0f4f8;
+    --color-bg: #17151C;
+    --color-bg-secondary: #292531;
+    --color-card: #201D27;
+    --color-card-elevated: #292531;
+    --color-border: #45404F;
+    --color-border-dark: #716879;
+    --color-text: #E2DDE7;
+    --color-text-secondary: #AAA2B3;
+    --color-text-muted: #716879;
+    --color-primary: #AAA2B3;
+    --color-primary-hover: #E2DDE7;
+
+    /* Harmonized Status Accents */
+    --color-success: #86D6A6;
+    --color-success-bg: #1B2D22;
+    --color-warning: #E8BC7A;
+    --color-warning-bg: #33281C;
+    --color-critical: #F08C8A;
+    --color-critical-bg: #2D1C22;
+    --color-accent-blue: #9FBAD8;
+    --color-accent-blue-bg: #1E2838;
   }
 
   body {
@@ -50,14 +58,14 @@
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #fffdf6;
+    background: #17151C;
   }
   ::-webkit-scrollbar-thumb {
-    background: #e5e5e5;
+    background: #45404F;
     border-radius: 0px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #c5716d;
+    background: #716879;
   }
 }
 
@@ -69,15 +77,15 @@
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Editorial Button - Adored Vintage Spec */
+/* Primary Button */
 .btn-vintage-primary {
-  background: #faf3dc;
-  color: #413634;
+  background: #E2DDE7;
+  color: #17151C;
   border-radius: 0px;
   padding: 6px 16px;
   font-size: 12px;
-  font-weight: 400;
-  border: 0.8px solid rgb(65, 54, 52);
+  font-weight: 500;
+  border: 0.8px solid #E2DDE7;
   cursor: pointer;
   letter-spacing: 0.04em;
   transition: all 0.15s ease-in-out;
@@ -87,18 +95,20 @@
 }
 
 .btn-vintage-primary:hover {
-  background: #eee4d5;
-  color: #8b6c58;
+  background: #AAA2B3;
+  color: #17151C;
+  border-color: #AAA2B3;
 }
 
+/* Accent Button */
 .btn-vintage-accent {
-  background: #c5716d;
-  color: #fffdf6;
+  background: #716879;
+  color: #E2DDE7;
   border-radius: 0px;
   padding: 6px 16px;
   font-size: 12px;
-  font-weight: 400;
-  border: 0.8px solid #c5716d;
+  font-weight: 500;
+  border: 0.8px solid #716879;
   cursor: pointer;
   letter-spacing: 0.04em;
   transition: all 0.15s ease-in-out;
@@ -108,18 +118,20 @@
 }
 
 .btn-vintage-accent:hover {
-  background: #b35f5b;
-  border-color: #b35f5b;
+  background: #AAA2B3;
+  color: #17151C;
+  border-color: #AAA2B3;
 }
 
+/* Outline Button */
 .btn-vintage-outline {
-  background: #fffdf6;
-  color: #413634;
+  background: #201D27;
+  color: #E2DDE7;
   border-radius: 0px;
   padding: 6px 14px;
   font-size: 12px;
   font-weight: 400;
-  border: 0.8px solid #e5e5e5;
+  border: 0.8px solid #45404F;
   cursor: pointer;
   transition: all 0.15s ease-in-out;
   display: inline-flex;
@@ -128,21 +140,22 @@
 }
 
 .btn-vintage-outline:hover {
-  background: #faf3dc;
-  border-color: #413634;
+  background: #292531;
+  border-color: #716879;
+  color: #E2DDE7;
 }
 
-/* Editorial Card - Adored Vintage Spec */
+/* Card Specs */
 .vintage-card {
-  background: #fffcf8;
-  border: 0.8px solid #e5e5e5;
+  background: #201D27;
+  border: 0.8px solid #45404F;
   border-radius: 0px;
-  box-shadow: rgba(0, 0, 0, 0.04) 0px 2px 6px 0px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 12px 0px;
 }
 
 .vintage-card-secondary {
-  background: #faf3dc;
-  border: 0.8px solid #e5e5e5;
+  background: #292531;
+  border: 0.8px solid #45404F;
   border-radius: 0px;
 }
 
@@ -151,6 +164,6 @@
   font-weight: 400;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #666666;
-  background: #faf3dc;
+  color: #AAA2B3;
+  background: #292531;
 }

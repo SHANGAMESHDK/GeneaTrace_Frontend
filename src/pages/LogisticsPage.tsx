@@ -57,19 +57,19 @@ export const LogisticsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#e5e5e5] pb-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#45404F] pb-4">
         <div>
-          <h1 className="text-2xl font-normal font-serif tracking-tight text-[#413634] flex items-center gap-2">
-            <Truck className="text-[#c5716d]" size={22} />
+          <h1 className="text-2xl font-normal font-serif tracking-tight text-[#E2DDE7] flex items-center gap-2">
+            <Truck className="text-[#AAA2B3]" size={22} />
             <span>Global Logistics &amp; Custody Traceability</span>
           </h1>
-          <p className="text-xs text-[#666666] font-serif mt-1">
+          <p className="text-xs text-[#AAA2B3] font-serif mt-1">
             Post-manufacturing product lifecycle from packing to transit checkpoints and retail handovers.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="px-3 py-1.5 bg-[#faf3dc] border border-[#e5e5e5] text-xs font-serif text-[#413634]">
+          <span className="px-3 py-1.5 bg-[#292531] border border-[#45404F] text-xs font-serif text-[#E2DDE7]">
             {shipments.length} Active Shipments Tracked
           </span>
         </div>
@@ -77,34 +77,34 @@ export const LogisticsPage: React.FC = () => {
 
       {/* Visual Lifecycle Banner */}
       <div className="p-4 vintage-card">
-        <div className="flex items-center justify-between pb-3 border-b border-[#e5e5e5] mb-3 text-xs font-serif">
-          <span className="text-[#c5716d] uppercase tracking-wider">End-to-End Custody Transfer Flow</span>
-          <span className="text-[#8b6c58]">ISO 28000 Verified</span>
+        <div className="flex items-center justify-between pb-3 border-b border-[#45404F] mb-3 text-xs font-serif">
+          <span className="text-[#E2DDE7] uppercase tracking-wider">End-to-End Custody Transfer Flow</span>
+          <span className="text-[#716879]">ISO 28000 Verified</span>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 text-center text-xs font-serif">
-          <div className="p-2.5 bg-[#fffdf6] border border-[#e5e5e5]">
-            <div className="text-[10px] text-[#8b6c58]">1. Factory</div>
-            <div className="text-[#413634] mt-0.5">Packed Units</div>
+          <div className="p-2.5 bg-[#17151C] border border-[#45404F]">
+            <div className="text-[10px] text-[#716879]">1. Factory</div>
+            <div className="text-[#E2DDE7] mt-0.5">Packed Units</div>
           </div>
-          <div className="p-2.5 bg-[#fffdf6] border border-[#e5e5e5]">
-            <div className="text-[10px] text-[#8b6c58]">2. Warehouse</div>
-            <div className="text-[#413634] mt-0.5">Scan &amp; Record</div>
+          <div className="p-2.5 bg-[#17151C] border border-[#45404F]">
+            <div className="text-[10px] text-[#716879]">2. Warehouse</div>
+            <div className="text-[#E2DDE7] mt-0.5">Scan &amp; Record</div>
           </div>
-          <div className="p-2.5 bg-[#faf3dc] border border-[#c5716d] text-[#413634]">
-            <div className="text-[10px] text-[#c5716d]">3. Intermodal</div>
-            <div className="text-[#413634] font-bold mt-0.5">In Transit Cargo</div>
+          <div className="p-2.5 bg-[#292531] border border-[#AAA2B3] text-[#E2DDE7]">
+            <div className="text-[10px] text-[#AAA2B3]">3. Intermodal</div>
+            <div className="text-[#E2DDE7] font-bold mt-0.5">In Transit Cargo</div>
           </div>
-          <div className="p-2.5 bg-[#fffdf6] border border-[#e5e5e5]">
-            <div className="text-[10px] text-[#8b6c58]">4. Checkpoint</div>
-            <div className="text-[#413634] mt-0.5">Munich Gateway</div>
+          <div className="p-2.5 bg-[#17151C] border border-[#45404F]">
+            <div className="text-[10px] text-[#716879]">4. Checkpoint</div>
+            <div className="text-[#E2DDE7] mt-0.5">Munich Gateway</div>
           </div>
-          <div className="p-2.5 bg-[#fffdf6] border border-[#e5e5e5]">
-            <div className="text-[10px] text-[#8b6c58]">5. Retailer</div>
-            <div className="text-[#413634] mt-0.5">Distributor POS</div>
+          <div className="p-2.5 bg-[#17151C] border border-[#45404F]">
+            <div className="text-[10px] text-[#716879]">5. Retailer</div>
+            <div className="text-[#E2DDE7] mt-0.5">Distributor POS</div>
           </div>
-          <div className="p-2.5 bg-[#fffdf6] border border-[#e5e5e5]">
-            <div className="text-[10px] text-[#8b6c58]">6. Customer</div>
-            <div className="text-[#413634] mt-0.5">Scan Authenticity</div>
+          <div className="p-2.5 bg-[#17151C] border border-[#45404F]">
+            <div className="text-[10px] text-[#716879]">6. Customer</div>
+            <div className="text-[#E2DDE7] mt-0.5">Scan Authenticity</div>
           </div>
         </div>
       </div>
@@ -120,9 +120,9 @@ export const LogisticsPage: React.FC = () => {
                 placeholder="Search shipment ID or destination..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 bg-[#fffdf6] border border-[#e5e5e5] rounded-none text-xs text-[#413634] font-mono focus:outline-none focus:border-[#413634]"
+                className="w-full pl-8 pr-3 py-1.5 bg-[#17151C] border border-[#45404F] rounded-none text-xs text-[#E2DDE7] font-mono focus:outline-none focus:border-[#AAA2B3]"
               />
-              <Search className="w-3.5 h-3.5 text-[#8b6c58] absolute left-2.5 top-2.5" />
+              <Search className="w-3.5 h-3.5 text-[#AAA2B3] absolute left-2.5 top-2.5" />
             </div>
 
             <div className="space-y-2 max-h-[560px] overflow-y-auto">
@@ -136,32 +136,32 @@ export const LogisticsPage: React.FC = () => {
                     onClick={() => setSelectedShipmentId(s.shipmentId)}
                     className={`p-3 border cursor-pointer transition-all ${
                       isSelected
-                        ? 'bg-[#faf3dc] border-[#c5716d]'
-                        : 'bg-[#fffdf6] border-[#e5e5e5] hover:border-[#413634]'
+                        ? 'bg-[#292531] border-[#AAA2B3]'
+                        : 'bg-[#201D27] border-[#45404F] hover:border-[#AAA2B3]'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-mono font-bold text-xs text-[#413634]">{s.shipmentId}</span>
+                      <span className="font-mono font-bold text-xs text-[#E2DDE7]">{s.shipmentId}</span>
                       <span
                         className={`text-[10px] px-2 py-0.5 border font-mono ${
                           s.currentStatus === 'Delivered'
-                            ? 'bg-[#edf6f0] text-[#2e6b4d] border-[#c3e6cb]'
-                            : 'bg-[#fef7ec] text-[#b87428] border-[#fae2c6]'
+                            ? 'bg-[#1B2D22] text-[#86D6A6] border-[#2D543B]'
+                            : 'bg-[#33281C] text-[#E8BC7A] border-[#5E4826]'
                         }`}
                       >
                         {s.currentStatus}
                       </span>
                     </div>
 
-                    <p className="text-xs text-[#666666] font-serif mt-1 truncate">{s.destination}</p>
+                    <p className="text-xs text-[#AAA2B3] font-serif mt-1 truncate">{s.destination}</p>
 
-                    <div className="mt-2 text-[10px] text-[#8b6c58] flex items-center justify-between font-serif">
+                    <div className="mt-2 text-[10px] text-[#716879] flex items-center justify-between font-serif">
                       <span>{s.carrier.split(' ')[0]} Priority</span>
-                      <span className="font-mono">{s.productIds.length} Products</span>
+                      <span className="font-mono text-[#AAA2B3]">{s.productIds.length} Products</span>
                     </div>
 
                     {carriesFlagged && (
-                      <div className="mt-2 text-[10px] text-[#b84a44] bg-[#fdf2f1] px-2 py-0.5 border border-[#f5c6cb] font-mono">
+                      <div className="mt-2 text-[10px] text-[#F08C8A] bg-[#2D1C22] px-2 py-0.5 border border-[#5A2C35] font-mono">
                         Contains Flagged GT-DEV-00000851
                       </div>
                     )}
@@ -178,16 +178,16 @@ export const LogisticsPage: React.FC = () => {
             <>
               {/* Shipment Header Card */}
               <div className="p-5 vintage-card space-y-4">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#e5e5e5]">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#45404F]">
                   <div>
                     <div className="flex items-center gap-3">
-                      <h2 className="text-xl font-normal font-serif text-[#413634]">{activeShipment.shipmentId}</h2>
-                      <span className="px-2 py-0.5 bg-[#faf3dc] text-[#413634] border border-[#e5e5e5] text-xs font-serif">
+                      <h2 className="text-xl font-normal font-serif text-[#E2DDE7]">{activeShipment.shipmentId}</h2>
+                      <span className="px-2 py-0.5 bg-[#292531] text-[#E2DDE7] border border-[#45404F] text-xs font-serif">
                         {activeShipment.currentStatus}
                       </span>
                     </div>
-                    <p className="text-xs text-[#666666] font-serif mt-1">
-                      Carrier: <strong className="text-[#413634]">{activeShipment.carrier}</strong>
+                    <p className="text-xs text-[#AAA2B3] font-serif mt-1">
+                      Carrier: <strong className="text-[#E2DDE7]">{activeShipment.carrier}</strong>
                     </p>
                   </div>
 
@@ -205,23 +205,23 @@ export const LogisticsPage: React.FC = () => {
                 {/* Metrics */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-serif">
                   <div>
-                    <span className="text-[#8b6c58]">Origin Facility:</span>
-                    <p className="text-[#413634] mt-0.5">{activeShipment.origin}</p>
+                    <span className="text-[#716879]">Origin Facility:</span>
+                    <p className="text-[#E2DDE7] mt-0.5">{activeShipment.origin}</p>
                   </div>
                   <div>
-                    <span className="text-[#8b6c58]">Destination Hub:</span>
-                    <p className="text-[#413634] mt-0.5">{activeShipment.destination}</p>
+                    <span className="text-[#716879]">Destination Hub:</span>
+                    <p className="text-[#E2DDE7] mt-0.5">{activeShipment.destination}</p>
                   </div>
                   <div>
-                    <span className="text-[#8b6c58]">Temperature Sensor:</span>
-                    <p className="text-[#2e6b4d] font-bold mt-0.5 flex items-center gap-1 font-mono">
+                    <span className="text-[#716879]">Temperature Sensor:</span>
+                    <p className="text-[#86D6A6] font-bold mt-0.5 flex items-center gap-1 font-mono">
                       <Thermometer size={13} />
                       <span>{activeShipment.temperature || '21.4 °C'}</span>
                     </p>
                   </div>
                   <div>
-                    <span className="text-[#8b6c58]">Humidity Sensor:</span>
-                    <p className="text-[#49627d] font-bold mt-0.5 flex items-center gap-1 font-mono">
+                    <span className="text-[#716879]">Humidity Sensor:</span>
+                    <p className="text-[#AAA2B3] font-bold mt-0.5 flex items-center gap-1 font-mono">
                       <Droplets size={13} />
                       <span>{activeShipment.humidity || '44% RH'}</span>
                     </p>
@@ -231,26 +231,26 @@ export const LogisticsPage: React.FC = () => {
 
               {/* Checkpoints Timeline */}
               <div className="p-5 vintage-card space-y-4">
-                <h3 className="text-sm font-normal font-serif text-[#413634]">Cryptographic Checkpoint Scan History</h3>
+                <h3 className="text-sm font-normal font-serif text-[#E2DDE7]">Cryptographic Checkpoint Scan History</h3>
                 <div className="space-y-3">
                   {activeShipment.checkpoints.map((cp, idx) => (
                     <div
                       key={cp.id}
                       className={`p-3 border flex items-center justify-between text-xs font-mono transition-all ${
                         cp.status === 'Completed'
-                          ? 'bg-[#fffdf6] border-[#e5e5e5]'
+                          ? 'bg-[#17151C] border-[#45404F]'
                           : cp.status === 'Current'
-                          ? 'bg-[#faf3dc] border-[#c5716d] text-[#413634]'
-                          : 'bg-[#fffdf6] border-[#e5e5e5] text-[#8b6c58]/60'
+                          ? 'bg-[#292531] border-[#AAA2B3] text-[#E2DDE7]'
+                          : 'bg-[#17151C] border-[#45404F] text-[#716879]/60'
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <span className="w-6 h-6 bg-[#faf3dc] border border-[#e5e5e5] flex items-center justify-center font-bold text-[10px] text-[#413634]">
+                        <span className="w-6 h-6 bg-[#292531] border border-[#45404F] flex items-center justify-center font-bold text-[10px] text-[#E2DDE7]">
                           {idx + 1}
                         </span>
                         <div>
-                          <span className="font-normal font-serif text-sm text-[#413634]">{cp.name}</span>
-                          <div className="text-[11px] text-[#666666] font-serif mt-0.5">{cp.location}</div>
+                          <span className="font-normal font-serif text-sm text-[#E2DDE7]">{cp.name}</span>
+                          <div className="text-[11px] text-[#AAA2B3] font-serif mt-0.5">{cp.location}</div>
                         </div>
                       </div>
 
@@ -258,15 +258,15 @@ export const LogisticsPage: React.FC = () => {
                         <span
                           className={`font-semibold ${
                             cp.status === 'Completed'
-                              ? 'text-[#2e6b4d]'
+                              ? 'text-[#86D6A6]'
                               : cp.status === 'Current'
-                              ? 'text-[#c5716d]'
-                              : 'text-[#8b6c58]/60'
+                              ? 'text-[#E8BC7A]'
+                              : 'text-[#716879]/60'
                           }`}
                         >
                           {cp.status}
                         </span>
-                        <div className="text-[10px] text-[#8b6c58]">{cp.timestamp}</div>
+                        <div className="text-[10px] text-[#716879]">{cp.timestamp}</div>
                       </div>
                     </div>
                   ))}
@@ -275,7 +275,7 @@ export const LogisticsPage: React.FC = () => {
 
               {/* Associated Products Inside */}
               <div className="p-5 vintage-card space-y-3">
-                <h3 className="text-sm font-normal font-serif text-[#413634]">
+                <h3 className="text-sm font-normal font-serif text-[#E2DDE7]">
                   Products Carried in Cargo Manifest ({activeShipment.productIds.length} units)
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -285,8 +285,8 @@ export const LogisticsPage: React.FC = () => {
                       onClick={() => navigate(`/passport/${pid}`)}
                       className={`px-3 py-1.5 border font-mono text-xs flex items-center gap-1.5 transition-colors ${
                         pid === 'GT-DEV-00000851'
-                          ? 'bg-[#fdf2f1] border-[#f5c6cb] text-[#b84a44] font-bold hover:bg-[#fae7e6]'
-                          : 'bg-[#fffdf6] border-[#e5e5e5] text-[#413634] hover:bg-[#faf3dc]'
+                          ? 'bg-[#2D1C22] border-[#5A2C35] text-[#F08C8A] font-bold hover:bg-[#3d232c]'
+                          : 'bg-[#17151C] border-[#45404F] text-[#E2DDE7] hover:bg-[#292531]'
                       }`}
                     >
                       <span>{pid}</span>

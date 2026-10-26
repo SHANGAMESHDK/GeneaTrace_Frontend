@@ -112,13 +112,13 @@ export const Topbar: React.FC<TopbarProps> = ({ collapsed }) => {
 
   return (
     <header
-      className={`fixed top-0 right-0 h-16 bg-[#fffdf6] border-b border-[#e5e5e5] z-30 transition-all duration-300 flex items-center justify-between px-6 font-serif-vintage ${
+      className={`fixed top-0 right-0 h-16 bg-[#17151C] border-b border-[#45404F] z-30 transition-all duration-300 flex items-center justify-between px-6 font-serif-vintage ${
         collapsed ? 'left-20' : 'left-64'
       }`}
     >
       {/* Left: Sector Selector Pill */}
       <div className="flex items-center gap-2">
-        <div className="flex items-center p-0.5 rounded-none bg-[#faf3dc] border border-[#e5e5e5] text-xs">
+        <div className="flex items-center p-0.5 rounded-none bg-[#292531] border border-[#45404F] text-xs">
           {sectors.map(sec => {
             const Icon = sec.icon;
             const isSelected = activeSector === sec.id;
@@ -128,8 +128,8 @@ export const Topbar: React.FC<TopbarProps> = ({ collapsed }) => {
                 onClick={() => handleSectorChange(sec.id)}
                 className={`flex items-center gap-1.5 px-2.5 py-1 rounded-none transition-all ${
                   isSelected
-                    ? 'bg-[#c5716d] text-[#fffdf6] font-normal shadow-sm'
-                    : 'text-[#413634] hover:text-[#c5716d] hover:bg-[#fffdf6]'
+                    ? 'bg-[#E2DDE7] text-[#17151C] font-medium shadow-sm'
+                    : 'text-[#AAA2B3] hover:text-[#E2DDE7] hover:bg-[#201D27]'
                 }`}
                 title={`Filter by ${sec.label}`}
               >
@@ -141,29 +141,29 @@ export const Topbar: React.FC<TopbarProps> = ({ collapsed }) => {
         </div>
 
         {/* Quick Showcase Links */}
-        <div className="hidden 2xl:flex items-center gap-1 text-[11px] text-[#666666]">
-          <span className="text-[#e5e5e5]">|</span>
+        <div className="hidden 2xl:flex items-center gap-1 text-[11px] text-[#AAA2B3]">
+          <span className="text-[#45404F]">|</span>
           <button
             onClick={() => navigate('/passport/GT-DEV-00000851')}
-            className="hover:text-[#c5716d] px-1.5 py-0.5"
+            className="hover:text-[#E2DDE7] px-1.5 py-0.5"
           >
             Smartphone
           </button>
           <button
             onClick={() => navigate('/passport/GT-EVB-00094120')}
-            className="hover:text-[#c5716d] px-1.5 py-0.5"
+            className="hover:text-[#E2DDE7] px-1.5 py-0.5"
           >
             EV Battery
           </button>
           <button
             onClick={() => navigate('/passport/GT-MED-00041289')}
-            className="hover:text-[#c5716d] px-1.5 py-0.5"
+            className="hover:text-[#E2DDE7] px-1.5 py-0.5"
           >
             Medical
           </button>
           <button
             onClick={() => navigate('/passport/GT-AVN-00018902')}
-            className="hover:text-[#c5716d] px-1.5 py-0.5"
+            className="hover:text-[#E2DDE7] px-1.5 py-0.5"
           >
             Avionics
           </button>
@@ -184,105 +184,87 @@ export const Topbar: React.FC<TopbarProps> = ({ collapsed }) => {
               }}
               onFocus={() => setShowSearchDropdown(true)}
               placeholder="Search Serial, Batch, Product, Shipment..."
-              className="w-44 sm:w-64 lg:w-80 pl-8 pr-4 py-1.5 bg-[#fffcf8] border border-[#e5e5e5] rounded-none text-xs text-[#413634] placeholder-[#8b6c58]/60 focus:outline-none focus:border-[#413634]"
+              className="w-44 sm:w-64 lg:w-80 pl-8 pr-4 py-1.5 bg-[#201D27] border border-[#45404F] rounded-none text-xs text-[#E2DDE7] placeholder-[#716879] focus:outline-none focus:border-[#AAA2B3]"
             />
-            <Search className="w-3.5 h-3.5 text-[#666666] absolute left-2.5 top-2.5" />
+            <Search className="w-3.5 h-3.5 text-[#AAA2B3] absolute left-2.5 top-2.5" />
           </form>
 
           {/* Quick Suggestions Dropdown */}
           {showSearchDropdown && searchQuery.length > 0 && (
-            <div className="absolute top-10 left-0 right-0 bg-[#fffcf8] border border-[#413634] rounded-none shadow-md p-2 z-50 text-xs">
-              <div className="flex items-center justify-between px-2 py-1 text-[#666666] border-b border-[#e5e5e5] mb-1">
-                <span className="text-[10px] uppercase tracking-wider">Quick Suggestions</span>
-                <button onClick={() => setShowSearchDropdown(false)} className="text-[#413634]">
+            <div className="absolute top-10 left-0 right-0 bg-[#201D27] border border-[#45404F] rounded-none shadow-xl p-2 z-50 text-xs">
+              <div className="flex items-center justify-between px-2 py-1 text-[#AAA2B3] border-b border-[#45404F] mb-1">
+                <span className="text-[10px] uppercase tracking-wider font-serif">Quick Suggestions</span>
+                <button onClick={() => setShowSearchDropdown(false)} className="text-[#AAA2B3] hover:text-[#E2DDE7]">
                   <X size={12} />
                 </button>
               </div>
-              <div
-                onClick={() => {
-                  navigate('/passport/GT-DEV-00000851');
-                  setShowSearchDropdown(false);
-                }}
-                className="px-2 py-1.5 hover:bg-[#faf3dc] rounded-none cursor-pointer flex items-center justify-between text-[#413634]"
-              >
-                <span>GT-DEV-00000851 (Galaxy S24 Ultra)</span>
-                <span className="text-[10px] text-[#c5716d] uppercase">Electronics</span>
-              </div>
-              <div
-                onClick={() => {
-                  navigate('/passport/GT-EVB-00094120');
-                  setShowSearchDropdown(false);
-                }}
-                className="px-2 py-1.5 hover:bg-[#faf3dc] rounded-none cursor-pointer flex items-center justify-between text-[#413634]"
-              >
-                <span>GT-EVB-00094120 (800V EV Battery Pack)</span>
-                <span className="text-[10px] text-[#b87428] uppercase">EV Battery</span>
-              </div>
-              <div
-                onClick={() => {
-                  navigate('/passport/GT-MED-00041289');
-                  setShowSearchDropdown(false);
-                }}
-                className="px-2 py-1.5 hover:bg-[#faf3dc] rounded-none cursor-pointer flex items-center justify-between text-[#413634]"
-              >
-                <span>GT-MED-00041289 (Cardiac Implant)</span>
-                <span className="text-[10px] text-[#2e6b4d] uppercase">Medical</span>
-              </div>
-              <div
-                onClick={() => {
-                  navigate('/batches');
-                  setShowSearchDropdown(false);
-                }}
-                className="px-2 py-1.5 hover:bg-[#faf3dc] rounded-none cursor-pointer flex items-center justify-between text-[#413634]"
-              >
-                <span>Batch ABC (Defective Display Batch)</span>
-                <span className="text-[10px] text-[#b84a44] uppercase">Batch</span>
+
+              <div className="space-y-1">
+                <button
+                  onClick={() => {
+                    navigate('/recalls');
+                    setShowSearchDropdown(false);
+                  }}
+                  className="w-full text-left px-2 py-1.5 hover:bg-[#292531] text-[#F08C8A] font-serif flex items-center justify-between"
+                >
+                  <span>Flagged Display Batch ABC</span>
+                  <span className="text-[10px] font-mono text-[#AAA2B3]">Recall Center</span>
+                </button>
+                <button
+                  onClick={() => {
+                    navigate('/passport/GT-DEV-00000851');
+                    setShowSearchDropdown(false);
+                  }}
+                  className="w-full text-left px-2 py-1.5 hover:bg-[#292531] text-[#E2DDE7] font-mono text-xs flex items-center justify-between"
+                >
+                  <span>GT-DEV-00000851</span>
+                  <span className="text-[10px] font-serif text-[#716879]">Finished Product</span>
+                </button>
+                <button
+                  onClick={() => {
+                    navigate('/logistics?search=GT-SHP-00000326');
+                    setShowSearchDropdown(false);
+                  }}
+                  className="w-full text-left px-2 py-1.5 hover:bg-[#292531] text-[#E8BC7A] font-mono text-xs flex items-center justify-between"
+                >
+                  <span>GT-SHP-00000326</span>
+                  <span className="text-[10px] font-serif text-[#716879]">In-Transit</span>
+                </button>
               </div>
             </div>
           )}
         </div>
 
-        {/* Reset Demo Data Button */}
+        {/* Quick Demo Reset */}
         <button
           onClick={handleResetData}
-          className="btn-vintage-outline"
-          title="Reset All Mock Data to Default"
+          title="Reset Demo Data"
+          className="p-2 rounded-none text-[#AAA2B3] hover:text-[#E2DDE7] hover:bg-[#292531] transition-colors border border-transparent hover:border-[#45404F]"
         >
-          <RotateCcw size={12} className="text-[#8b6c58]" />
-          <span className="hidden sm:inline">Reset Demo</span>
+          <RotateCcw size={15} />
         </button>
 
-        {/* Notifications Dropdown */}
+        {/* Notifications Popover */}
         <div className="relative">
           <button
             onClick={() => setShowNotifications(!showNotifications)}
-            className="p-2 rounded-none bg-[#fffcf8] border border-[#e5e5e5] text-[#413634] hover:bg-[#faf3dc] transition-colors relative"
-            title="Notifications"
+            className="p-2 rounded-none text-[#AAA2B3] hover:text-[#E2DDE7] hover:bg-[#292531] transition-colors relative border border-transparent hover:border-[#45404F]"
+            title="System Alerts"
           >
             <Bell size={15} />
-            <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[#c5716d]" />
+            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#F08C8A]" />
           </button>
 
           {showNotifications && (
-            <div className="absolute right-0 top-11 w-80 sm:w-96 bg-[#fffcf8] border border-[#413634] rounded-none shadow-xl z-50 overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#e5e5e5] bg-[#faf3dc]">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-[#413634] font-normal uppercase tracking-wide">
-                    Manufacturing Alerts
-                  </span>
-                  <span className="text-[9px] px-1.5 py-0.2 bg-[#c5716d] text-[#fffdf6]">
-                    {notifications.length}
-                  </span>
-                </div>
-                <button
-                  onClick={() => setShowNotifications(false)}
-                  className="text-[#413634] hover:text-[#c5716d]"
-                >
-                  <X size={14} />
+            <div className="absolute right-0 top-11 w-80 sm:w-96 bg-[#201D27] border border-[#45404F] rounded-none shadow-2xl p-3 z-50">
+              <div className="flex items-center justify-between pb-2 border-b border-[#45404F] mb-2 font-serif">
+                <span className="text-xs uppercase tracking-wider text-[#E2DDE7]">Industrial Event Notifications</span>
+                <button onClick={() => setShowNotifications(false)} className="text-[#AAA2B3] hover:text-[#E2DDE7]">
+                  <X size={13} />
                 </button>
               </div>
 
-              <div className="max-h-80 overflow-y-auto divide-y divide-[#e5e5e5]">
+              <div className="space-y-2 max-h-72 overflow-y-auto">
                 {notifications.map(n => (
                   <div
                     key={n.id}
@@ -290,24 +272,13 @@ export const Topbar: React.FC<TopbarProps> = ({ collapsed }) => {
                       navigate(n.path);
                       setShowNotifications(false);
                     }}
-                    className="p-3 hover:bg-[#faf3dc] cursor-pointer transition-colors"
+                    className="p-2.5 rounded-none bg-[#17151C] hover:bg-[#292531] border border-[#45404F] cursor-pointer transition-colors space-y-1"
                   >
-                    <div className="flex items-start gap-2.5">
-                      {n.type === 'critical' ? (
-                        <AlertOctagon className="w-4 h-4 text-[#b84a44] shrink-0 mt-0.5" />
-                      ) : n.type === 'warning' ? (
-                        <ShieldAlert className="w-4 h-4 text-[#b87428] shrink-0 mt-0.5" />
-                      ) : (
-                        <CheckCircle2 className="w-4 h-4 text-[#2e6b4d] shrink-0 mt-0.5" />
-                      )}
-                      <div className="flex flex-col min-w-0">
-                        <div className="flex items-center justify-between gap-1">
-                          <span className="text-xs text-[#413634] truncate">{n.title}</span>
-                          <span className="text-[10px] text-[#666666] shrink-0 font-mono">{n.time}</span>
-                        </div>
-                        <p className="text-[11px] text-[#666666] mt-0.5 line-clamp-2">{n.desc}</p>
-                      </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-normal font-serif text-[#E2DDE7] truncate">{n.title}</span>
+                      <span className="text-[10px] font-mono text-[#716879] shrink-0 ml-2">{n.time}</span>
                     </div>
+                    <p className="text-[11px] text-[#AAA2B3] font-serif line-clamp-2 leading-relaxed">{n.desc}</p>
                   </div>
                 ))}
               </div>

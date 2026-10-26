@@ -114,13 +114,13 @@ export const BatchManagementPage: React.FC = () => {
   return (
     <div className="space-y-6 font-serif-vintage">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-[#e5e5e5]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-[#45404F]">
         <div>
-          <h1 className="text-2xl text-[#413634] flex items-center gap-2">
-            <Layers className="text-[#c5716d]" size={22} />
+          <h1 className="text-2xl text-[#E2DDE7] flex items-center gap-2">
+            <Layers className="text-[#AAA2B3]" size={22} />
             <span>Industrial Batch Management &amp; Serialization</span>
           </h1>
-          <p className="text-xs text-[#666666] mt-0.5">
+          <p className="text-xs text-[#AAA2B3] mt-0.5">
             Cryptographic batch grouping with individual unit-level serial number generation across industries.
           </p>
         </div>
@@ -148,15 +148,15 @@ export const BatchManagementPage: React.FC = () => {
                   placeholder="Search batches..."
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
-                  className="w-full pl-8 pr-3 py-1.5 bg-[#fffdf6] border border-[#e5e5e5] rounded-none text-xs text-[#413634] placeholder-[#8b6c58]/60 focus:outline-none focus:border-[#413634]"
+                  className="w-full pl-8 pr-3 py-1.5 bg-[#17151C] border border-[#45404F] rounded-none text-xs text-[#E2DDE7] placeholder-[#716879] focus:outline-none focus:border-[#AAA2B3]"
                 />
-                <Search className="w-3.5 h-3.5 text-[#666666] absolute left-2.5 top-2.5" />
+                <Search className="w-3.5 h-3.5 text-[#AAA2B3] absolute left-2.5 top-2.5" />
               </div>
 
               <select
                 value={selectedSectorFilter}
                 onChange={e => setSelectedSectorFilter(e.target.value)}
-                className="px-2 py-1.5 bg-[#faf3dc] border border-[#e5e5e5] rounded-none text-[11px] text-[#413634]"
+                className="px-2 py-1.5 bg-[#292531] border border-[#45404F] rounded-none text-[11px] text-[#E2DDE7]"
               >
                 <option value="All">All Sectors</option>
                 <option value="Consumer Electronics">Electronics</option>
@@ -178,32 +178,32 @@ export const BatchManagementPage: React.FC = () => {
                     className={`p-3 border cursor-pointer transition-all ${
                       isSelected
                         ? isDefective
-                          ? 'bg-[#fdf2f1] border-[#b84a44]'
-                          : 'bg-[#faf3dc] border-[#413634]'
-                        : 'bg-[#fffdf6] border-[#e5e5e5] hover:bg-[#faf3dc]/50'
+                          ? 'bg-[#2D1C22] border-[#5A2C35]'
+                          : 'bg-[#292531] border-[#AAA2B3]'
+                        : 'bg-[#201D27] border-[#45404F] hover:bg-[#292531]/50'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs text-[#413634]">Batch {b.batchId}</span>
-                        <span className="text-[10px] px-1.5 py-0.2 bg-[#faf3dc] text-[#8b6c58] border border-[#e5e5e5]">
+                        <span className="font-mono text-xs text-[#E2DDE7]">Batch {b.batchId}</span>
+                        <span className="text-[10px] px-1.5 py-0.2 bg-[#292531] text-[#AAA2B3] border border-[#45404F]">
                           {b.componentType}
                         </span>
                       </div>
                       <span
                         className={`text-[9px] px-1.5 py-0.2 uppercase font-mono ${
                           isDefective
-                            ? 'bg-[#fdf2f1] text-[#b84a44] border border-[#b84a44]'
-                            : 'bg-[#edf6f0] text-[#2e6b4d] border border-[#2e6b4d]/30'
+                            ? 'bg-[#2D1C22] text-[#F08C8A] border border-[#5A2C35]'
+                            : 'bg-[#1B2D22] text-[#86D6A6] border border-[#2D543B]'
                         }`}
                       >
                         {b.status}
                       </span>
                     </div>
 
-                    <div className="mt-2 text-xs text-[#666666] flex items-center justify-between font-mono">
-                      <span className="text-[#c5716d] text-[10px]">{b.sector}</span>
-                      <span className="text-[11px] text-[#8b6c58]">{b.batchSize} units</span>
+                    <div className="mt-2 text-xs text-[#AAA2B3] flex items-center justify-between font-mono">
+                      <span className="text-[#E2DDE7] text-[10px]">{b.sector}</span>
+                      <span className="text-[11px] text-[#716879]">{b.batchSize} units</span>
                     </div>
                   </div>
                 );
@@ -220,32 +220,32 @@ export const BatchManagementPage: React.FC = () => {
               <div
                 className={`p-5 vintage-card ${
                   activeBatch.status === 'Defective' || activeBatch.status === 'Recalled'
-                    ? 'bg-[#fdf2f1] border-[#b84a44]'
+                    ? 'bg-[#2D1C22] border-[#5A2C35]'
                     : ''
                 }`}
               >
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#e5e5e5]">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#45404F]">
                   <div>
                     <div className="flex items-center gap-3">
-                      <h2 className="text-xl text-[#413634] font-mono">Batch {activeBatch.batchId}</h2>
-                      <span className="px-2 py-0.5 bg-[#faf3dc] text-[#c5716d] border border-[#e5e5e5] text-xs">
+                      <h2 className="text-xl text-[#E2DDE7] font-mono">Batch {activeBatch.batchId}</h2>
+                      <span className="px-2 py-0.5 bg-[#292531] text-[#E2DDE7] border border-[#45404F] text-xs">
                         {activeBatch.componentType}
                       </span>
-                      <span className="px-2 py-0.5 bg-[#faf3dc] text-[#666666] border border-[#e5e5e5] text-xs">
+                      <span className="px-2 py-0.5 bg-[#292531] text-[#AAA2B3] border border-[#45404F] text-xs">
                         {activeBatch.sector}
                       </span>
                       <span
                         className={`px-2 py-0.5 text-xs font-mono uppercase ${
                           activeBatch.status === 'Defective' || activeBatch.status === 'Recalled'
-                            ? 'bg-[#b84a44] text-white'
-                            : 'bg-[#edf6f0] text-[#2e6b4d]'
+                            ? 'bg-[#F08C8A] text-[#17151C] font-semibold'
+                            : 'bg-[#1B2D22] text-[#86D6A6]'
                         }`}
                       >
                         {activeBatch.status}
                       </span>
                     </div>
-                    <p className="text-xs text-[#666666] mt-1">
-                      Supplier: <strong className="text-[#413634]">{activeBatch.supplier}</strong> • Facility: <strong className="text-[#413634]">{activeBatch.facility}</strong>
+                    <p className="text-xs text-[#AAA2B3] mt-1">
+                      Supplier: <strong className="text-[#E2DDE7]">{activeBatch.supplier}</strong> • Facility: <strong className="text-[#E2DDE7]">{activeBatch.facility}</strong>
                     </p>
                   </div>
 
@@ -253,7 +253,7 @@ export const BatchManagementPage: React.FC = () => {
                     {activeBatch.status !== 'Defective' && activeBatch.status !== 'Recalled' ? (
                       <button
                         onClick={() => handleMarkDefective(activeBatch.batchId)}
-                        className="btn-vintage-outline border-[#b84a44] text-[#b84a44] hover:bg-[#fdf2f1]"
+                        className="btn-vintage-outline border-[#5A2C35] text-[#F08C8A] hover:bg-[#2D1C22]"
                       >
                         <AlertOctagon size={13} />
                         <span>Flag Defective</span>
@@ -280,43 +280,43 @@ export const BatchManagementPage: React.FC = () => {
                 {/* Sub details */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 text-xs font-mono">
                   <div>
-                    <span className="text-[#666666]">Batch Size:</span>
-                    <p className="text-[#413634] text-sm mt-0.5">{activeBatch.batchSize} Units</p>
+                    <span className="text-[#AAA2B3]">Batch Size:</span>
+                    <p className="text-[#E2DDE7] text-sm mt-0.5">{activeBatch.batchSize} Units</p>
                   </div>
                   <div>
-                    <span className="text-[#666666]">Serial Range:</span>
-                    <p className="text-[#c5716d] text-sm mt-0.5">
+                    <span className="text-[#AAA2B3]">Serial Range:</span>
+                    <p className="text-[#E2DDE7] text-sm mt-0.5">
                       {activeBatch.batchId}-0001 → {activeBatch.batchId}-{activeBatch.batchSize.toString().padStart(4, '0')}
                     </p>
                   </div>
                   <div>
-                    <span className="text-[#666666]">Inspection:</span>
-                    <p className="text-[#413634] text-xs mt-0.5 truncate">{activeBatch.inspectionResult}</p>
+                    <span className="text-[#AAA2B3]">Inspection:</span>
+                    <p className="text-[#E2DDE7] text-xs mt-0.5 truncate">{activeBatch.inspectionResult}</p>
                   </div>
                   <div>
-                    <span className="text-[#666666]">Demo TX Hash:</span>
-                    <p className="text-[#8b6c58] text-xs mt-0.5 truncate">{activeBatch.blockchainCheckpointTx}</p>
+                    <span className="text-[#AAA2B3]">Demo TX Hash:</span>
+                    <p className="text-[#716879] text-xs mt-0.5 truncate">{activeBatch.blockchainCheckpointTx}</p>
                   </div>
                 </div>
               </div>
 
               {/* Individual Serials Table */}
               <div className="p-5 vintage-card space-y-4">
-                <div className="flex items-center justify-between pb-2 border-b border-[#e5e5e5]">
+                <div className="flex items-center justify-between pb-2 border-b border-[#45404F]">
                   <div>
-                    <h3 className="text-sm text-[#413634]">
+                    <h3 className="text-sm text-[#E2DDE7]">
                       Unit Serial Registry ({batchComponents.length} units in Batch {activeBatch.batchId})
                     </h3>
-                    <p className="text-xs text-[#666666]">
+                    <p className="text-xs text-[#AAA2B3]">
                       Individual unit-level identification. {activeBatch.batchId} is the batch; {activeBatch.batchId}-0001 is the unit serial.
                     </p>
                   </div>
-                  <span className="text-xs font-mono text-[#8b6c58]">{batchComponents.length} units</span>
+                  <span className="text-xs font-mono text-[#716879]">{batchComponents.length} units</span>
                 </div>
 
-                <div className="max-h-96 overflow-y-auto border border-[#e5e5e5]">
+                <div className="max-h-96 overflow-y-auto border border-[#45404F]">
                   <table className="w-full text-left text-xs font-mono">
-                    <thead className="bg-[#faf3dc] text-[#666666] border-b border-[#e5e5e5]">
+                    <thead className="bg-[#292531] text-[#AAA2B3] border-b border-[#45404F]">
                       <tr>
                         <th className="py-2.5 px-3">Serial Number</th>
                         <th className="py-2.5 px-3">Component ID</th>
@@ -327,40 +327,40 @@ export const BatchManagementPage: React.FC = () => {
                         <th className="py-2.5 px-3 text-right">Action</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#e5e5e5] bg-[#fffdf6]">
+                    <tbody className="divide-y divide-[#45404F] bg-[#17151C]">
                       {batchComponents.map(c => (
-                        <tr key={c.serialNumber} className="hover:bg-[#faf3dc]/60 transition-colors">
-                          <td className="py-2 px-3 text-[#c5716d]">{c.serialNumber}</td>
-                          <td className="py-2 px-3 text-[#413634]">{c.componentId}</td>
-                          <td className="py-2 px-3 text-[#8b6c58] text-[10px]">{c.sector}</td>
+                        <tr key={c.serialNumber} className="hover:bg-[#292531]/60 transition-colors">
+                          <td className="py-2 px-3 text-[#E2DDE7] font-semibold">{c.serialNumber}</td>
+                          <td className="py-2 px-3 text-[#AAA2B3]">{c.componentId}</td>
+                          <td className="py-2 px-3 text-[#716879] text-[10px]">{c.sector}</td>
                           <td className="py-2 px-3">
                             <span
                               className={`px-1.5 py-0.2 text-[9px] uppercase ${
                                 c.status === 'Recalled' || c.status === 'Quality Failed'
-                                  ? 'bg-[#fdf2f1] text-[#b84a44] border border-[#b84a44]'
-                                  : 'bg-[#edf6f0] text-[#2e6b4d]'
+                                  ? 'bg-[#2D1C22] text-[#F08C8A] border border-[#5A2C35]'
+                                  : 'bg-[#1B2D22] text-[#86D6A6]'
                               }`}
                             >
                               {c.status}
                             </span>
                           </td>
-                          <td className="py-2 px-3 text-[#666666]">{c.qualityStatus}</td>
-                          <td className="py-2 px-3 text-[#413634]">
+                          <td className="py-2 px-3 text-[#AAA2B3]">{c.qualityStatus}</td>
+                          <td className="py-2 px-3 text-[#E2DDE7]">
                             {c.installedInProductId ? (
                               <button
                                 onClick={() => navigate(`/passport/${c.installedInProductId}`)}
-                                className="text-[#c5716d] hover:underline"
+                                className="text-[#E2DDE7] hover:underline"
                               >
                                 {c.installedInProductId}
                               </button>
                             ) : (
-                              <span className="text-[#8b6c58]">Inventory</span>
+                              <span className="text-[#716879]">Inventory</span>
                             )}
                           </td>
                           <td className="py-2 px-3 text-right">
                             <button
                               onClick={() => navigate(`/traceability?query=${c.serialNumber}`)}
-                              className="text-[11px] text-[#413634] hover:text-[#c5716d]"
+                              className="text-[11px] text-[#AAA2B3] hover:text-[#E2DDE7]"
                             >
                               Trace
                             </button>
@@ -373,27 +373,27 @@ export const BatchManagementPage: React.FC = () => {
               </div>
             </>
           ) : (
-            <div className="p-12 text-center text-[#666666]">Select a batch to inspect its details</div>
+            <div className="p-12 text-center text-[#AAA2B3]">Select a batch to inspect its details</div>
           )}
         </div>
       </div>
 
       {/* Register Batch Modal */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 z-50 bg-[#413634]/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="w-full max-w-lg bg-[#fffdf6] border border-[#413634] p-6 space-y-4 shadow-xl">
-            <div className="flex items-center justify-between pb-3 border-b border-[#e5e5e5]">
-              <h3 className="text-base text-[#413634] flex items-center gap-2">
-                <Plus size={16} className="text-[#c5716d]" />
+        <div className="fixed inset-0 z-50 bg-[#17151C]/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-[#201D27] border border-[#45404F] p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-[#45404F]">
+              <h3 className="text-base text-[#E2DDE7] flex items-center gap-2">
+                <Plus size={16} className="text-[#AAA2B3]" />
                 <span>Register New Manufacturing Batch</span>
               </h3>
-              <button onClick={() => setIsCreateModalOpen(false)} className="text-[#666666] hover:text-[#413634]">
+              <button onClick={() => setIsCreateModalOpen(false)} className="text-[#AAA2B3] hover:text-[#E2DDE7]">
                 <X size={16} />
               </button>
             </div>
 
             {formError && (
-              <div className="p-3 bg-[#fdf2f1] border border-[#b84a44] text-xs text-[#b84a44]">
+              <div className="p-3 bg-[#2D1C22] border border-[#5A2C35] text-xs text-[#F08C8A]">
                 {formError}
               </div>
             )}
@@ -401,11 +401,11 @@ export const BatchManagementPage: React.FC = () => {
             <form onSubmit={handleCreateBatch} className="space-y-4 text-xs">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[#666666] mb-1">Industry Sector</label>
+                  <label className="block text-[#AAA2B3] mb-1">Industry Sector</label>
                   <select
                     value={newSector}
                     onChange={e => setNewSector(e.target.value as IndustrySector)}
-                    className="w-full px-3 py-2 bg-[#fffcf8] border border-[#e5e5e5] rounded-none text-[#413634] focus:outline-none focus:border-[#413634]"
+                    className="w-full px-3 py-2 bg-[#17151C] border border-[#45404F] rounded-none text-[#E2DDE7] focus:outline-none focus:border-[#AAA2B3]"
                   >
                     <option value="Consumer Electronics">Consumer Electronics</option>
                     <option value="Automotive & EV Battery">Automotive & EV Battery</option>
@@ -415,11 +415,11 @@ export const BatchManagementPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[#666666] mb-1">Component Type</label>
+                  <label className="block text-[#AAA2B3] mb-1">Component Type</label>
                   <select
                     value={newType}
                     onChange={e => setNewType(e.target.value as ComponentCategory)}
-                    className="w-full px-3 py-2 bg-[#fffcf8] border border-[#e5e5e5] rounded-none text-[#413634] focus:outline-none focus:border-[#413634]"
+                    className="w-full px-3 py-2 bg-[#17151C] border border-[#45404F] rounded-none text-[#E2DDE7] focus:outline-none focus:border-[#AAA2B3]"
                   >
                     <option value="Display">Display</option>
                     <option value="Battery">Battery</option>
@@ -439,56 +439,56 @@ export const BatchManagementPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[#666666] mb-1">Batch ID Code (e.g. CELL-97)</label>
+                  <label className="block text-[#AAA2B3] mb-1">Batch ID Code (e.g. CELL-97)</label>
                   <input
                     type="text"
                     value={newBatchId}
                     onChange={e => setNewBatchId(e.target.value)}
                     placeholder="CELL-97"
-                    className="w-full px-3 py-2 bg-[#fffcf8] border border-[#e5e5e5] rounded-none text-[#413634] font-mono focus:outline-none focus:border-[#413634]"
+                    className="w-full px-3 py-2 bg-[#17151C] border border-[#45404F] rounded-none text-[#E2DDE7] font-mono focus:outline-none focus:border-[#AAA2B3]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#666666] mb-1">Batch Size</label>
+                  <label className="block text-[#AAA2B3] mb-1">Batch Size</label>
                   <input
                     type="number"
                     value={newBatchSize}
                     onChange={e => setNewBatchSize(Number(e.target.value))}
                     min={1}
                     max={500}
-                    className="w-full px-3 py-2 bg-[#fffcf8] border border-[#e5e5e5] rounded-none text-[#413634] font-mono focus:outline-none focus:border-[#413634]"
+                    className="w-full px-3 py-2 bg-[#17151C] border border-[#45404F] rounded-none text-[#E2DDE7] font-mono focus:outline-none focus:border-[#AAA2B3]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[#666666] mb-1">Supplier Organization</label>
+                <label className="block text-[#AAA2B3] mb-1">Supplier Organization</label>
                 <input
                   type="text"
                   value={newSupplier}
                   onChange={e => setNewSupplier(e.target.value)}
                   placeholder="Northvolt Gigafactory / CATL / Medtronic / Sony"
-                  className="w-full px-3 py-2 bg-[#fffcf8] border border-[#e5e5e5] rounded-none text-[#413634] focus:outline-none focus:border-[#413634]"
+                  className="w-full px-3 py-2 bg-[#17151C] border border-[#45404F] rounded-none text-[#E2DDE7] focus:outline-none focus:border-[#AAA2B3]"
                 />
               </div>
 
               {/* Preview */}
-              <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5] space-y-1">
-                <span className="text-[10px] uppercase text-[#666666]">
+              <div className="p-3 bg-[#292531] border border-[#45404F] space-y-1">
+                <span className="text-[10px] uppercase text-[#AAA2B3]">
                   Serial Range Preview:
                 </span>
                 <div className="flex flex-wrap gap-1.5 pt-1">
                   {previewSerials.map(s => (
-                    <span key={s} className="px-2 py-0.5 bg-[#fffdf6] text-[#c5716d] font-mono text-[11px] border border-[#e5e5e5]">
+                    <span key={s} className="px-2 py-0.5 bg-[#17151C] text-[#E2DDE7] font-mono text-[11px] border border-[#45404F]">
                       {s}
                     </span>
                   ))}
-                  <span className="text-[#8b6c58] text-[11px] self-center">... up to {newBatchSize} units</span>
+                  <span className="text-[#716879] text-[11px] self-center">... up to {newBatchSize} units</span>
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3 pt-3 border-t border-[#e5e5e5]">
+              <div className="flex justify-end gap-3 pt-3 border-t border-[#45404F]">
                 <button
                   type="button"
                   onClick={() => setIsCreateModalOpen(false)}
