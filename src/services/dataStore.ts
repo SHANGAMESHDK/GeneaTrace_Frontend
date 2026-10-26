@@ -210,6 +210,11 @@ export const GeneaTraceStore = {
     return currentState.currentUser || defaultUsers.company_qa;
   },
 
+  setCurrentUser(user: AuthUser) {
+    currentState.currentUser = user;
+    this.saveState();
+  },
+
   switchUserRole(role: UserRole) {
     currentState.currentUser = defaultUsers[role];
     this.saveState();

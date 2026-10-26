@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { GeneaTraceStore } from '../services/dataStore';
 import { ProductRecord, ShopkeeperDefectReport } from '../types';
+import { api } from '../services/apiClient';
 
 export const PassportPage: React.FC = () => {
   const { productId: paramProductId } = useParams();
@@ -60,6 +61,15 @@ export const PassportPage: React.FC = () => {
       // Reset progressive disclosure toggles on new search
       setShowPartDetails(false);
       setShowBatchDetails(false);
+
+      // Fetch live passport verification from Azure FastAPI backend
+      api.getPublicPassport(clean)
+        .then(res => {
+          console.log(`Live backend passport for ${clean}:`, res);
+        })
+        .catch(err => {
+          console.warn('Backend public passport fallback:', err);
+        });
     } else {
       setProduct(null);
       setDefectReport(null);

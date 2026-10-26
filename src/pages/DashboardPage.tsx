@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   AlertOctagon,
@@ -11,7 +11,10 @@ import {
   Layers,
   MapPin,
   Truck,
-  FileText
+  FileText,
+  Server,
+  Cpu,
+  Boxes
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -23,10 +26,31 @@ import {
   CartesianGrid
 } from 'recharts';
 import { GeneaTraceStore } from '../services/dataStore';
+import { api, DashboardSummary } from '../services/apiClient';
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const store = GeneaTraceStore.getState();
+
+  // Live Backend Stats
+  const [backendSummary, setBackendSummary] = useState<DashboardSummary | null>(null);
+  const [loadingBackend, setLoadingBackend] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    api.getDashboardSummary()
+      .then(data => {
+        if (isMounted) {
+          setBackendSummary(data);
+          setLoadingBackend(false);
+        }
+      })
+      .catch(err => {
+        console.warn('Backend summary fetch fallback to local:', err);
+        if (isMounted) setLoadingBackend(false);
+      });
+    return () => { isMounted = false; };
+  }, []);
 
   // Defect metrics: Pre-dispatch (factory/testing) vs Post-dispatch (retail/shops)
   const shopReports = GeneaTraceStore.getDefectReports();
@@ -81,6 +105,38 @@ export const DashboardPage: React.FC = () => {
             <span>Corporate Defect Hub</span>
           </button>
         </div>
+      </div>
+
+      {/* Live Azure Backend Database Telemetry Bar */}
+      <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5] flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-2">
+          <Server size={14} className="text-[#c5716d]" />
+          <span className="font-medium text-[#413634]">Azure Cloud Backend:</span>
+          {loadingBackend ? (
+            <span className="text-[#8b6c58] font-mono text-[11px]">Connecting to API...</span>
+          ) : backendSummary ? (
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-[#2e6b4d] animate-pulse" />
+              <span className="text-[#2e6b4d] font-mono font-medium text-[11px]">
+                Live Connected (FastAPI + Supabase)
+              </span>
+            </div>
+          ) : (
+            <span className="text-[#b87428] font-mono text-[11px]">Offline / Fallback Local Cache</span>
+          )}
+        </div>
+
+        {backendSummary && (
+          <div className="flex items-center gap-3 font-mono text-[11px] text-[#413634]">
+            <span><strong>{backendSummary.total_components}</strong> Components</span>
+            <span className="text-[#8b6c58]/40">|</span>
+            <span><strong>{backendSummary.total_batches}</strong> Batches</span>
+            <span className="text-[#8b6c58]/40">|</span>
+            <span><strong>{backendSummary.total_products_assembled}</strong> Assembled Products</span>
+            <span className="text-[#8b6c58]/40">|</span>
+            <span><strong>{backendSummary.total_manufacturing_events}</strong> Events</span>
+          </div>
+        )}
       </div>
 
       {/* 3 Core Metric Cards: Clear & Not Clumsy */}

@@ -1,19 +1,35 @@
 /**
  * GeneaTrace Backend API Client
- * Connects the React/TypeScript frontend to the FastAPI + Supabase backend.
+ * Connects the React/TypeScript frontend to the FastAPI + Azure/Supabase backend.
  */
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || (
+export const API_BASE = import.meta.env.VITE_API_BASE_URL || (
   typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:8000/api/v1'
     : 'https://geneatrace-api.azurewebsites.net/api/v1'
 );
 
+export const BACKEND_ROOT = API_BASE.replace('/api/v1', '');
+
 export interface BackendHealth {
   status: string;
+  service?: string;
+  environment?: string;
   relational_database?: { status: string; database?: string };
   graph_database?: { status: string; using_fallback?: boolean };
   blockchain?: { status: string; is_mock?: boolean };
+}
+
+export interface DashboardSummary {
+  total_components: number;
+  total_batches: number;
+  total_products_assembled: number;
+  active_recalls: number;
+  blockchain_checkpoints: number;
+  pass_rate_percentage: number;
+  total_manufacturing_events: number;
+  graph_health: string;
+  blockchain_health: string;
 }
 
 class ApiClient {
@@ -55,7 +71,7 @@ class ApiClient {
   }
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    const url = endpoint.startsWith('http') ? endpoint : API_BASE + endpoint;
+    const url = endpoint.startsWith('http') ? endpoint : `${API_BASE}${endpoint}`;
     const token = this.getToken();
 
     const headers: Record<string, string> = {
@@ -64,7 +80,7 @@ class ApiClient {
     };
 
     if (token) {
-      headers['Authorization'] = 'Bearer ' + token;
+      headers['Authorization'] = `Bearer ${token}`;
     }
 
     const response = await fetch(url, {
@@ -73,7 +89,7 @@ class ApiClient {
     });
 
     if (!response.ok) {
-      let errorMessage = 'API Error ' + response.status + ': ' + response.statusText;
+      let errorMessage = `API Error ${response.status}: ${response.statusText}`;
       try {
         const errorJson = await response.json();
         if (errorJson.detail) {
@@ -88,20 +104,22 @@ class ApiClient {
     return response.json();
   }
 
-  // Health checks
-  async getHealth(): Promise<{ status: string }> {
-    return this.request<{ status: string }>('/health');
+  // Health & Readiness Checks
+  async getHealth(): Promise<{ status: string; service?: string }> {
+    const res = await fetch(`${BACKEND_ROOT}/health`);
+    if (!res.ok) throw new Error(`Health check failed: ${res.status}`);
+    return res.json();
   }
 
   async getReadiness(): Promise<BackendHealth> {
-    const rootUrl = API_BASE.replace('/api/v1', '');
-    const res = await fetch(rootUrl + '/ready');
+    const res = await fetch(`${BACKEND_ROOT}/ready`);
+    if (!res.ok) throw new Error(`Readiness check failed: ${res.status}`);
     return res.json();
   }
 
   // Auth
-  async login(username = 'admin', password = 'DevPassword123!'): Promise<{ access_token: string; user: any }> {
-    const res = await this.request<{ access_token: string; user: any }>('/auth/login', {
+  async login(username = 'admin', password = 'DevPassword123!'): Promise<{ access_token: string; token_type: string; user_role?: string; username?: string }> {
+    const res = await this.request<{ access_token: string; token_type: string; user_role?: string; username?: string }>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ username, password }),
     });
@@ -115,54 +133,93 @@ class ApiClient {
     return this.request<any>('/auth/me');
   }
 
-  // Dashboard Metrics
-  async getDashboardMetrics(): Promise<any> {
-    return this.request<any>('/dashboard/metrics');
+  // Dashboard Endpoints
+  async getDashboardSummary(): Promise<DashboardSummary> {
+    return this.request<DashboardSummary>('/dashboard/summary');
+  }
+
+  async getManufacturingOutput(): Promise<any[]> {
+    return this.request<any[]>('/dashboard/manufacturing-output');
+  }
+
+  async getDefectRates(): Promise<any[]> {
+    return this.request<any[]>('/dashboard/defect-rates');
+  }
+
+  async getBatchDistribution(): Promise<any[]> {
+    return this.request<any[]>('/dashboard/batch-distribution');
+  }
+
+  async getRecallExposure(): Promise<any[]> {
+    return this.request<any[]>('/dashboard/recall-exposure');
+  }
+
+  async getRecentEvents(limit = 15): Promise<any[]> {
+    return this.request<any[]>(`/dashboard/recent-events?limit=${limit}`);
   }
 
   // Digital Product Passports
   async getPassport(productId: string): Promise<any> {
-    return this.request<any>('/passports/' + productId);
+    return this.request<any>(`/passports/${productId}`);
   }
 
   async getPublicPassport(productId: string): Promise<any> {
-    return this.request<any>('/passports/' + productId + '/public');
+    return this.request<any>(`/passports/${productId}/public`);
+  }
+
+  async verifyPassport(productId: string): Promise<any> {
+    return this.request<any>(`/passports/${productId}/verify`);
   }
 
   // Lineage & Graph Traversals
-  async getForwardLineage(batchCode: string): Promise<any> {
-    return this.request<any>('/lineage/forward/' + batchCode);
+  async traceBatch(batchCode: string): Promise<any> {
+    return this.request<any>(`/traceability/batch/${batchCode}`);
   }
 
-  async getBackwardLineage(productId: string): Promise<any> {
-    return this.request<any>('/lineage/backward/' + productId);
+  async traceComponent(serial: string): Promise<any> {
+    return this.request<any>(`/traceability/component/${serial}`);
+  }
+
+  async traceProduct(productId: string): Promise<any> {
+    return this.request<any>(`/traceability/product/${productId}`);
+  }
+
+  async traceShipment(shipmentId: string): Promise<any> {
+    return this.request<any>(`/traceability/shipment/${shipmentId}`);
   }
 
   // Batches
-  async getBatches(): Promise<any[]> {
-    return this.request<any[]>('/batches');
+  async getBatches(page = 1, pageSize = 50): Promise<any> {
+    return this.request<any>(`/batches?page=${page}&page_size=${pageSize}`);
   }
 
   async getBatch(batchCode: string): Promise<any> {
-    return this.request<any>('/batches/' + batchCode);
+    return this.request<any>(`/batches/${batchCode}`);
+  }
+
+  async createBatch(batchData: any): Promise<any> {
+    return this.request<any>('/batches', {
+      method: 'POST',
+      body: JSON.stringify(batchData),
+    });
   }
 
   // Components
-  async getComponents(skip = 0, limit = 50): Promise<any[]> {
-    return this.request<any[]>('/components?skip=' + skip + '&limit=' + limit);
+  async getComponents(page = 1, pageSize = 50): Promise<any> {
+    return this.request<any>(`/components?page=${page}&page_size=${pageSize}`);
   }
 
   async getComponent(serial: string): Promise<any> {
-    return this.request<any>('/components/' + serial);
+    return this.request<any>(`/components/${serial}`);
   }
 
   // Products
-  async getProducts(): Promise<any[]> {
-    return this.request<any[]>('/products');
+  async getProducts(page = 1, pageSize = 50): Promise<any> {
+    return this.request<any>(`/products?page=${page}&page_size=${pageSize}`);
   }
 
   async getProduct(productId: string): Promise<any> {
-    return this.request<any>('/products/' + productId);
+    return this.request<any>(`/products/${productId}`);
   }
 
   // Recalls
@@ -170,35 +227,40 @@ class ApiClient {
     return this.request<any[]>('/recalls');
   }
 
-  async getRecallExposure(batchCode: string): Promise<any> {
-    return this.request<any>('/recalls/exposure/' + batchCode);
+  async initiateRecall(recallData: any): Promise<any> {
+    return this.request<any>('/recalls', {
+      method: 'POST',
+      body: JSON.stringify(recallData),
+    });
   }
 
-  async triggerRecall(batchCode: string, reason: string): Promise<any> {
-    return this.request<any>('/recalls/trigger', {
-      method: 'POST',
-      body: JSON.stringify({ batch_code: batchCode, reason }),
-    });
+  // Shipments
+  async getShipments(page = 1, pageSize = 50): Promise<any> {
+    return this.request<any>(`/shipments?page=${page}&page_size=${pageSize}`);
+  }
+
+  // Blockchain Audit
+  async getBlockchainAudit(): Promise<any> {
+    return this.request<any>('/blockchain/audit');
+  }
+
+  // Integrations
+  async getIntegrations(): Promise<any[]> {
+    return this.request<any[]>('/integrations');
   }
 
   // Device Security & Attestation
-  async attestDevice(productId: string, identityCommitment: string): Promise<any> {
-    return this.request<any>('/security/attest', {
+  async attestDevice(payload: any): Promise<any> {
+    return this.request<any>('/security/attestations', {
       method: 'POST',
-      body: JSON.stringify({ product_id: productId, identity_commitment: identityCommitment }),
+      body: JSON.stringify(payload),
     });
   }
 
-  async executeDeviceLock(productId: string, reason: string): Promise<any> {
-    return this.request<any>('/security/lock', {
+  async issueDeviceCommand(commandData: any): Promise<any> {
+    return this.request<any>('/security/commands', {
       method: 'POST',
-      body: JSON.stringify({ product_id: productId, reason }),
-    });
-  }
-
-  async recoverDevice(productId: string): Promise<any> {
-    return this.request<any>('/security/recover/' + productId, {
-      method: 'POST',
+      body: JSON.stringify(commandData),
     });
   }
 }

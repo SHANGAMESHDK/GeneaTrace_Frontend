@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Layers,
@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { GeneaTraceStore } from '../services/dataStore';
 import { BatchRecord, ComponentCategory, IndustrySector } from '../types';
+import { api } from '../services/apiClient';
 
 export const BatchManagementPage: React.FC = () => {
   const navigate = useNavigate();
@@ -29,6 +30,19 @@ export const BatchManagementPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState(initialSearch);
   const [selectedSectorFilter, setSelectedSectorFilter] = useState<string>('All');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  // Live Backend Batches fetch
+  useEffect(() => {
+    api.getBatches(1, 50)
+      .then(res => {
+        if (res && Array.isArray(res.items) && res.items.length > 0) {
+          console.log(`Backend Batches fetched (${res.items.length} items):`, res.items);
+        }
+      })
+      .catch(err => {
+        console.warn('Backend batches fallback:', err);
+      });
+  }, []);
 
   // Unit Location Tracing Modal State
   const [selectedTraceUnit, setSelectedTraceUnit] = useState<{
@@ -109,6 +123,17 @@ export const BatchManagementPage: React.FC = () => {
       setSelectedBatchId(newBatchId.trim().toUpperCase());
       setIsCreateModalOpen(false);
       setNewBatchId('');
+
+      // Dispatch to FastAPI backend on Azure
+      api.createBatch({
+        batch_code: newBatchId.trim().toUpperCase(),
+        component_type: newType.toUpperCase(),
+        planned_quantity: Number(newBatchSize) || 100,
+        supplier_id: newSupplier.trim() || 'SUP-DEFAULT',
+        facility_id: newFacility.trim() || 'FAC-FAB-01',
+      }).catch(backendErr => {
+        console.warn('Backend sync note for createBatch:', backendErr.message);
+      });
     } catch (err: any) {
       setFormError(err.message || 'Error registering batch');
     }

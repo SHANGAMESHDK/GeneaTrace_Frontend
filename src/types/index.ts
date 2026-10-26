@@ -51,7 +51,7 @@ export interface ComponentRecord {
   status: ComponentStatus;
   qualityStatus: 'Passed' | 'Failed' | 'Pending' | 'Reworked';
   passportRef?: string;
-  verificationStatus: 'Demo Verified' | 'Pending' | 'Flagged';
+  verificationStatus: 'Cryptographically Verified' | 'Verified' | 'Pending' | 'Flagged' | 'Demo Verified';
   cryptographicHash: string;
   installedInProductId?: string;
 }
@@ -101,7 +101,7 @@ export interface ManufacturingEvent {
   inspectionNotes?: string;
   cryptographicHash: string;
   parentHash?: string;
-  verificationStatus: 'Demo Verified' | 'Pending';
+  verificationStatus: 'Cryptographically Verified' | 'Verified' | 'Pending' | 'Demo Verified';
 }
 
 export interface ProductRecord {
@@ -217,7 +217,7 @@ export interface BlockchainAuditBlock {
   entityId: string;
   merkleRoot: string;
   validatorNode: string;
-  status: 'Demo Confirmed';
+  status: 'Confirmed' | 'Pending' | 'Demo Confirmed';
 }
 
 export type UserRole = 'shopkeeper' | 'company_qa';

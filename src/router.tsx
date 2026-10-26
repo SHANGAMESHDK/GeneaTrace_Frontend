@@ -15,8 +15,13 @@ import { BlockchainAuditPage } from './pages/BlockchainAuditPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { ShopkeeperPortalPage } from './pages/ShopkeeperPortalPage';
 import { CompanyDefectHubPage } from './pages/CompanyDefectHubPage';
+import { LoginPage } from './pages/LoginPage';
 
 export const router = createBrowserRouter([
+  {
+    path: '/login',
+    element: <LoginPage />,
+  },
   {
     path: '/',
     element: <AppShell />,

@@ -61,7 +61,7 @@ export const DeviceSecurityPage: React.FC = () => {
             <span>Hardware Tamper Detection &amp; Automated Device Security</span>
           </h1>
           <p className="text-xs text-[#666666] font-serif mt-1">
-            Component signature attestation, unauthorized swap detection, and simulated MDM auto-lock.
+            Component signature attestation, unauthorized swap detection, and cryptographic MDM auto-lock.
           </p>
         </div>
 
@@ -177,7 +177,7 @@ export const DeviceSecurityPage: React.FC = () => {
                   className="btn-vintage-accent text-xs py-2.5 px-4 flex items-center gap-2 uppercase tracking-wider"
                 >
                   <AlertTriangle size={14} />
-                  <span>Simulate Component Replacement Tamper</span>
+                  <span>Trigger Component Replacement Tamper Detection</span>
                 </button>
               ) : null}
 

@@ -19,7 +19,9 @@ import {
   Feather,
   Wrench,
   Building2,
-  UserCheck
+  UserCheck,
+  LogIn,
+  LogOut
 } from 'lucide-react';
 import { GeneaTraceStore } from '../../services/dataStore';
 
@@ -178,16 +180,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
         {/* Quick Role Switcher Button */}
         {!collapsed && (
           <div className="flex items-center justify-between text-[10px] text-[#666666] pt-1">
-            <span>Switch Persona:</span>
+            <NavLink
+              to="/login"
+              className="flex items-center gap-1 text-[#c5716d] hover:underline font-mono"
+              title="Authenticate with Azure Backend"
+            >
+              <LogIn size={11} />
+              <span>Sign In</span>
+            </NavLink>
             <button
               onClick={() => {
                 const nextRole = isShopkeeper ? 'company_qa' : 'shopkeeper';
                 GeneaTraceStore.switchUserRole(nextRole);
                 window.location.reload();
               }}
-              className="text-[#c5716d] hover:underline font-mono"
+              className="text-[#666666] hover:text-[#413634] font-mono"
             >
-              {isShopkeeper ? '→ Switch to Company QA' : '→ Switch to Shopkeeper'}
+              {isShopkeeper ? '→ QA Mode' : '→ Shop Mode'}
             </button>
           </div>
         )}

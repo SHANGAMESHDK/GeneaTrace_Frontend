@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Search,
@@ -13,9 +13,13 @@ import {
   Smartphone,
   BatteryCharging,
   HeartPulse,
-  Plane
+  Plane,
+  Server,
+  Activity,
+  RefreshCw
 } from 'lucide-react';
 import { GeneaTraceStore } from '../../services/dataStore';
+import { api, BackendHealth, BACKEND_ROOT } from '../../services/apiClient';
 
 interface TopbarProps {
   collapsed: boolean;
@@ -27,37 +31,66 @@ export const Topbar: React.FC<TopbarProps> = ({ collapsed }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showApiModal, setShowApiModal] = useState(false);
 
-  const activeSector = GeneaTraceStore.getActiveSector();
+  // Live Backend Connection Status
+  const [backendStatus, setBackendStatus] = useState<{
+    status: 'checking' | 'connected' | 'error';
+    latencyMs?: number;
+    health?: any;
+    readiness?: BackendHealth | null;
+    lastPing?: string;
+  }>({ status: 'checking', readiness: null });
 
-  const sectors = [
-    { id: 'All', label: 'All Industries', icon: Layers },
-    { id: 'Consumer Electronics', label: 'Electronics', icon: Smartphone, showcase: 'GT-DEV-00000851' },
-    { id: 'Automotive & EV Battery', label: 'EV Battery', icon: BatteryCharging, showcase: 'GT-EVB-00094120' },
-    { id: 'Medical Technology', label: 'Medical Devices', icon: HeartPulse, showcase: 'GT-MED-00041289' },
-    { id: 'Industrial & Aerospace', label: 'Aerospace & IoT', icon: Plane, showcase: 'GT-AVN-00018902' },
-  ];
+  const pingBackend = async () => {
+    setBackendStatus(prev => ({ ...prev, status: 'checking' }));
+    const start = performance.now();
+    try {
+      const health = await api.getHealth();
+      let readiness: BackendHealth | null = null;
+      try {
+        readiness = await api.getReadiness();
+      } catch {
+        // optional readiness probe
+      }
+      const latency = Math.round(performance.now() - start);
+      setBackendStatus({
+        status: 'connected',
+        latencyMs: latency,
+        health,
+        readiness,
+        lastPing: new Date().toLocaleTimeString()
+      });
+    } catch (err: any) {
+      const latency = Math.round(performance.now() - start);
+      setBackendStatus({
+        status: 'error',
+        latencyMs: latency,
+        health: { error: err.message },
+        readiness: null,
+        lastPing: new Date().toLocaleTimeString()
+      });
+    }
+  };
+
+  useEffect(() => {
+    pingBackend();
+    const interval = setInterval(pingBackend, 45000);
+    return () => clearInterval(interval);
+  }, []);
 
   const notifications = [
     {
       id: 'notif-1',
-      title: 'Precision Recall Alert: Display Batch ABC',
+      title: 'Precision Recall Advisory: Display Batch ABC',
       desc: '100 units flagged. 87 assembled finished phones traced across 14 carrier shipments.',
       type: 'critical',
       time: '12m ago',
       path: '/recalls'
     },
     {
-      id: 'notif-evb',
-      title: 'EU Battery Passport (2023/1542) Audit Passed',
-      desc: 'GT-EVB-00094120: Recycled Cobalt/Nickel content 41.2% verified on ledger.',
-      type: 'success',
-      time: '20m ago',
-      path: '/passport/GT-EVB-00094120'
-    },
-    {
       id: 'notif-2',
-      title: 'Shipment Alert: GT-SHP-00000326',
+      title: 'Logistics Manifest Alert: GT-SHP-00000326',
       desc: 'Carries 4 affected units. Current location: Munich Rail Gateway.',
       type: 'warning',
       time: '24m ago',
@@ -65,26 +98,13 @@ export const Topbar: React.FC<TopbarProps> = ({ collapsed }) => {
     },
     {
       id: 'notif-3',
-      title: 'Device Security Simulation Ready',
-      desc: 'Test hardware tampering detection and simulated remote lock command on GT-DEV-00000851.',
+      title: 'Device Hardware Security Status Active',
+      desc: 'Attestation identity commitment verified on ledger for GT-DEV-00000851.',
       type: 'info',
       time: '1h ago',
       path: '/security'
     }
   ];
-
-  const handleSectorChange = (sectorId: string) => {
-    GeneaTraceStore.setActiveSector(sectorId);
-    window.dispatchEvent(new Event('sectorChanged'));
-    if (location.pathname.startsWith('/passport')) {
-      const target = sectors.find(s => s.id === sectorId);
-      if (target?.showcase) {
-        navigate(`/passport/${target.showcase}`);
-      }
-    } else {
-      window.location.reload();
-    }
-  };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,21 +112,14 @@ export const Topbar: React.FC<TopbarProps> = ({ collapsed }) => {
     const query = searchQuery.trim();
     setShowSearchDropdown(false);
 
-    if (query.toUpperCase().startsWith('GT-DEV') || query.toUpperCase().startsWith('GT-EVB') || query.toUpperCase().startsWith('GT-MED') || query.toUpperCase().startsWith('GT-AVN')) {
+    if (query.toUpperCase().startsWith('GT-DEV')) {
       navigate(`/passport/${query.toUpperCase()}`);
-    } else if (query.toUpperCase() === 'ABC' || query.toUpperCase().startsWith('CELL') || query.toUpperCase().startsWith('BMS')) {
+    } else if (['ABC', 'BTR', 'PCB', 'CAM', 'SPK', 'FRM'].includes(query.toUpperCase())) {
       navigate(`/batches?search=${query}`);
     } else if (query.toUpperCase().startsWith('GT-SHP')) {
       navigate(`/logistics?search=${query}`);
     } else {
       navigate(`/traceability?query=${encodeURIComponent(query)}`);
-    }
-  };
-
-  const handleResetData = () => {
-    if (window.confirm('Reset all GeneaTrace demo data back to default state?')) {
-      GeneaTraceStore.resetDemoData();
-      window.location.reload();
     }
   };
 
@@ -116,57 +129,16 @@ export const Topbar: React.FC<TopbarProps> = ({ collapsed }) => {
         collapsed ? 'left-20' : 'left-64'
       }`}
     >
-      {/* Left: Sector Selector Pill */}
-      <div className="flex items-center gap-2">
-        <div className="flex items-center p-0.5 rounded-none bg-[#faf3dc] border border-[#e5e5e5] text-xs">
-          {sectors.map(sec => {
-            const Icon = sec.icon;
-            const isSelected = activeSector === sec.id;
-            return (
-              <button
-                key={sec.id}
-                onClick={() => handleSectorChange(sec.id)}
-                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-none transition-all ${
-                  isSelected
-                    ? 'bg-[#c5716d] text-[#fffdf6] font-normal shadow-sm'
-                    : 'text-[#413634] hover:text-[#c5716d] hover:bg-[#fffdf6]'
-                }`}
-                title={`Filter by ${sec.label}`}
-              >
-                <Icon size={13} />
-                <span className="hidden xl:inline">{sec.label}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Quick Showcase Links */}
-        <div className="hidden 2xl:flex items-center gap-1 text-[11px] text-[#666666]">
-          <span className="text-[#e5e5e5]">|</span>
-          <button
-            onClick={() => navigate('/passport/GT-DEV-00000851')}
-            className="hover:text-[#c5716d] px-1.5 py-0.5"
-          >
-            Smartphone
-          </button>
-          <button
-            onClick={() => navigate('/passport/GT-EVB-00094120')}
-            className="hover:text-[#c5716d] px-1.5 py-0.5"
-          >
-            EV Battery
-          </button>
-          <button
-            onClick={() => navigate('/passport/GT-MED-00041289')}
-            className="hover:text-[#c5716d] px-1.5 py-0.5"
-          >
-            Medical
-          </button>
-          <button
-            onClick={() => navigate('/passport/GT-AVN-00018902')}
-            className="hover:text-[#c5716d] px-1.5 py-0.5"
-          >
-            Avionics
-          </button>
+      {/* Left: Manufacturing Lineage Header */}
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-[#faf3dc] border border-[#e5e5e5] text-xs">
+          <Layers size={14} className="text-[#c5716d]" />
+          <span className="font-medium text-[#413634] hidden sm:inline">
+            GeneaTrace — Unified Manufacturing Lineage &amp; DPP
+          </span>
+          <span className="text-[10px] px-1.5 py-0.2 bg-[#edf6f0] border border-[#2e6b4d] text-[#2e6b4d] font-mono font-medium">
+            Production
+          </span>
         </div>
       </div>
 
@@ -242,15 +214,104 @@ export const Topbar: React.FC<TopbarProps> = ({ collapsed }) => {
           )}
         </div>
 
-        {/* Reset Demo Data Button */}
-        <button
-          onClick={handleResetData}
-          className="btn-vintage-outline"
-          title="Reset All Mock Data to Default"
-        >
-          <RotateCcw size={12} className="text-[#8b6c58]" />
-          <span className="hidden sm:inline">Reset Demo</span>
-        </button>
+        {/* Live Backend API Connection Status */}
+        <div className="relative">
+          <button
+            onClick={() => setShowApiModal(!showApiModal)}
+            className={`px-2.5 py-1.5 text-xs border flex items-center gap-2 transition-all ${
+              backendStatus.status === 'connected'
+                ? 'bg-[#edf6f0] border-[#2e6b4d] text-[#2e6b4d]'
+                : backendStatus.status === 'checking'
+                ? 'bg-[#faf3dc] border-[#b87428] text-[#b87428]'
+                : 'bg-[#fdf2f1] border-[#b84a44] text-[#b84a44]'
+            }`}
+            title="Azure Backend API Status (click to test/view details)"
+          >
+            <span className={`w-2 h-2 rounded-full shrink-0 ${
+              backendStatus.status === 'connected'
+                ? 'bg-[#2e6b4d] animate-pulse'
+                : backendStatus.status === 'checking'
+                ? 'bg-[#b87428]'
+                : 'bg-[#b84a44]'
+            }`} />
+            <span className="font-mono text-[11px] font-semibold hidden md:inline">
+              {backendStatus.status === 'connected'
+                ? `Backend: Live (${backendStatus.latencyMs}ms)`
+                : backendStatus.status === 'checking'
+                ? 'Backend: Connecting...'
+                : 'Backend: Offline'}
+            </span>
+          </button>
+
+          {showApiModal && (
+            <div className="absolute right-0 top-11 w-80 sm:w-96 bg-[#fffcf8] border border-[#413634] shadow-xl z-50 p-4 space-y-3 font-serif-vintage">
+              <div className="flex items-center justify-between border-b border-[#e5e5e5] pb-2">
+                <div className="flex items-center gap-1.5">
+                  <Server size={15} className="text-[#c5716d]" />
+                  <span className="text-xs uppercase font-medium text-[#413634] tracking-wide">
+                    Azure Backend API Link
+                  </span>
+                </div>
+                <button onClick={() => setShowApiModal(false)} className="text-[#666666] hover:text-[#413634]">
+                  <X size={14} />
+                </button>
+              </div>
+
+              <div className="space-y-1.5 text-xs">
+                <div className="flex justify-between items-center text-[11px]">
+                  <span className="text-[#666666]">Host:</span>
+                  <a
+                    href={BACKEND_ROOT}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-[#c5716d] flex items-center gap-1 hover:underline truncate max-w-[220px]"
+                  >
+                    <span>{BACKEND_ROOT}</span>
+                    <ExternalLink size={10} />
+                  </a>
+                </div>
+                <div className="flex justify-between items-center text-[11px]">
+                  <span className="text-[#666666]">Liveness Check:</span>
+                  <span className="font-mono font-medium">
+                    {backendStatus.status === 'connected' ? '200 OK (Healthy)' : backendStatus.status === 'checking' ? 'Testing...' : 'Unreachable'}
+                  </span>
+                </div>
+                {backendStatus.latencyMs !== undefined && (
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="text-[#666666]">Round-Trip Latency:</span>
+                    <span className="font-mono text-[#2e6b4d] font-bold">{backendStatus.latencyMs} ms</span>
+                  </div>
+                )}
+                {backendStatus.readiness?.relational_database && (
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="text-[#666666]">Database:</span>
+                    <span className="font-mono text-[#2e6b4d]">{backendStatus.readiness.relational_database.database || 'Connected'}</span>
+                  </div>
+                )}
+                {backendStatus.readiness?.blockchain && (
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="text-[#666666]">Blockchain Adapter:</span>
+                    <span className="font-mono text-[#413634]">{backendStatus.readiness.blockchain.status}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="pt-2 border-t border-[#e5e5e5] flex gap-2">
+                <button
+                  onClick={pingBackend}
+                  disabled={backendStatus.status === 'checking'}
+                  className="flex-1 btn-vintage-accent text-xs flex items-center justify-center gap-1.5 py-1.5"
+                >
+                  <RefreshCw size={12} className={backendStatus.status === 'checking' ? 'animate-spin' : ''} />
+                  <span>Send Test Ping to Backend</span>
+                </button>
+              </div>
+              <p className="text-[10px] text-[#8b6c58] text-center">
+                Open browser DevTools (Inspect $\rightarrow$ Network tab) to inspect requests live.
+              </p>
+            </div>
+          )}
+        </div>
 
         {/* Notifications Dropdown */}
         <div className="relative">
