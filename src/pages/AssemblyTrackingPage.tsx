@@ -64,27 +64,27 @@ export const AssemblyTrackingPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#45404F] pb-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#e5e5e5] pb-4">
         <div>
-          <h1 className="text-2xl font-normal font-serif tracking-tight text-[#E2DDE7] flex items-center gap-2">
-            <Cpu className="text-[#AAA2B3]" size={22} />
+          <h1 className="text-2xl font-normal font-serif tracking-tight text-[#413634] flex items-center gap-2">
+            <Cpu className="text-[#c5716d]" size={22} />
             <span>Industrial Assembly Line Tracking &amp; Work Orders</span>
           </h1>
-          <p className="text-xs text-[#AAA2B3] font-serif mt-1">
+          <p className="text-xs text-[#666666] font-serif mt-1">
             Sequential work order execution across Cleanroom &amp; Gigafactory assembly cells. Unit-level event generation for every section.
           </p>
         </div>
 
         {/* Sector Tabs */}
-        <div className="flex flex-wrap items-center border border-[#45404F] bg-[#17151C] text-xs font-serif">
+        <div className="flex flex-wrap items-center border border-[#e5e5e5] bg-[#fffdf6] text-xs font-serif">
           {(['Consumer Electronics', 'Automotive & EV Battery', 'Medical Technology', 'Industrial & Aerospace'] as IndustrySector[]).map(s => (
             <button
               key={s}
               onClick={() => setSelectedSector(s)}
-              className={`px-3 py-1.5 transition-all text-xs border-r border-[#45404F] last:border-r-0 ${
+              className={`px-3 py-1.5 transition-all text-xs border-r border-[#e5e5e5] last:border-r-0 ${
                 selectedSector === s
-                  ? 'bg-[#292531] text-[#E2DDE7] font-normal shadow-none border-b-2 border-b-[#AAA2B3]'
-                  : 'text-[#AAA2B3] hover:bg-[#292531]/40'
+                  ? 'bg-[#faf3dc] text-[#413634] font-normal shadow-none border-b-2 border-b-[#c5716d]'
+                  : 'text-[#666666] hover:bg-[#faf3dc]/40'
               }`}
             >
               {s === 'Consumer Electronics' && '📱 Electronics'}
@@ -98,36 +98,36 @@ export const AssemblyTrackingPage: React.FC = () => {
 
       {/* Assembly Pipeline Visual Cards */}
       <div className="p-5 vintage-card space-y-4">
-        <div className="flex items-center justify-between border-b border-[#45404F] pb-2">
-          <h3 className="text-sm font-normal font-serif text-[#E2DDE7]">
+        <div className="flex items-center justify-between border-b border-[#e5e5e5] pb-2">
+          <h3 className="text-sm font-normal font-serif text-[#413634]">
             {selectedSector} — Sequential Assembly Stages &amp; Machine Events
           </h3>
-          <span className="text-xs font-mono text-[#716879]">Automated MES Cell Line 4</span>
+          <span className="text-xs font-mono text-[#8b6c58]">Automated MES Cell Line 4</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
           {steps.map((step, idx) => (
             <div
               key={step.id}
-              className="p-3.5 bg-[#17151C] border border-[#45404F] hover:border-[#AAA2B3] transition-all flex flex-col justify-between space-y-3"
+              className="p-3.5 bg-[#fffdf6] border border-[#e5e5e5] hover:border-[#413634] transition-all flex flex-col justify-between space-y-3"
             >
               <div>
-                <div className="flex items-center justify-between text-[10px] font-mono pb-1 border-b border-[#45404F]">
-                  <span className="text-[#AAA2B3] font-bold">Stage {idx + 1}</span>
-                  <span className="px-1.5 py-0.2 bg-[#292531] text-[#E2DDE7] border border-[#45404F]">{step.machine}</span>
+                <div className="flex items-center justify-between text-[10px] font-mono pb-1 border-b border-[#e5e5e5]">
+                  <span className="text-[#c5716d] font-bold">Stage {idx + 1}</span>
+                  <span className="px-1.5 py-0.2 bg-[#faf3dc] text-[#413634] border border-[#e5e5e5]">{step.machine}</span>
                 </div>
-                <h4 className="font-normal font-serif text-xs text-[#E2DDE7] mt-2 leading-tight">{step.step}</h4>
-                <p className="text-[11px] font-serif text-[#AAA2B3] mt-1 line-clamp-2 leading-normal">{step.desc}</p>
+                <h4 className="font-normal font-serif text-xs text-[#413634] mt-2 leading-tight">{step.step}</h4>
+                <p className="text-[11px] font-serif text-[#666666] mt-1 line-clamp-2 leading-normal">{step.desc}</p>
               </div>
 
-              <div className="pt-2 border-t border-[#45404F] space-y-1 font-mono text-[10px]">
-                <div className="flex justify-between text-[#716879]">
+              <div className="pt-2 border-t border-[#e5e5e5] space-y-1 font-mono text-[10px]">
+                <div className="flex justify-between text-[#8b6c58]">
                   <span>Event ID:</span>
-                  <span className="text-[#AAA2B3]">{step.eventId}</span>
+                  <span className="text-[#49627d]">{step.eventId}</span>
                 </div>
-                <div className="flex justify-between text-[#716879]">
+                <div className="flex justify-between text-[#8b6c58]">
                   <span>Status:</span>
-                  <span className="text-[#86D6A6] font-bold">{step.result}</span>
+                  <span className="text-[#2e6b4d] font-bold">{step.result}</span>
                 </div>
               </div>
             </div>
@@ -137,18 +137,18 @@ export const AssemblyTrackingPage: React.FC = () => {
 
       {/* Tracked Products for this Sector */}
       <div className="p-5 vintage-card space-y-4">
-        <div className="border-b border-[#45404F] pb-2">
-          <h3 className="text-sm font-normal font-serif text-[#E2DDE7]">
+        <div className="border-b border-[#e5e5e5] pb-2">
+          <h3 className="text-sm font-normal font-serif text-[#413634]">
             {selectedSector} — Assembled Products ({products.length} Tracked)
           </h3>
-          <p className="text-xs font-serif text-[#AAA2B3]">
+          <p className="text-xs font-serif text-[#666666]">
             Each unit links its respective registered sub-assemblies into an immutable Digital Product Passport.
           </p>
         </div>
 
-        <div className="max-h-96 overflow-y-auto border border-[#45404F]">
+        <div className="max-h-96 overflow-y-auto border border-[#e5e5e5]">
           <table className="w-full text-left text-xs font-mono">
-            <thead className="bg-[#292531] text-[#AAA2B3] sticky top-0 border-b border-[#45404F] font-serif text-[11px] uppercase tracking-wider">
+            <thead className="bg-[#faf3dc] text-[#413634] sticky top-0 border-b border-[#e5e5e5] font-serif text-[11px] uppercase tracking-wider">
               <tr>
                 <th className="py-2.5 px-3 font-normal">Product ID</th>
                 <th className="py-2.5 px-3 font-normal">Product Model</th>
@@ -158,19 +158,19 @@ export const AssemblyTrackingPage: React.FC = () => {
                 <th className="py-2.5 px-3 font-normal text-right">Digital Passport</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#45404F] bg-[#17151C]">
+            <tbody className="divide-y divide-[#e5e5e5] bg-[#fffdf6]">
               {products.map(p => (
-                <tr key={p.productId} className="hover:bg-[#292531]/50 transition-colors">
-                  <td className="py-2 px-3 font-bold text-[#E2DDE7]">{p.productId}</td>
-                  <td className="py-2 px-3 text-[#AAA2B3]">{p.productModel}</td>
-                  <td className="py-2 px-3 text-[#716879] truncate max-w-[160px]">{p.imeiMasked}</td>
-                  <td className="py-2 px-3 text-[#E2DDE7] font-serif">{p.assemblyFacility}</td>
+                <tr key={p.productId} className="hover:bg-[#faf3dc]/50 transition-colors">
+                  <td className="py-2 px-3 font-bold text-[#413634]">{p.productId}</td>
+                  <td className="py-2 px-3 text-[#49627d]">{p.productModel}</td>
+                  <td className="py-2 px-3 text-[#666666] truncate max-w-[160px]">{p.imeiMasked}</td>
+                  <td className="py-2 px-3 text-[#413634] font-serif">{p.assemblyFacility}</td>
                   <td className="py-2 px-3">
                     <span
                       className={`px-1.5 py-0.5 border text-[10px] font-mono ${
                         p.status === 'Recall Flagged'
-                          ? 'bg-[#2D1C22] text-[#F08C8A] border-[#5A2C35]'
-                          : 'bg-[#1B2D22] text-[#86D6A6] border-[#2D543B]'
+                          ? 'bg-[#fdf2f1] text-[#b84a44] border-[#f5c6cb]'
+                          : 'bg-[#edf6f0] text-[#2e6b4d] border-[#c3e6cb]'
                       }`}
                     >
                       {p.status}
@@ -179,7 +179,7 @@ export const AssemblyTrackingPage: React.FC = () => {
                   <td className="py-2 px-3 text-right">
                     <button
                       onClick={() => navigate(`/passport/${p.productId}`)}
-                      className="text-[#E2DDE7] hover:underline flex items-center gap-1 ml-auto font-serif text-[11px]"
+                      className="text-[#c5716d] hover:underline flex items-center gap-1 ml-auto font-serif text-[11px]"
                     >
                       <span>Open DPP</span>
                       <ExternalLink size={10} />

@@ -9,7 +9,10 @@ import {
   IntegrationStatus,
   BlockchainAuditBlock,
   ComponentCategory,
-  IndustrySector
+  IndustrySector,
+  ShopkeeperDefectReport,
+  AuthUser,
+  UserRole
 } from '../types';
 import {
   initialBatches,
@@ -24,7 +27,85 @@ import {
 } from '../data/mockData';
 import { pseudoHash } from '../utils/hashing';
 
-const STORAGE_KEY = 'geneatrace_state_v2_multi';
+const STORAGE_KEY = 'geneatrace_state_v3_shopkeeper';
+
+export const initialDefectReports: ShopkeeperDefectReport[] = [
+  {
+    id: 'REP-2026-001',
+    serialNumber: 'GT-DEV-00000851',
+    productModel: 'Galaxy S24 Ultra (Titanium Gray 512GB)',
+    reportedAt: '2026-10-25 14:32:00',
+    shopkeeperId: 'TECH-BLR-01',
+    shopName: 'iFix Retail & Service Hub - Indiranagar',
+    location: 'Bangalore, Karnataka',
+    state: 'Karnataka',
+    problemCategory: 'Screen & Display',
+    problemDescription: 'Display panel exhibits severe horizontal flickering and green vertical lines after 20 minutes of usage. Screen unresponsive around center touch matrix.',
+    suspectedCause: 'Defective display adhesive or polarizer delamination from manufacturing batch.',
+    severity: 'Critical Failure',
+    batchId: 'ABC',
+    mfgDate: '2026-10-01',
+    status: 'Batch Hold Issued',
+    companyNotes: 'Match confirmed with Batch ABC display adhesive curing sensor variance. 14 sister shipments flagged for hold.',
+    isImmutable: true
+  },
+  {
+    id: 'REP-2026-002',
+    serialNumber: 'GT-DEV-00000853',
+    productModel: 'Galaxy S24 Ultra (Titanium Black 256GB)',
+    reportedAt: '2026-10-26 11:15:00',
+    shopkeeperId: 'TECH-MUM-04',
+    shopName: 'Apex Electronics Care - Bandra West',
+    location: 'Mumbai, Maharashtra',
+    state: 'Maharashtra',
+    problemCategory: 'Screen & Display',
+    problemDescription: 'Intermittent display blackout under direct sunlight. OLED panel does not wake up upon power button toggle.',
+    suspectedCause: 'Display assembly bonding layer fault under thermal expansion.',
+    severity: 'Critical Failure',
+    batchId: 'ABC',
+    mfgDate: '2026-10-01',
+    status: 'Investigating',
+    companyNotes: 'Matched against Batch ABC display defect pattern. Investigating shipment allocation.',
+    isImmutable: true
+  },
+  {
+    id: 'REP-2026-003',
+    serialNumber: 'GT-DEV-00000856',
+    productModel: 'Galaxy S24 Ultra (Titanium Violet 512GB)',
+    reportedAt: '2026-10-26 16:45:00',
+    shopkeeperId: 'TECH-DEL-02',
+    shopName: 'Metro Telecom & Service Center - Connaught Place',
+    location: 'New Delhi, Delhi NCR',
+    state: 'Delhi',
+    problemCategory: 'Screen & Display',
+    problemDescription: 'Touch digitizer ghost-clicking continuously on upper right quadrant after fresh unboxing in retail store.',
+    suspectedCause: 'Micro-delamination in display flex cable bonding layer.',
+    severity: 'Critical Failure',
+    batchId: 'ABC',
+    mfgDate: '2026-10-01',
+    status: 'Pending Review',
+    companyNotes: 'Logged into company defect monitoring stream.',
+    isImmutable: true
+  }
+];
+
+export const defaultUsers: Record<UserRole, AuthUser> = {
+  company_qa: {
+    id: 'USR-QA-01',
+    name: 'Lead QA Architect',
+    role: 'company_qa',
+    badge: 'Enterprise HQ Admin (Full Inspection & Recall Rights)'
+  },
+  shopkeeper: {
+    id: 'TECH-BLR-01',
+    name: 'Ramesh Kumar (Authorized Service Technician)',
+    role: 'shopkeeper',
+    shopName: 'iFix Retail & Service Hub - Indiranagar',
+    city: 'Bangalore',
+    state: 'Karnataka',
+    badge: 'Shop / Service Center (Strict Write-Only Incident Reporting)'
+  }
+};
 
 interface AppState {
   batches: BatchRecord[];
@@ -37,13 +118,18 @@ interface AppState {
   integrations: IntegrationStatus[];
   blockchainBlocks: BlockchainAuditBlock[];
   activeSector: string; // 'All' or IndustrySector
+  defectReports: ShopkeeperDefectReport[];
+  currentUser: AuthUser;
 }
 
 function loadInitialState(): AppState {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored) {
     try {
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      if (parsed.defectReports && parsed.currentUser) {
+        return parsed;
+      }
     } catch (e) {
       console.warn('Failed to parse stored GeneaTrace state, resetting.', e);
     }
@@ -64,7 +150,9 @@ function loadInitialState(): AppState {
     securityStatus: initialSecurityStatus,
     integrations: initialIntegrations,
     blockchainBlocks: initialBlockchainBlocks,
-    activeSector: 'All'
+    activeSector: 'All',
+    defectReports: initialDefectReports,
+    currentUser: defaultUsers.company_qa
   };
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -108,11 +196,213 @@ export const GeneaTraceStore = {
       securityStatus: initialSecurityStatus,
       integrations: initialIntegrations,
       blockchainBlocks: initialBlockchainBlocks,
-      activeSector: 'All'
+      activeSector: 'All',
+      defectReports: initialDefectReports,
+      currentUser: defaultUsers.company_qa
     };
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(currentState));
     return currentState;
+  },
+
+  // User & Role Switching
+  getCurrentUser(): AuthUser {
+    return currentState.currentUser || defaultUsers.company_qa;
+  },
+
+  switchUserRole(role: UserRole) {
+    currentState.currentUser = defaultUsers[role];
+    this.saveState();
+  },
+
+  getDefectReports(): ShopkeeperDefectReport[] {
+    return [...currentState.defectReports];
+  },
+
+  getDefectReportById(id: string): ShopkeeperDefectReport | undefined {
+    return currentState.defectReports.find(r => r.id === id);
+  },
+
+  getDefectReportBySerial(serialNumber: string): ShopkeeperDefectReport | undefined {
+    const clean = serialNumber.trim().toUpperCase();
+    return currentState.defectReports.find(
+      r => r.serialNumber.toUpperCase() === clean || clean.includes(r.serialNumber.toUpperCase())
+    );
+  },
+
+  submitShopkeeperDefectReport(reportInput: {
+    serialNumber: string;
+    productModel?: string;
+    shopName: string;
+    location: string;
+    state: string;
+    problemCategory: ShopkeeperDefectReport['problemCategory'];
+    problemDescription: string;
+    suspectedCause: string;
+    severity?: ShopkeeperDefectReport['severity'];
+  }): { report: ShopkeeperDefectReport; matchedProduct?: ProductRecord; batchId?: string; mfgDate?: string } {
+    const cleanSerial = reportInput.serialNumber.trim().toUpperCase();
+    
+    // Auto-correlate with Digital Product Passport / Serial database
+    const matchedProduct = currentState.products.find(
+      p => p.productId.toUpperCase() === cleanSerial || p.imeiMasked.toUpperCase() === cleanSerial
+    );
+
+    let foundBatchId: string | undefined = undefined;
+    let foundMfgDate: string | undefined = undefined;
+
+    if (matchedProduct) {
+      // Find component batch (default to Display Module or first component)
+      const displaySerial = matchedProduct.installedComponents['Display Module'] || Object.values(matchedProduct.installedComponents)[0];
+      if (displaySerial) {
+        const comp = currentState.components.find(c => c.serialNumber === displaySerial);
+        foundBatchId = comp?.batchId || displaySerial.split('-')[0];
+        foundMfgDate = comp?.mfgDate || matchedProduct.assemblyDate;
+      }
+      if (!foundBatchId && matchedProduct.installedBatches) {
+        foundBatchId = Object.values(matchedProduct.installedBatches)[0];
+      }
+    } else {
+      // Check component serial registry directly
+      const comp = currentState.components.find(c => c.serialNumber.toUpperCase() === cleanSerial);
+      if (comp) {
+        foundBatchId = comp.batchId;
+        foundMfgDate = comp.mfgDate;
+      }
+    }
+
+    const newId = `REP-2026-${(currentState.defectReports.length + 1).toString().padStart(3, '0')}`;
+    const newReport: ShopkeeperDefectReport = {
+      id: newId,
+      serialNumber: cleanSerial,
+      productModel: reportInput.productModel || matchedProduct?.productModel || 'Galaxy S24 Ultra (Retail Unit)',
+      reportedAt: new Date().toISOString().replace('T', ' ').slice(0, 19),
+      shopkeeperId: currentState.currentUser?.id || 'TECH-LOCAL',
+      shopName: reportInput.shopName || currentState.currentUser?.shopName || 'Authorized Local Service Hub',
+      location: reportInput.location || currentState.currentUser?.city || 'Local Service Center',
+      state: reportInput.state || currentState.currentUser?.state || 'Local State',
+      problemCategory: reportInput.problemCategory,
+      problemDescription: reportInput.problemDescription,
+      suspectedCause: reportInput.suspectedCause,
+      severity: reportInput.severity || 'Critical Failure',
+      batchId: foundBatchId,
+      mfgDate: foundMfgDate,
+      status: 'Pending Review',
+      isImmutable: true
+    };
+
+    // Append to immutable defect stream
+    currentState.defectReports.unshift(newReport);
+
+    // Record immutable blockchain checkpoint block
+    currentState.blockchainBlocks.unshift({
+      blockNumber: currentState.blockchainBlocks.length + 1849500,
+      txHash: pseudoHash(`DEFECT-TX-${newId}`),
+      timestamp: newReport.reportedAt,
+      entityType: 'Shop Incident Report',
+      entityId: newId,
+      merkleRoot: pseudoHash(`INCIDENT-MERKLE-${cleanSerial}`),
+      validatorNode: 'Validator-Node-EU-01 (Proof-of-Authority)',
+      status: 'Demo Confirmed'
+    });
+
+    this.saveState();
+    return { report: newReport, matchedProduct, batchId: foundBatchId, mfgDate: foundMfgDate };
+  },
+
+  updateDefectReportStatus(id: string, status: ShopkeeperDefectReport['status'], notes?: string) {
+    const report = currentState.defectReports.find(r => r.id === id);
+    if (report) {
+      report.status = status;
+      if (notes) {
+        report.companyNotes = notes;
+      }
+      this.saveState();
+    }
+  },
+
+  // Batch Location Tracker: Find all mobiles/devices in a batch and their exact locations/shipments/shops
+  getBatchLocations(batchId: string): {
+    batchId: string;
+    totalUnitsInBatch: number;
+    productionDate: string;
+    supplier: string;
+    facility: string;
+    units: {
+      productId: string;
+      model: string;
+      imei: string;
+      status: string;
+      shipmentId: string;
+      carrier: string;
+      destinationHub: string;
+      currentLocation: string;
+      isHoldNotified: boolean;
+    }[];
+    locationsSummary: {
+      location: string;
+      count: number;
+      carrier: string;
+      shipmentId: string;
+      status: string;
+    }[];
+  } {
+    const cleanBatch = batchId.toUpperCase();
+    const batch = currentState.batches.find(b => b.batchId.toUpperCase() === cleanBatch);
+    const affectedComponents = currentState.components.filter(c => c.batchId.toUpperCase() === cleanBatch);
+    const componentSerials = new Set(affectedComponents.map(c => c.serialNumber));
+
+    const affectedProducts = currentState.products.filter(p => {
+      const installedValues = Object.values(p.installedComponents);
+      return installedValues.some(val => componentSerials.has(val));
+    });
+
+    const units = affectedProducts.map(p => {
+      const shp = currentState.shipments.find(s => s.shipmentId === p.shipmentId);
+      return {
+        productId: p.productId,
+        model: p.productModel,
+        imei: p.imeiMasked,
+        status: p.status,
+        shipmentId: p.shipmentId || 'N/A',
+        carrier: shp?.carrier || 'Direct Retail Handover',
+        destinationHub: shp?.destination || 'Local Fulfillment Center',
+        currentLocation: shp?.currentLocation || 'In Transit (Regional Hub)',
+        isHoldNotified: p.status === 'Recall Flagged'
+      };
+    });
+
+    // Group by location
+    const locationMap: Record<string, { count: number; carrier: string; shipmentId: string; status: string }> = {};
+    units.forEach(u => {
+      if (!locationMap[u.currentLocation]) {
+        locationMap[u.currentLocation] = {
+          count: 0,
+          carrier: u.carrier,
+          shipmentId: u.shipmentId,
+          status: u.status
+        };
+      }
+      locationMap[u.currentLocation].count++;
+    });
+
+    const locationsSummary = Object.entries(locationMap).map(([loc, data]) => ({
+      location: loc,
+      count: data.count,
+      carrier: data.carrier,
+      shipmentId: data.shipmentId,
+      status: data.status
+    }));
+
+    return {
+      batchId: cleanBatch,
+      totalUnitsInBatch: affectedComponents.length || batch?.batchSize || 100,
+      productionDate: batch?.productionDate || '2026-10-01',
+      supplier: batch?.supplier || 'Cleanroom Complex Alpha',
+      facility: batch?.facility || 'Cleanroom Complex Alpha (Line 3)',
+      units,
+      locationsSummary
+    };
   },
 
   // Batches
