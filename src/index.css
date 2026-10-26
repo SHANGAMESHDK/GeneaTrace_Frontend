@@ -2,7 +2,7 @@
 
 @layer base {
   :root {
-    --font-serif: 'Baskervville', Georgia, serif;
+    --font-serif: 'Times New Roman', Times, Georgia, serif;
     --font-mono: 'JetBrains Mono', monospace;
 
     /* Adored Vintage Extracted Design System Tokens */
@@ -62,7 +62,7 @@
 }
 
 .font-serif-vintage {
-  font-family: 'Baskervville', Georgia, serif;
+  font-family: 'Times New Roman', Times, Georgia, serif;
 }
 
 .font-mono-code {
@@ -147,7 +147,7 @@
 }
 
 .vintage-table th {
-  font-family: 'Baskervville', Georgia, serif;
+  font-family: 'Times New Roman', Times, Georgia, serif;
   font-weight: 400;
   letter-spacing: 0.04em;
   text-transform: uppercase;
