@@ -5,41 +5,41 @@
     --font-serif: 'Baskervville', Georgia, serif;
     --font-mono: 'JetBrains Mono', monospace;
 
-    /* Palette Extracted from User Swatch */
-    --color-palette-1: #17151C;
-    --color-palette-2: #292531;
-    --color-palette-3: #45404F;
-    --color-palette-4: #716879;
-    --color-palette-5: #AAA2B3;
-    --color-palette-6: #E2DDE7;
+    /* Dark Navy, Ocean Blue & Cyan Design System Tokens */
+    --color-bg: #011C40;
+    --color-sidebar-base: #023859;
+    --color-sidebar-mid: #064A67;
+    --color-card: #062B49;
+    --color-card-elevated: #073451;
+    --color-border: #155477;
+    --color-border-hover: #54ACBF;
+    --color-secondary-blue: #26658C;
+    --color-accent-teal: #54ACBF;
+    --color-primary-highlight: #A7EBF2;
+    --color-text: #D9F5F7;
+    --color-text-secondary: #86BFCF;
+    --color-text-muted: #54ACBF;
+    --color-primary: #A7EBF2;
+    --color-primary-hover: #D9F5F7;
 
-    --color-bg: #17151C;
-    --color-bg-secondary: #292531;
-    --color-card: #201D27;
-    --color-card-elevated: #292531;
-    --color-border: #45404F;
-    --color-border-dark: #716879;
-    --color-text: #E2DDE7;
-    --color-text-secondary: #AAA2B3;
-    --color-text-muted: #716879;
-    --color-primary: #AAA2B3;
-    --color-primary-hover: #E2DDE7;
+    /* Status Tokens */
+    --color-critical: #F87171;
+    --color-critical-bg: rgba(248, 113, 113, 0.12);
+    --color-critical-border: rgba(248, 113, 113, 0.35);
 
-    /* Harmonized Status Accents */
-    --color-success: #86D6A6;
-    --color-success-bg: #1B2D22;
-    --color-warning: #E8BC7A;
-    --color-warning-bg: #33281C;
-    --color-critical: #F08C8A;
-    --color-critical-bg: #2D1C22;
-    --color-accent-blue: #9FBAD8;
-    --color-accent-blue-bg: #1E2838;
+    --color-warning: #FBBF24;
+    --color-warning-bg: rgba(251, 191, 36, 0.12);
+    --color-warning-border: rgba(251, 191, 36, 0.35);
+
+    --color-success: #34D399;
+    --color-success-bg: rgba(52, 211, 153, 0.12);
+    --color-success-border: rgba(52, 211, 153, 0.35);
   }
 
   body {
     font-family: var(--font-serif);
-    background-color: var(--color-bg);
-    color: var(--color-text);
+    background-color: #011C40;
+    color: #D9F5F7;
     overflow-x: hidden;
     font-size: 13px;
     line-height: 1.6;
@@ -49,7 +49,7 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-serif);
     font-weight: 400;
-    color: var(--color-text);
+    color: #D9F5F7;
   }
 
   /* Crisp Scrollbar */
@@ -58,14 +58,14 @@
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #17151C;
+    background: #011C40;
   }
   ::-webkit-scrollbar-thumb {
-    background: #45404F;
-    border-radius: 0px;
+    background: #155477;
+    border-radius: 2px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #716879;
+    background: #54ACBF;
   }
 }
 
@@ -77,61 +77,72 @@
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Primary Button */
-.btn-vintage-primary {
-  background: #E2DDE7;
-  color: #17151C;
-  border-radius: 0px;
+/* Sidebar Gradient */
+.sidebar-gradient {
+  background: linear-gradient(180deg, #023859 0%, #064A67 52%, #011C40 100%);
+}
+
+/* Primary Button (A7EBF2 cyan highlight) */
+.btn-vintage-primary,
+.btn-primary {
+  background: #A7EBF2;
+  color: #011C40;
+  border-radius: 2px;
   padding: 6px 16px;
   font-size: 12px;
-  font-weight: 500;
-  border: 0.8px solid #E2DDE7;
+  font-weight: 600;
+  border: 1px solid #A7EBF2;
   cursor: pointer;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   transition: all 0.15s ease-in-out;
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
-.btn-vintage-primary:hover {
-  background: #AAA2B3;
-  color: #17151C;
-  border-color: #AAA2B3;
+.btn-vintage-primary:hover,
+.btn-primary:hover {
+  background: #D9F5F7;
+  border-color: #D9F5F7;
+  color: #011C40;
+  box-shadow: 0 0 12px rgba(167, 235, 242, 0.35);
 }
 
-/* Accent Button */
-.btn-vintage-accent {
-  background: #716879;
-  color: #E2DDE7;
-  border-radius: 0px;
+/* Accent Button (Teal / Secondary Blue) */
+.btn-vintage-accent,
+.btn-accent {
+  background: #26658C;
+  color: #D9F5F7;
+  border-radius: 2px;
   padding: 6px 16px;
   font-size: 12px;
   font-weight: 500;
-  border: 0.8px solid #716879;
+  border: 1px solid #155477;
   cursor: pointer;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   transition: all 0.15s ease-in-out;
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
-.btn-vintage-accent:hover {
-  background: #AAA2B3;
-  color: #17151C;
-  border-color: #AAA2B3;
+.btn-vintage-accent:hover,
+.btn-accent:hover {
+  background: #54ACBF;
+  color: #011C40;
+  border-color: #54ACBF;
 }
 
 /* Outline Button */
-.btn-vintage-outline {
-  background: #201D27;
-  color: #E2DDE7;
-  border-radius: 0px;
+.btn-vintage-outline,
+.btn-outline {
+  background: #062B49;
+  color: #D9F5F7;
+  border-radius: 2px;
   padding: 6px 14px;
   font-size: 12px;
   font-weight: 400;
-  border: 0.8px solid #45404F;
+  border: 1px solid #155477;
   cursor: pointer;
   transition: all 0.15s ease-in-out;
   display: inline-flex;
@@ -139,24 +150,26 @@
   gap: 6px;
 }
 
-.btn-vintage-outline:hover {
-  background: #292531;
-  border-color: #716879;
-  color: #E2DDE7;
+.btn-vintage-outline:hover,
+.btn-outline:hover {
+  background: #073451;
+  border-color: #54ACBF;
+  color: #A7EBF2;
 }
 
 /* Card Specs */
-.vintage-card {
-  background: #201D27;
-  border: 0.8px solid #45404F;
-  border-radius: 0px;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 12px 0px;
+.vintage-card,
+.dashboard-card {
+  background: #062B49;
+  border: 1px solid #155477;
+  border-radius: 2px;
+  box-shadow: 0 4px 16px rgba(1, 28, 64, 0.35);
 }
 
 .vintage-card-secondary {
-  background: #292531;
-  border: 0.8px solid #45404F;
-  border-radius: 0px;
+  background: #073451;
+  border: 1px solid #155477;
+  border-radius: 2px;
 }
 
 .vintage-table th {
@@ -164,6 +177,6 @@
   font-weight: 400;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #AAA2B3;
-  background: #292531;
+  color: #86BFCF;
+  background: #073451;
 }
