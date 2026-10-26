@@ -44,13 +44,13 @@ export const SettingsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#155477] pb-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#60433D] pb-4">
         <div>
-          <h1 className="text-2xl font-normal font-serif tracking-tight text-[#D9F5F7] flex items-center gap-2">
-            <Settings className="text-[#86BFCF]" size={22} />
+          <h1 className="text-2xl font-normal font-serif tracking-tight text-[#E8D8CE] flex items-center gap-2">
+            <Settings className="text-[#C1A094]" size={22} />
             <span>Industrial Integrations &amp; System Configuration</span>
           </h1>
-          <p className="text-xs text-[#86BFCF] font-serif mt-1">
+          <p className="text-xs text-[#C1A094] font-serif mt-1">
             ERP, MES, SCADA data ingestion gateways, demo environment controls, and data management.
           </p>
         </div>
@@ -67,28 +67,28 @@ export const SettingsPage: React.FC = () => {
       </div>
 
       {feedback && (
-        <div className="p-3 bg-[#073451] border border-[#155477] text-xs text-[#D9F5F7] font-serif">
+        <div className="p-3 bg-[#60433D] border border-[#60433D] text-xs text-[#E8D8CE] font-serif">
           {feedback}
         </div>
       )}
 
       {/* Industrial Integration Dashboard */}
       <div className="p-5 vintage-card space-y-4">
-        <div className="flex items-center justify-between border-b border-[#155477] pb-2">
+        <div className="flex items-center justify-between border-b border-[#60433D] pb-2">
           <div>
-            <h3 className="text-sm font-normal font-serif text-[#D9F5F7]">Enterprise Industrial Systems Integration</h3>
-            <p className="text-xs text-[#86BFCF] font-serif">
+            <h3 className="text-sm font-normal font-serif text-[#E8D8CE]">Enterprise Industrial Systems Integration</h3>
+            <p className="text-xs text-[#C1A094] font-serif">
               Clean abstraction architecture ready to attach live OPC UA, MQTT Sparkplug B, and REST endpoints.
             </p>
           </div>
-          <span className="text-xs font-serif text-[#86BFCF]">6 Gateways Connected</span>
+          <span className="text-xs font-serif text-[#C1A094]">6 Gateways Connected</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {integrations.map(int => (
-            <div key={int.id} className="p-4 bg-[#011C40] border border-[#155477] space-y-3">
+            <div key={int.id} className="p-4 bg-[#211B1A] border border-[#60433D] space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-serif uppercase tracking-wider px-2 py-0.5 bg-[#073451] text-[#D9F5F7] border border-[#155477]">
+                <span className="text-[10px] font-serif uppercase tracking-wider px-2 py-0.5 bg-[#60433D] text-[#E8D8CE] border border-[#60433D]">
                   {int.category}
                 </span>
                 <span className="flex items-center gap-1.5 text-[11px] font-serif text-[#86D6A6]">
@@ -98,18 +98,18 @@ export const SettingsPage: React.FC = () => {
               </div>
 
               <div>
-                <h4 className="font-normal font-serif text-xs text-[#D9F5F7]">{int.name}</h4>
-                <p className="text-[11px] text-[#86BFCF] font-serif mt-1 line-clamp-2 leading-relaxed">{int.description}</p>
+                <h4 className="font-normal font-serif text-xs text-[#E8D8CE]">{int.name}</h4>
+                <p className="text-[11px] text-[#C1A094] font-serif mt-1 line-clamp-2 leading-relaxed">{int.description}</p>
               </div>
 
-              <div className="pt-2 border-t border-[#155477] grid grid-cols-2 gap-2 text-[10px] font-mono text-[#54ACBF]">
+              <div className="pt-2 border-t border-[#60433D] grid grid-cols-2 gap-2 text-[10px] font-mono text-[#916B60]">
                 <div>
                   <span className="font-serif">Protocol:</span>
-                  <p className="text-[#D9F5F7] font-medium truncate">{int.protocol}</p>
+                  <p className="text-[#E8D8CE] font-medium truncate">{int.protocol}</p>
                 </div>
                 <div>
                   <span className="font-serif">Ingested:</span>
-                  <p className="text-[#86BFCF] font-bold truncate">{int.eventsIngested.toLocaleString()}</p>
+                  <p className="text-[#C1A094] font-bold truncate">{int.eventsIngested.toLocaleString()}</p>
                 </div>
               </div>
             </div>
@@ -120,11 +120,11 @@ export const SettingsPage: React.FC = () => {
       {/* Demo Controls & State Management */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="p-5 vintage-card space-y-3 text-xs font-serif">
-          <h3 className="text-sm font-normal text-[#D9F5F7] flex items-center gap-2">
-            <Database size={15} className="text-[#86BFCF]" />
+          <h3 className="text-sm font-normal text-[#E8D8CE] flex items-center gap-2">
+            <Database size={15} className="text-[#C1A094]" />
             <span>Demonstration State Storage</span>
           </h3>
-          <p className="text-[#86BFCF]">
+          <p className="text-[#C1A094]">
             Current changes are saved to browser local state for immediate interactive demonstration.
           </p>
           <div className="flex gap-2 pt-2">
@@ -139,15 +139,15 @@ export const SettingsPage: React.FC = () => {
         </div>
 
         <div className="p-5 vintage-card space-y-3 text-xs font-serif">
-          <h3 className="text-sm font-normal text-[#D9F5F7] flex items-center gap-2">
-            <Layers size={15} className="text-[#86BFCF]" />
+          <h3 className="text-sm font-normal text-[#E8D8CE] flex items-center gap-2">
+            <Layers size={15} className="text-[#C1A094]" />
             <span>Manufacturing Batch Configuration</span>
           </h3>
-          <p className="text-[#86BFCF]">
+          <p className="text-[#C1A094]">
             Standard demonstration batch size is configured to <strong>100 units/batch</strong> (e.g. ABC-0001 through ABC-0100).
           </p>
-          <div className="p-3 bg-[#011C40] border border-[#155477] font-mono text-[11px] text-[#D9F5F7]">
-            Batch Namespace: <span className="text-[#86BFCF] font-bold">GT-KOREA-GUMI-L2</span>
+          <div className="p-3 bg-[#211B1A] border border-[#60433D] font-mono text-[11px] text-[#E8D8CE]">
+            Batch Namespace: <span className="text-[#C1A094] font-bold">GT-KOREA-GUMI-L2</span>
           </div>
         </div>
       </div>

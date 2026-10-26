@@ -79,24 +79,24 @@ export const TraceabilityPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#155477] pb-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#60433D] pb-4">
         <div>
-          <h1 className="text-2xl font-normal font-serif tracking-tight text-[#D9F5F7] flex items-center gap-2">
-            <Search className="text-[#86BFCF]" size={22} />
+          <h1 className="text-2xl font-normal font-serif tracking-tight text-[#E8D8CE] flex items-center gap-2">
+            <Search className="text-[#C1A094]" size={22} />
             <span>Multi-Directional Traceability Explorer</span>
           </h1>
-          <p className="text-xs text-[#86BFCF] font-serif mt-1">
+          <p className="text-xs text-[#C1A094] font-serif mt-1">
             Bi-directional Merkle graph traversal engine across components, assembly lines, and shipment manifests.
           </p>
         </div>
 
         {/* Measured Latency Chip */}
         {latencyMs > 0 && (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-none bg-[#073451] border border-[#155477] text-xs font-mono text-[#D9F5F7]">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-none bg-[#60433D] border border-[#60433D] text-xs font-mono text-[#E8D8CE]">
             <Zap size={14} className="text-[#E8BC7A]" />
-            <span className="text-[#86BFCF]">Traversal:</span>
+            <span className="text-[#C1A094]">Traversal:</span>
             <span className="text-[#86D6A6] font-bold">{latencyMs} ms</span>
-            <span className="text-[#54ACBF] text-[11px] font-serif">(Sub-100ms benchmark)</span>
+            <span className="text-[#916B60] text-[11px] font-serif">(Sub-100ms benchmark)</span>
           </div>
         )}
       </div>
@@ -116,9 +116,9 @@ export const TraceabilityPage: React.FC = () => {
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="Enter Batch ID (e.g. ABC), Serial (e.g. ABC-0042), Product ID (e.g. GT-DEV-00000851), or IMEI..."
-              className="w-full pl-10 pr-4 py-2.5 bg-[#011C40] border border-[#155477] rounded-none text-xs text-[#D9F5F7] placeholder-[#54ACBF] font-mono focus:outline-none focus:border-[#86BFCF]"
+              className="w-full pl-10 pr-4 py-2.5 bg-[#211B1A] border border-[#60433D] rounded-none text-xs text-[#E8D8CE] placeholder-[#916B60] font-mono focus:outline-none focus:border-[#C1A094]"
             />
-            <Search className="w-4 h-4 text-[#54ACBF] absolute left-3 top-3" />
+            <Search className="w-4 h-4 text-[#916B60] absolute left-3 top-3" />
           </div>
 
           <button
@@ -131,8 +131,8 @@ export const TraceabilityPage: React.FC = () => {
         </form>
 
         {/* Quick Demo Presets */}
-        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#155477] text-xs font-serif">
-          <span className="text-[#54ACBF] text-[11px] uppercase tracking-wider">Example Presets:</span>
+        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#60433D] text-xs font-serif">
+          <span className="text-[#916B60] text-[11px] uppercase tracking-wider">Example Presets:</span>
           <button
             onClick={() => {
               setSearchQuery('ABC');
@@ -147,7 +147,7 @@ export const TraceabilityPage: React.FC = () => {
               setSearchQuery('GT-DEV-00000851');
               executeSearch('GT-DEV-00000851');
             }}
-            className="px-2.5 py-1 rounded-none bg-[#073451] hover:bg-[#342f3d] border border-[#155477] text-[#D9F5F7] font-mono text-[11px] transition-colors"
+            className="px-2.5 py-1 rounded-none bg-[#60433D] hover:bg-[#342f3d] border border-[#60433D] text-[#E8D8CE] font-mono text-[11px] transition-colors"
           >
             Finished Product GT-DEV-00000851 (Backward)
           </button>
@@ -156,7 +156,7 @@ export const TraceabilityPage: React.FC = () => {
               setSearchQuery('ABC-0042');
               executeSearch('ABC-0042');
             }}
-            className="px-2.5 py-1 rounded-none bg-[#011C40] hover:bg-[#073451] border border-[#155477] text-[#86BFCF] font-mono text-[11px] transition-colors"
+            className="px-2.5 py-1 rounded-none bg-[#211B1A] hover:bg-[#60433D] border border-[#60433D] text-[#C1A094] font-mono text-[11px] transition-colors"
           >
             Component Serial ABC-0042
           </button>
@@ -169,9 +169,9 @@ export const TraceabilityPage: React.FC = () => {
           {/* Summary Stat Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div className="p-4 vintage-card">
-              <span className="text-xs text-[#54ACBF] font-serif">Source Batch</span>
-              <p className="text-xl font-normal font-serif text-[#D9F5F7] mt-1">Batch {forwardResult.batch.batchId}</p>
-              <span className="text-[11px] text-[#86BFCF] font-mono">{forwardResult.totalUnits} Units Total</span>
+              <span className="text-xs text-[#916B60] font-serif">Source Batch</span>
+              <p className="text-xl font-normal font-serif text-[#E8D8CE] mt-1">Batch {forwardResult.batch.batchId}</p>
+              <span className="text-[11px] text-[#C1A094] font-mono">{forwardResult.totalUnits} Units Total</span>
             </div>
             <div className="p-4 rounded-none bg-[#2D1C22] border border-[#5A2C35]">
               <span className="text-xs text-[#F08C8A] font-serif">Affected Finished Products</span>
@@ -179,23 +179,23 @@ export const TraceabilityPage: React.FC = () => {
               <span className="text-[11px] text-[#F08C8A]/80 font-serif">Assembled &amp; Dispatched</span>
             </div>
             <div className="p-4 vintage-card">
-              <span className="text-xs text-[#54ACBF] font-serif">Associated Shipments</span>
-              <p className="text-xl font-normal font-serif text-[#D9F5F7] mt-1">{forwardResult.affectedShipments.length} Active</p>
+              <span className="text-xs text-[#916B60] font-serif">Associated Shipments</span>
+              <p className="text-xl font-normal font-serif text-[#E8D8CE] mt-1">{forwardResult.affectedShipments.length} Active</p>
               <span className="text-[11px] text-[#E8BC7A] font-serif">{forwardResult.inTransitCount} in Transit</span>
             </div>
             <div className="p-4 vintage-card">
-              <span className="text-xs text-[#54ACBF] font-serif">Delivered to End Custody</span>
+              <span className="text-xs text-[#916B60] font-serif">Delivered to End Custody</span>
               <p className="text-xl font-normal font-serif text-[#86D6A6] mt-1">{forwardResult.deliveredCount} Units</p>
-              <span className="text-[11px] text-[#86BFCF] font-serif">Recall Notice Required</span>
+              <span className="text-[11px] text-[#C1A094] font-serif">Recall Notice Required</span>
             </div>
           </div>
 
           {/* Impact Visual Hierarchy */}
           <div className="p-5 vintage-card space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#155477] pb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#60433D] pb-3">
               <div>
-                <h3 className="text-sm font-normal font-serif text-[#D9F5F7]">Traversed Finished Products with Installed Components</h3>
-                <p className="text-xs text-[#86BFCF] font-serif">
+                <h3 className="text-sm font-normal font-serif text-[#E8D8CE]">Traversed Finished Products with Installed Components</h3>
+                <p className="text-xs text-[#C1A094] font-serif">
                   Every product below carries a component manufactured in defective Batch {forwardResult.batch.batchId}.
                 </p>
               </div>
@@ -203,7 +203,7 @@ export const TraceabilityPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={exportAffectedProductsCsv}
-                  className="px-3 py-1.5 rounded-none bg-[#073451] hover:bg-[#342f3d] border border-[#155477] text-[#D9F5F7] text-xs font-serif flex items-center gap-1.5 transition-colors"
+                  className="px-3 py-1.5 rounded-none bg-[#60433D] hover:bg-[#342f3d] border border-[#60433D] text-[#E8D8CE] text-xs font-serif flex items-center gap-1.5 transition-colors"
                 >
                   <Download size={13} />
                   <span>Export CSV</span>
@@ -218,9 +218,9 @@ export const TraceabilityPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="max-h-80 overflow-y-auto border border-[#155477]">
+            <div className="max-h-80 overflow-y-auto border border-[#60433D]">
               <table className="w-full text-left text-xs font-mono">
-                <thead className="bg-[#073451] text-[#86BFCF] sticky top-0 border-b border-[#155477] font-serif text-[11px] uppercase tracking-wider">
+                <thead className="bg-[#60433D] text-[#C1A094] sticky top-0 border-b border-[#60433D] font-serif text-[11px] uppercase tracking-wider">
                   <tr>
                     <th className="py-2.5 px-3 font-normal">Product ID</th>
                     <th className="py-2.5 px-3 font-normal">Installed Display</th>
@@ -231,13 +231,13 @@ export const TraceabilityPage: React.FC = () => {
                     <th className="py-2.5 px-3 font-normal text-right">Passport</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#155477] bg-[#011C40]">
+                <tbody className="divide-y divide-[#60433D] bg-[#211B1A]">
                   {forwardResult.affectedProducts.map((p: any) => (
-                    <tr key={p.productId} className="hover:bg-[#073451]/50 transition-colors">
-                      <td className="py-2 px-3 font-bold text-[#D9F5F7]">{p.productId}</td>
+                    <tr key={p.productId} className="hover:bg-[#60433D]/50 transition-colors">
+                      <td className="py-2 px-3 font-bold text-[#E8D8CE]">{p.productId}</td>
                       <td className="py-2 px-3 text-[#F08C8A] font-bold">{p.installedComponents.displaySerial}</td>
-                      <td className="py-2 px-3 text-[#86BFCF]">{p.installedComponents.batterySerial}</td>
-                      <td className="py-2 px-3 text-[#86BFCF]">{p.installedComponents.pcbSerial}</td>
+                      <td className="py-2 px-3 text-[#C1A094]">{p.installedComponents.batterySerial}</td>
+                      <td className="py-2 px-3 text-[#C1A094]">{p.installedComponents.pcbSerial}</td>
                       <td className="py-2 px-3 text-[#E8BC7A]">{p.shipmentId}</td>
                       <td className="py-2 px-3">
                         <span className="px-1.5 py-0.5 rounded-none text-[10px] bg-[#2D1C22] text-[#F08C8A] border border-[#5A2C35]">
@@ -247,7 +247,7 @@ export const TraceabilityPage: React.FC = () => {
                       <td className="py-2 px-3 text-right">
                         <button
                           onClick={() => navigate(`/passport/${p.productId}`)}
-                          className="text-[#D9F5F7] hover:underline flex items-center gap-1 ml-auto font-serif text-[11px]"
+                          className="text-[#E8D8CE] hover:underline flex items-center gap-1 ml-auto font-serif text-[11px]"
                         >
                           <span>Open</span>
                           <ExternalLink size={11} />
@@ -267,19 +267,19 @@ export const TraceabilityPage: React.FC = () => {
         <div className="space-y-6">
           {/* Product Header Card */}
           <div className="p-5 vintage-card">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#155477]">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#60433D]">
               <div>
                 <div className="flex items-center gap-3">
-                  <h2 className="text-xl font-normal font-serif text-[#D9F5F7]">{backwardResult.product.productId}</h2>
-                  <span className="px-2 py-0.5 bg-[#073451] text-[#D9F5F7] border border-[#155477] text-xs font-serif">
+                  <h2 className="text-xl font-normal font-serif text-[#E8D8CE]">{backwardResult.product.productId}</h2>
+                  <span className="px-2 py-0.5 bg-[#60433D] text-[#E8D8CE] border border-[#60433D] text-xs font-serif">
                     {backwardResult.product.productModel}
                   </span>
                   <span className="px-2 py-0.5 bg-[#2D1C22] text-[#F08C8A] border border-[#5A2C35] text-xs font-serif">
                     {backwardResult.product.status}
                   </span>
                 </div>
-                <p className="text-xs text-[#86BFCF] font-serif mt-1">
-                  Protected Identifier: <span className="font-mono text-[#D9F5F7]">{backwardResult.product.imeiMasked}</span> • Assembled: <span className="font-mono text-[#D9F5F7]">{backwardResult.product.assemblyDate}</span>
+                <p className="text-xs text-[#C1A094] font-serif mt-1">
+                  Protected Identifier: <span className="font-mono text-[#E8D8CE]">{backwardResult.product.imeiMasked}</span> • Assembled: <span className="font-mono text-[#E8D8CE]">{backwardResult.product.assemblyDate}</span>
                 </p>
               </div>
 
@@ -295,13 +295,13 @@ export const TraceabilityPage: React.FC = () => {
             {/* Installed Components Lineage */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4">
               {backwardResult.components.map((c: any) => (
-                <div key={c.category} className="p-3 bg-[#011C40] border border-[#155477] text-xs font-mono">
-                  <div className="flex items-center justify-between text-[#54ACBF] font-serif">
+                <div key={c.category} className="p-3 bg-[#211B1A] border border-[#60433D] text-xs font-mono">
+                  <div className="flex items-center justify-between text-[#916B60] font-serif">
                     <span>{c.category}</span>
-                    <span className="text-[10px] text-[#86BFCF] font-mono">Batch {c.batch}</span>
+                    <span className="text-[10px] text-[#C1A094] font-mono">Batch {c.batch}</span>
                   </div>
-                  <div className="text-sm font-bold text-[#D9F5F7] mt-1">{c.serial}</div>
-                  <div className="text-[10px] text-[#86BFCF] font-serif mt-0.5 truncate">
+                  <div className="text-sm font-bold text-[#E8D8CE] mt-1">{c.serial}</div>
+                  <div className="text-[10px] text-[#C1A094] font-serif mt-0.5 truncate">
                     {c.record?.manufacturer || 'Certified Tier-1 Supplier'}
                   </div>
                 </div>
@@ -311,18 +311,18 @@ export const TraceabilityPage: React.FC = () => {
 
           {/* Chronological Manufacturing Operation History */}
           <div className="p-5 vintage-card space-y-4">
-            <h3 className="text-sm font-normal font-serif text-[#D9F5F7]">Chronological Manufacturing &amp; Assembly Operations</h3>
+            <h3 className="text-sm font-normal font-serif text-[#E8D8CE]">Chronological Manufacturing &amp; Assembly Operations</h3>
             <div className="space-y-2">
               {backwardResult.events.map((e: any) => (
-                <div key={e.eventId} className="p-3 bg-[#011C40] border border-[#155477] flex items-center justify-between text-xs font-mono">
+                <div key={e.eventId} className="p-3 bg-[#211B1A] border border-[#60433D] flex items-center justify-between text-xs font-mono">
                   <div className="flex items-center gap-3">
-                    <span className="px-2 py-0.5 bg-[#073451] text-[#D9F5F7] border border-[#155477] text-[10px] font-mono">{e.operationId}</span>
+                    <span className="px-2 py-0.5 bg-[#60433D] text-[#E8D8CE] border border-[#60433D] text-[10px] font-mono">{e.operationId}</span>
                     <div>
-                      <span className="font-normal font-serif text-sm text-[#D9F5F7]">{e.operationName}</span>
-                      <span className="text-[#54ACBF] text-[11px] font-mono ml-2">Machine: {e.machineId}</span>
+                      <span className="font-normal font-serif text-sm text-[#E8D8CE]">{e.operationName}</span>
+                      <span className="text-[#916B60] text-[11px] font-mono ml-2">Machine: {e.machineId}</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 text-[#86BFCF]">
+                  <div className="flex items-center gap-4 text-[#C1A094]">
                     <span className="text-[11px]">{e.completionTimestamp}</span>
                     <span className={e.result === 'OK' ? 'text-[#86D6A6] font-bold' : 'text-[#F08C8A] font-bold'}>
                       {e.result}

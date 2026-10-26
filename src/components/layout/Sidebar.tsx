@@ -53,24 +53,24 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
   return (
     <aside
       style={{
-        background: 'linear-gradient(180deg, #023859 0%, #064A67 52%, #011C40 100%)'
+        background: 'linear-gradient(180deg, #211B1A 0%, #382A28 52%, #211B1A 100%)'
       }}
-      className={`fixed top-0 left-0 h-screen z-40 border-r border-[#155477] transition-all duration-300 flex flex-col font-serif-vintage ${
+      className={`fixed top-0 left-0 h-screen z-40 border-r border-[#60433D] transition-all duration-300 flex flex-col font-serif-vintage ${
         collapsed ? 'w-20' : 'w-64'
       }`}
     >
       {/* Brand Header */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-[#155477] bg-transparent">
+      <div className="h-16 flex items-center justify-between px-4 border-b border-[#60433D] bg-transparent">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="w-9 h-9 rounded-sm bg-[#073451] border border-[#155477] flex items-center justify-center text-[#A7EBF2] shrink-0 shadow-sm">
+          <div className="w-9 h-9 rounded-sm bg-[#60433D] border border-[#60433D] flex items-center justify-center text-[#C1A094] shrink-0 shadow-sm">
             <Feather size={18} />
           </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="font-normal text-lg tracking-wide text-[#D9F5F7]">
+              <span className="font-normal text-lg tracking-wide text-[#E8D8CE]">
                 GeneaTrace
               </span>
-              <span className="text-[11px] font-normal text-[#86BFCF] tracking-wider uppercase">
+              <span className="text-[11px] font-normal text-[#C1A094] tracking-wider uppercase">
                 Digital Passport
               </span>
             </div>
@@ -79,7 +79,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
 
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-1.5 rounded-sm text-[#86BFCF] hover:text-[#D9F5F7] hover:bg-[#064A67]/60 transition-colors"
+          className="p-1.5 rounded-sm text-[#C1A094] hover:text-[#E8D8CE] hover:bg-[#382A28]/60 transition-colors"
           title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
         >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
@@ -89,14 +89,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
       {/* Environment Indicator */}
       {!collapsed && (
         <div className="px-4 pt-3 pb-1">
-          <div className="flex items-center justify-between px-3 py-1.5 rounded-sm bg-[#062B49]/80 border border-[#155477] text-[11px]">
+          <div className="flex items-center justify-between px-3 py-1.5 rounded-sm bg-[#382A28]/80 border border-[#60433D] text-[11px]">
             <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#54ACBF] animate-pulse" />
-              <span className="text-[#D9F5F7] tracking-wider uppercase font-normal text-[10px]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#916B60] animate-pulse" />
+              <span className="text-[#E8D8CE] tracking-wider uppercase font-normal text-[10px]">
                 Demo Network
               </span>
             </div>
-            <span className="text-[#86BFCF] font-mono text-[10px]">EVM-Sepolia</span>
+            <span className="text-[#C1A094] font-mono text-[10px]">EVM-Sepolia</span>
           </div>
         </div>
       )}
@@ -112,8 +112,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2 rounded-sm text-xs transition-all group ${
                   isActive
-                    ? 'bg-[#54ACBF]/15 text-[#D9F5F7] border-l-2 border-[#54ACBF] shadow-[0_0_12px_rgba(84,172,191,0.22)] font-medium'
-                    : 'text-[#86BFCF] hover:text-[#D9F5F7] hover:bg-[#064A67]/40'
+                    ? 'bg-[#916B60]/15 text-[#E8D8CE] border-l-2 border-[#C1A094] shadow-[0_0_12px_rgba(193,160,148,0.22)] font-medium'
+                    : 'text-[#C1A094] hover:text-[#E8D8CE] hover:bg-[#382A28]/40'
                 }`
               }
               title={collapsed ? item.label : undefined}
@@ -122,7 +122,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
                 <>
                   <Icon
                     className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-105 ${
-                      isActive ? 'text-[#A7EBF2]' : 'text-[#86BFCF]'
+                      isActive ? 'text-[#E8D8CE]' : 'text-[#916B60]'
                     }`}
                   />
                   {!collapsed && (
@@ -133,8 +133,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
                           className={`text-[9px] px-1.5 py-0.2 rounded-sm uppercase font-normal border ${
                             item.badgeColor ||
                             (isActive
-                              ? 'bg-[#073451] text-[#A7EBF2] border-[#54ACBF]'
-                              : 'bg-[#062B49] text-[#86BFCF] border-[#155477]')
+                              ? 'bg-[#60433D] text-[#C1A094] border-[#916B60]'
+                              : 'bg-[#382A28] text-[#C1A094] border-[#60433D]')
                           }`}
                         >
                           {item.badge}
@@ -150,14 +150,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
       </nav>
 
       {/* Footer / User Profile */}
-      <div className="p-3 border-t border-[#155477] bg-transparent">
-        <div className="flex items-center gap-3 px-2 py-2 rounded-sm bg-[#062B49]/70 border border-[#155477]">
-          <div className="w-7 h-7 rounded-sm bg-[#073451] border border-[#155477] flex items-center justify-center text-xs text-[#A7EBF2] shrink-0 font-medium">
+      <div className="p-3 border-t border-[#60433D] bg-transparent">
+        <div className="flex items-center gap-3 px-2 py-2 rounded-sm bg-[#382A28]/70 border border-[#60433D]">
+          <div className="w-7 h-7 rounded-sm bg-[#60433D] border border-[#60433D] flex items-center justify-center text-xs text-[#C1A094] shrink-0 font-medium">
             GT
           </div>
           {!collapsed && (
             <div className="flex flex-col min-w-0">
-              <span className="text-xs text-[#D9F5F7] truncate">Lead QA Architect</span>
+              <span className="text-xs text-[#E8D8CE] truncate">Lead QA Architect</span>
               <div className="flex items-center gap-1 text-[10px] text-[#34D399]">
                 <ShieldCheck size={11} />
                 <span>Authorized Level 4</span>

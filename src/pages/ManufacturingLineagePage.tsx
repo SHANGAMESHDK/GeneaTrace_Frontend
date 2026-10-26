@@ -36,26 +36,26 @@ const OperationNode = ({ data }: { data: any }) => {
       className={`px-3 py-2 rounded-sm border text-xs min-w-[170px] shadow-sm transition-all font-serif-vintage ${
         isDefective
           ? 'bg-[rgba(248,113,113,0.15)] border-[#F87171] text-[#F87171]'
-          : 'bg-[#062B49] border-[#155477] text-[#D9F5F7] hover:border-[#54ACBF]'
+          : 'bg-[#382A28] border-[#60433D] text-[#E8D8CE] hover:border-[#916B60]'
       }`}
     >
-      <Handle type="target" position={Position.Left} className="bg-[#54ACBF]! w-1.5! h-1.5!" />
-      <div className="flex items-center justify-between gap-2 border-b border-[#155477] pb-1">
-        <span className="font-mono text-[9px] uppercase tracking-wider text-[#86BFCF]">{data.step}</span>
+      <Handle type="target" position={Position.Left} className="bg-[#916B60]! w-1.5! h-1.5!" />
+      <div className="flex items-center justify-between gap-2 border-b border-[#60433D] pb-1">
+        <span className="font-mono text-[9px] uppercase tracking-wider text-[#C1A094]">{data.step}</span>
         <span
           className={`px-1 py-0.2 rounded-xs text-[9px] font-mono ${
-            isDefective ? 'bg-[#F87171] text-[#011C40] font-semibold' : 'bg-[#073451] text-[#D9F5F7] border border-[#155477]'
+            isDefective ? 'bg-[#F87171] text-[#211B1A] font-semibold' : 'bg-[#60433D] text-[#E8D8CE] border border-[#60433D]'
           }`}
         >
           {data.machine}
         </span>
       </div>
-      <div className="text-xs mt-1 text-[#D9F5F7] leading-tight font-normal">{data.label}</div>
-      <div className="mt-1 flex items-center justify-between text-[10px] text-[#86BFCF] font-mono">
+      <div className="text-xs mt-1 text-[#E8D8CE] leading-tight font-normal">{data.label}</div>
+      <div className="mt-1 flex items-center justify-between text-[10px] text-[#C1A094] font-mono">
         <span>{data.event}</span>
         <span className={data.result === 'OK' ? 'text-[#34D399]' : 'text-[#F87171] font-semibold'}>{data.result}</span>
       </div>
-      <Handle type="source" position={Position.Right} className="bg-[#54ACBF]! w-1.5! h-1.5!" />
+      <Handle type="source" position={Position.Right} className="bg-[#916B60]! w-1.5! h-1.5!" />
     </div>
   );
 };
@@ -63,15 +63,15 @@ const OperationNode = ({ data }: { data: any }) => {
 // Custom Node for Component Junction in Theme Aesthetic
 const ComponentJunctionNode = ({ data }: { data: any }) => {
   return (
-    <div className="px-3.5 py-2.5 rounded-sm bg-[#073451] border border-[#155477] text-xs min-w-[190px] shadow-sm font-serif-vintage">
-      <Handle type="target" position={Position.Left} className="bg-[#54ACBF]! w-1.5! h-1.5!" />
-      <div className="flex items-center gap-1.5 text-[#A7EBF2] mb-1">
+    <div className="px-3.5 py-2.5 rounded-sm bg-[#60433D] border border-[#60433D] text-xs min-w-[190px] shadow-sm font-serif-vintage">
+      <Handle type="target" position={Position.Left} className="bg-[#916B60]! w-1.5! h-1.5!" />
+      <div className="flex items-center gap-1.5 text-[#C1A094] mb-1">
         <Cpu size={13} />
         <span className="text-xs font-medium">{data.title}</span>
       </div>
-      <div className="text-[11px] text-[#86BFCF]">{data.desc}</div>
-      <div className="mt-1 text-[10px] font-mono text-[#54ACBF]">Batch: {data.batchId}</div>
-      <Handle type="source" position={Position.Right} className="bg-[#54ACBF]! w-1.5! h-1.5!" />
+      <div className="text-[11px] text-[#C1A094]">{data.desc}</div>
+      <div className="mt-1 text-[10px] font-mono text-[#916B60]">Batch: {data.batchId}</div>
+      <Handle type="source" position={Position.Right} className="bg-[#916B60]! w-1.5! h-1.5!" />
     </div>
   );
 };
@@ -113,9 +113,9 @@ export const ManufacturingLineagePage: React.FC = () => {
   ];
 
   const electronicsEdges: Edge[] = [
-    { id: 'e1-2', source: '1.1', target: '1.2', animated: true, style: { stroke: '#155477', strokeWidth: 1.5 } },
-    { id: 'e2-3', source: '1.2', target: '1.3', animated: true, style: { stroke: '#155477', strokeWidth: 1.5 } },
-    { id: 'e3-4', source: '1.3', target: '1.4', animated: true, style: { stroke: '#155477', strokeWidth: 1.5 } },
+    { id: 'e1-2', source: '1.1', target: '1.2', animated: true, style: { stroke: '#60433D', strokeWidth: 1.5 } },
+    { id: 'e2-3', source: '1.2', target: '1.3', animated: true, style: { stroke: '#60433D', strokeWidth: 1.5 } },
+    { id: 'e3-4', source: '1.3', target: '1.4', animated: true, style: { stroke: '#60433D', strokeWidth: 1.5 } },
     { id: 'e4-5', source: '1.4', target: '1.5', animated: true, style: { stroke: '#F87171', strokeWidth: 1.8 } },
     { id: 'e5-6', source: '1.5', target: '1.6', animated: true, style: { stroke: '#F87171', strokeWidth: 1.8 } },
     { id: 'e6-7', source: '1.6', target: '1.7', animated: true, style: { stroke: '#F87171', strokeWidth: 1.8 } },
@@ -123,14 +123,14 @@ export const ManufacturingLineagePage: React.FC = () => {
     { id: 'e8-9', source: '1.8', target: '1.9', animated: true, style: { stroke: '#F87171', strokeWidth: 1.8 } },
     { id: 'e9-hub', source: '1.9', target: 'hub-display', animated: true, style: { stroke: '#F87171', strokeWidth: 2 } },
     { id: 'e-disp-asm', source: 'hub-display', target: '3.1', animated: true, style: { stroke: '#F87171', strokeWidth: 1.8 } },
-    { id: 'e-btr-asm', source: 'hub-battery', target: '3.1', style: { stroke: '#26658C', strokeWidth: 1.2 } },
-    { id: 'e-pcb-asm', source: 'hub-pcb', target: '3.1', style: { stroke: '#26658C', strokeWidth: 1.2 } },
-    { id: 'e31-32', source: '3.1', target: '3.2', animated: true, style: { stroke: '#155477', strokeWidth: 1.5 } },
-    { id: 'e32-33', source: '3.2', target: '3.3', animated: true, style: { stroke: '#155477', strokeWidth: 1.5 } },
-    { id: 'e33-34', source: '3.3', target: '3.4', animated: true, style: { stroke: '#155477', strokeWidth: 1.5 } },
-    { id: 'e34-35', source: '3.4', target: '3.5', animated: true, style: { stroke: '#155477', strokeWidth: 1.5 } },
-    { id: 'e35-36', source: '3.5', target: '3.6', animated: true, style: { stroke: '#155477', strokeWidth: 1.5 } },
-    { id: 'e36-prod', source: '3.6', target: 'product-851', animated: true, style: { stroke: '#54ACBF', strokeWidth: 1.8 } },
+    { id: 'e-btr-asm', source: 'hub-battery', target: '3.1', style: { stroke: '#916B60', strokeWidth: 1.2 } },
+    { id: 'e-pcb-asm', source: 'hub-pcb', target: '3.1', style: { stroke: '#916B60', strokeWidth: 1.2 } },
+    { id: 'e31-32', source: '3.1', target: '3.2', animated: true, style: { stroke: '#60433D', strokeWidth: 1.5 } },
+    { id: 'e32-33', source: '3.2', target: '3.3', animated: true, style: { stroke: '#60433D', strokeWidth: 1.5 } },
+    { id: 'e33-34', source: '3.3', target: '3.4', animated: true, style: { stroke: '#60433D', strokeWidth: 1.5 } },
+    { id: 'e34-35', source: '3.4', target: '3.5', animated: true, style: { stroke: '#60433D', strokeWidth: 1.5 } },
+    { id: 'e35-36', source: '3.5', target: '3.6', animated: true, style: { stroke: '#60433D', strokeWidth: 1.5 } },
+    { id: 'e36-prod', source: '3.6', target: 'product-851', animated: true, style: { stroke: '#916B60', strokeWidth: 1.8 } },
   ];
 
   // Workflow 2: EV Battery Cell-to-Pack
@@ -147,13 +147,13 @@ export const ManufacturingLineagePage: React.FC = () => {
   ];
 
   const evEdges: Edge[] = [
-    { id: 'ev-e1', source: 'ev-1', target: 'ev-2', animated: true, style: { stroke: '#155477' } },
-    { id: 'ev-e2', source: 'ev-2', target: 'ev-3', animated: true, style: { stroke: '#155477' } },
-    { id: 'ev-e3', source: 'ev-3', target: 'ev-4', animated: true, style: { stroke: '#155477' } },
-    { id: 'ev-e4', source: 'ev-4', target: 'ev-hub', animated: true, style: { stroke: '#155477' } },
+    { id: 'ev-e1', source: 'ev-1', target: 'ev-2', animated: true, style: { stroke: '#60433D' } },
+    { id: 'ev-e2', source: 'ev-2', target: 'ev-3', animated: true, style: { stroke: '#60433D' } },
+    { id: 'ev-e3', source: 'ev-3', target: 'ev-4', animated: true, style: { stroke: '#60433D' } },
+    { id: 'ev-e4', source: 'ev-4', target: 'ev-hub', animated: true, style: { stroke: '#60433D' } },
     { id: 'ev-e5', source: 'ev-hub', target: 'ev-5', animated: true, style: { stroke: '#FBBF24' } },
-    { id: 'ev-e6', source: 'ev-5', target: 'ev-6', animated: true, style: { stroke: '#155477' } },
-    { id: 'ev-e7', source: 'ev-6', target: 'ev-7', animated: true, style: { stroke: '#155477' } },
+    { id: 'ev-e6', source: 'ev-5', target: 'ev-6', animated: true, style: { stroke: '#60433D' } },
+    { id: 'ev-e7', source: 'ev-6', target: 'ev-7', animated: true, style: { stroke: '#60433D' } },
     { id: 'ev-e8', source: 'ev-7', target: 'ev-pack', animated: true, style: { stroke: '#34D399', strokeWidth: 1.8 } },
   ];
 
@@ -181,26 +181,26 @@ export const ManufacturingLineagePage: React.FC = () => {
   return (
     <div className="space-y-4 h-[calc(100vh-100px)] flex flex-col font-serif-vintage">
       {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shrink-0 pb-2 border-b border-[#155477]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shrink-0 pb-2 border-b border-[#60433D]">
         <div>
-          <h1 className="text-xl text-[#D9F5F7] flex items-center gap-2">
-            <GitFork className="text-[#54ACBF]" size={20} />
+          <h1 className="text-xl text-[#E8D8CE] flex items-center gap-2">
+            <GitFork className="text-[#916B60]" size={20} />
             <span>Manufacturing Lineage Map (Multi-Sector Merkle-DAG)</span>
           </h1>
-          <p className="text-xs text-[#86BFCF]">
+          <p className="text-xs text-[#C1A094]">
             Interactive visual graph of component fabrication and end-product assembly.
           </p>
         </div>
 
         {/* Workflow Switcher */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center p-0.5 rounded-sm bg-[#062B49] border border-[#155477] text-xs">
+          <div className="flex items-center p-0.5 rounded-sm bg-[#382A28] border border-[#60433D] text-xs">
             <button
               onClick={() => switchWorkflow('electronics')}
               className={`px-3 py-1 rounded-xs transition-all ${
                 activeWorkflow === 'electronics'
-                  ? 'bg-[#A7EBF2] text-[#011C40] font-semibold'
-                  : 'text-[#86BFCF] hover:text-[#D9F5F7]'
+                  ? 'bg-[#C1A094] text-[#211B1A] font-semibold'
+                  : 'text-[#C1A094] hover:text-[#E8D8CE]'
               }`}
             >
               📱 Display &amp; Mobile Lineage
@@ -209,8 +209,8 @@ export const ManufacturingLineagePage: React.FC = () => {
               onClick={() => switchWorkflow('ev_battery')}
               className={`px-3 py-1 rounded-xs transition-all ${
                 activeWorkflow === 'ev_battery'
-                  ? 'bg-[#A7EBF2] text-[#011C40] font-semibold'
-                  : 'text-[#86BFCF] hover:text-[#D9F5F7]'
+                  ? 'bg-[#C1A094] text-[#211B1A] font-semibold'
+                  : 'text-[#C1A094] hover:text-[#E8D8CE]'
               }`}
             >
               🚗 EV Battery Cell-to-Pack
@@ -220,7 +220,7 @@ export const ManufacturingLineagePage: React.FC = () => {
       </div>
 
       {/* Main Graph Area */}
-      <div className="flex-1 border border-[#155477] bg-[#011C40] relative overflow-hidden flex shadow-lg rounded-sm">
+      <div className="flex-1 border border-[#60433D] bg-[#211B1A] relative overflow-hidden flex shadow-lg rounded-sm">
         <div className="flex-1 h-full">
           <ReactFlow
             nodes={nodes}
@@ -234,56 +234,56 @@ export const ManufacturingLineagePage: React.FC = () => {
             minZoom={0.2}
             maxZoom={1.5}
           >
-            <Background color="#155477" gap={20} size={1} />
-            <Controls className="bg-[#062B49]! border-[#155477]! text-[#D9F5F7]!" />
+            <Background color="#60433D" gap={20} size={1} />
+            <Controls className="bg-[#382A28]! border-[#60433D]! text-[#E8D8CE]!" />
             <MiniMap
               nodeColor={node => {
                 const d = node.data as any;
                 if (d?.isDefective) return '#F87171';
-                if (d?.section?.includes('Assembly')) return '#26658C';
-                return '#54ACBF';
+                if (d?.section?.includes('Assembly')) return '#916B60';
+                return '#916B60';
               }}
-              className="bg-[#062B49]! border-[#155477]!"
+              className="bg-[#382A28]! border-[#60433D]!"
             />
           </ReactFlow>
         </div>
 
         {/* Node Detail Inspector Drawer */}
         {selectedNode && (
-          <div className="w-80 md:w-96 bg-[#062B49] border-l border-[#155477] p-5 flex flex-col justify-between overflow-y-auto shadow-2xl z-20">
+          <div className="w-80 md:w-96 bg-[#382A28] border-l border-[#60433D] p-5 flex flex-col justify-between overflow-y-auto shadow-2xl z-20">
             <div className="space-y-4">
-              <div className="flex items-center justify-between pb-2 border-b border-[#155477]">
-                <span className="text-xs uppercase tracking-wider text-[#A7EBF2] font-medium">
+              <div className="flex items-center justify-between pb-2 border-b border-[#60433D]">
+                <span className="text-xs uppercase tracking-wider text-[#C1A094] font-medium">
                   Unit-Level Event Inspector
                 </span>
                 <button
                   onClick={() => setSelectedNode(null)}
-                  className="text-[#86BFCF] hover:text-[#D9F5F7] text-xs px-2 py-0.5 border border-[#155477] bg-[#073451] rounded-xs"
+                  className="text-[#C1A094] hover:text-[#E8D8CE] text-xs px-2 py-0.5 border border-[#60433D] bg-[#60433D] rounded-xs"
                 >
                   Close
                 </button>
               </div>
 
               <div>
-                <h3 className="text-base text-[#D9F5F7] font-medium">{selectedNode.data.label || selectedNode.data.title}</h3>
-                <span className="text-xs font-mono text-[#54ACBF]">{selectedNode.data.step || selectedNode.id}</span>
+                <h3 className="text-base text-[#E8D8CE] font-medium">{selectedNode.data.label || selectedNode.data.title}</h3>
+                <span className="text-xs font-mono text-[#916B60]">{selectedNode.data.step || selectedNode.id}</span>
               </div>
 
-              <div className="p-3 bg-[#073451] border border-[#155477] rounded-sm space-y-2 text-xs font-mono">
+              <div className="p-3 bg-[#60433D] border border-[#60433D] rounded-sm space-y-2 text-xs font-mono">
                 <div className="flex justify-between">
-                  <span className="text-[#86BFCF]">Machine / Station:</span>
-                  <span className="text-[#D9F5F7]">{selectedNode.data.machine || 'Automated Hub'}</span>
+                  <span className="text-[#C1A094]">Machine / Station:</span>
+                  <span className="text-[#E8D8CE]">{selectedNode.data.machine || 'Automated Hub'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#86BFCF]">Operator Identity:</span>
-                  <span className="text-[#D9F5F7]">{selectedNode.data.operator || 'SYSTEM_ROBOTIC'}</span>
+                  <span className="text-[#C1A094]">Operator Identity:</span>
+                  <span className="text-[#E8D8CE]">{selectedNode.data.operator || 'SYSTEM_ROBOTIC'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#86BFCF]">Event Execution:</span>
-                  <span className="text-[#A7EBF2]">{selectedNode.data.event || selectedNode.data.batchId}</span>
+                  <span className="text-[#C1A094]">Event Execution:</span>
+                  <span className="text-[#C1A094]">{selectedNode.data.event || selectedNode.data.batchId}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#86BFCF]">Inspection Status:</span>
+                  <span className="text-[#C1A094]">Inspection Status:</span>
                   <span className={selectedNode.data.isDefective ? 'text-[#F87171] font-bold' : 'text-[#34D399]'}>
                     {selectedNode.data.result || 'Anchored OK'}
                   </span>
@@ -296,21 +296,21 @@ export const ManufacturingLineagePage: React.FC = () => {
                     <AlertTriangle size={14} />
                     <span>Defect Root Cause Registered</span>
                   </div>
-                  <p className="text-[11px] text-[#D9F5F7] leading-relaxed">
+                  <p className="text-[11px] text-[#E8D8CE] leading-relaxed">
                     Oven PH-07 thermal variance caused premature crystallization of the optical adhesive (AG-05). All 100 display serials (ABC-0001 to ABC-0100) are flagged.
                   </p>
                 </div>
               )}
 
               <div className="space-y-1">
-                <span className="text-[11px] uppercase tracking-wider text-[#86BFCF]">Merkle Hash Commitment</span>
-                <div className="p-2 bg-[#011C40] border border-[#155477] font-mono text-[10px] text-[#A7EBF2] break-all rounded-xs">
+                <span className="text-[11px] uppercase tracking-wider text-[#C1A094]">Merkle Hash Commitment</span>
+                <div className="p-2 bg-[#211B1A] border border-[#60433D] font-mono text-[10px] text-[#C1A094] break-all rounded-xs">
                   0x94bca001e8812cfa09923847529841bb2347890123...
                 </div>
               </div>
             </div>
 
-            <div className="pt-4 border-t border-[#155477] space-y-2">
+            <div className="pt-4 border-t border-[#60433D] space-y-2">
               <button
                 onClick={() => navigate(`/traceability?query=${selectedNode.data.batchId || 'ABC'}`)}
                 className="btn-vintage-primary w-full justify-center"

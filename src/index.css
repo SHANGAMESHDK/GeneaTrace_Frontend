@@ -5,22 +5,29 @@
     --font-serif: 'Baskervville', Georgia, serif;
     --font-mono: 'JetBrains Mono', monospace;
 
-    /* Dark Navy, Ocean Blue & Cyan Design System Tokens */
-    --color-bg: #011C40;
-    --color-sidebar-base: #023859;
-    --color-sidebar-mid: #064A67;
-    --color-card: #062B49;
-    --color-card-elevated: #073451;
-    --color-border: #155477;
-    --color-border-hover: #54ACBF;
-    --color-secondary-blue: #26658C;
-    --color-accent-teal: #54ACBF;
-    --color-primary-highlight: #A7EBF2;
-    --color-text: #D9F5F7;
-    --color-text-secondary: #86BFCF;
-    --color-text-muted: #54ACBF;
-    --color-primary: #A7EBF2;
-    --color-primary-hover: #D9F5F7;
+    /* Warm Espresso & Chocolate Mocha Palette Tokens */
+    --color-palette-1: #211B1A;
+    --color-palette-2: #382A28;
+    --color-palette-3: #60433D;
+    --color-palette-4: #916B60;
+    --color-palette-5: #C1A094;
+    --color-palette-6: #E8D8CE;
+
+    --color-bg: #211B1A;
+    --color-sidebar-base: #211B1A;
+    --color-sidebar-mid: #382A28;
+    --color-card: #382A28;
+    --color-card-elevated: #60433D;
+    --color-border: #60433D;
+    --color-border-hover: #916B60;
+    --color-secondary-blue: #916B60;
+    --color-accent: #916B60;
+    --color-primary-highlight: #C1A094;
+    --color-text: #E8D8CE;
+    --color-text-secondary: #C1A094;
+    --color-text-muted: #916B60;
+    --color-primary: #C1A094;
+    --color-primary-hover: #E8D8CE;
 
     /* Status Tokens */
     --color-critical: #F87171;
@@ -38,8 +45,8 @@
 
   body {
     font-family: var(--font-serif);
-    background-color: #011C40;
-    color: #D9F5F7;
+    background-color: #211B1A;
+    color: #E8D8CE;
     overflow-x: hidden;
     font-size: 13px;
     line-height: 1.6;
@@ -49,7 +56,7 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-serif);
     font-weight: 400;
-    color: #D9F5F7;
+    color: #E8D8CE;
   }
 
   /* Crisp Scrollbar */
@@ -58,14 +65,14 @@
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #011C40;
+    background: #211B1A;
   }
   ::-webkit-scrollbar-thumb {
-    background: #155477;
+    background: #60433D;
     border-radius: 2px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #54ACBF;
+    background: #916B60;
   }
 }
 
@@ -79,19 +86,19 @@
 
 /* Sidebar Gradient */
 .sidebar-gradient {
-  background: linear-gradient(180deg, #023859 0%, #064A67 52%, #011C40 100%);
+  background: linear-gradient(180deg, #211B1A 0%, #382A28 52%, #211B1A 100%);
 }
 
 /* Primary Button (A7EBF2 cyan highlight) */
 .btn-vintage-primary,
 .btn-primary {
-  background: #A7EBF2;
-  color: #011C40;
+  background: #C1A094;
+  color: #211B1A;
   border-radius: 2px;
   padding: 6px 16px;
   font-size: 12px;
   font-weight: 600;
-  border: 1px solid #A7EBF2;
+  border: 1px solid #C1A094;
   cursor: pointer;
   letter-spacing: 0.03em;
   transition: all 0.15s ease-in-out;
@@ -102,22 +109,22 @@
 
 .btn-vintage-primary:hover,
 .btn-primary:hover {
-  background: #D9F5F7;
-  border-color: #D9F5F7;
-  color: #011C40;
-  box-shadow: 0 0 12px rgba(167, 235, 242, 0.35);
+  background: #E8D8CE;
+  border-color: #E8D8CE;
+  color: #211B1A;
+  box-shadow: 0 0 12px rgba(193, 160, 148, 0.35);
 }
 
-/* Accent Button (Teal / Secondary Blue) */
+/* Accent Button */
 .btn-vintage-accent,
 .btn-accent {
-  background: #26658C;
-  color: #D9F5F7;
+  background: #916B60;
+  color: #E8D8CE;
   border-radius: 2px;
   padding: 6px 16px;
   font-size: 12px;
   font-weight: 500;
-  border: 1px solid #155477;
+  border: 1px solid #60433D;
   cursor: pointer;
   letter-spacing: 0.03em;
   transition: all 0.15s ease-in-out;
@@ -128,21 +135,21 @@
 
 .btn-vintage-accent:hover,
 .btn-accent:hover {
-  background: #54ACBF;
-  color: #011C40;
-  border-color: #54ACBF;
+  background: #C1A094;
+  color: #211B1A;
+  border-color: #C1A094;
 }
 
 /* Outline Button */
 .btn-vintage-outline,
 .btn-outline {
-  background: #062B49;
-  color: #D9F5F7;
+  background: #382A28;
+  color: #E8D8CE;
   border-radius: 2px;
   padding: 6px 14px;
   font-size: 12px;
   font-weight: 400;
-  border: 1px solid #155477;
+  border: 1px solid #60433D;
   cursor: pointer;
   transition: all 0.15s ease-in-out;
   display: inline-flex;
@@ -152,23 +159,23 @@
 
 .btn-vintage-outline:hover,
 .btn-outline:hover {
-  background: #073451;
-  border-color: #54ACBF;
-  color: #A7EBF2;
+  background: #60433D;
+  border-color: #916B60;
+  color: #C1A094;
 }
 
 /* Card Specs */
 .vintage-card,
 .dashboard-card {
-  background: #062B49;
-  border: 1px solid #155477;
+  background: #382A28;
+  border: 1px solid #60433D;
   border-radius: 2px;
-  box-shadow: 0 4px 16px rgba(1, 28, 64, 0.35);
+  box-shadow: 0 4px 16px rgba(33, 27, 26, 0.45);
 }
 
 .vintage-card-secondary {
-  background: #073451;
-  border: 1px solid #155477;
+  background: #60433D;
+  border: 1px solid #60433D;
   border-radius: 2px;
 }
 
@@ -177,6 +184,6 @@
   font-weight: 400;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #86BFCF;
-  background: #073451;
+  color: #C1A094;
+  background: #60433D;
 }

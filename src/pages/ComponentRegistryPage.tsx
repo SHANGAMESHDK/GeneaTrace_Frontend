@@ -64,13 +64,13 @@ export const ComponentRegistryPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#155477] pb-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#60433D] pb-4">
         <div>
-          <h1 className="text-2xl font-normal font-serif tracking-tight text-[#D9F5F7] flex items-center gap-2">
-            <Cpu className="text-[#86BFCF]" size={22} />
+          <h1 className="text-2xl font-normal font-serif tracking-tight text-[#E8D8CE] flex items-center gap-2">
+            <Cpu className="text-[#C1A094]" size={22} />
             <span>Component Registry &amp; Serial Inventory</span>
           </h1>
-          <p className="text-xs text-[#86BFCF] font-serif mt-1">
+          <p className="text-xs text-[#C1A094] font-serif mt-1">
             Unit-level serialization across displays, batteries, motherboards, cameras, frames, and sensors.
           </p>
         </div>
@@ -78,7 +78,7 @@ export const ComponentRegistryPage: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={exportCsv}
-            className="px-3.5 py-2 rounded-none bg-[#073451] hover:bg-[#342f3d] border border-[#155477] text-[#D9F5F7] text-xs font-serif flex items-center gap-1.5 transition-colors uppercase tracking-wider"
+            className="px-3.5 py-2 rounded-none bg-[#60433D] hover:bg-[#342f3d] border border-[#60433D] text-[#E8D8CE] text-xs font-serif flex items-center gap-1.5 transition-colors uppercase tracking-wider"
           >
             <Download size={13} />
             <span>Export CSV</span>
@@ -104,9 +104,9 @@ export const ComponentRegistryPage: React.FC = () => {
               setSearch(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full pl-8 pr-3 py-1.5 bg-[#011C40] border border-[#155477] rounded-none text-xs text-[#D9F5F7] font-mono focus:outline-none focus:border-[#86BFCF]"
+            className="w-full pl-8 pr-3 py-1.5 bg-[#211B1A] border border-[#60433D] rounded-none text-xs text-[#E8D8CE] font-mono focus:outline-none focus:border-[#C1A094]"
           />
-          <Search className="w-3.5 h-3.5 text-[#86BFCF] absolute left-2.5 top-2.5" />
+          <Search className="w-3.5 h-3.5 text-[#C1A094] absolute left-2.5 top-2.5" />
         </div>
 
         <select
@@ -115,7 +115,7 @@ export const ComponentRegistryPage: React.FC = () => {
             setSelectedType(e.target.value);
             setCurrentPage(1);
           }}
-          className="px-3 py-1.5 bg-[#073451] border border-[#155477] rounded-none text-xs text-[#D9F5F7] font-serif"
+          className="px-3 py-1.5 bg-[#60433D] border border-[#60433D] rounded-none text-xs text-[#E8D8CE] font-serif"
         >
           <option value="All">All Categories</option>
           <option value="Display">Display</option>
@@ -133,7 +133,7 @@ export const ComponentRegistryPage: React.FC = () => {
             setSelectedBatch(e.target.value);
             setCurrentPage(1);
           }}
-          className="px-3 py-1.5 bg-[#073451] border border-[#155477] rounded-none text-xs text-[#D9F5F7] font-serif"
+          className="px-3 py-1.5 bg-[#60433D] border border-[#60433D] rounded-none text-xs text-[#E8D8CE] font-serif"
         >
           <option value="All">All Batches</option>
           {batches.map(b => (
@@ -149,7 +149,7 @@ export const ComponentRegistryPage: React.FC = () => {
             setSelectedQuality(e.target.value);
             setCurrentPage(1);
           }}
-          className="px-3 py-1.5 bg-[#073451] border border-[#155477] rounded-none text-xs text-[#D9F5F7] font-serif"
+          className="px-3 py-1.5 bg-[#60433D] border border-[#60433D] rounded-none text-xs text-[#E8D8CE] font-serif"
         >
           <option value="All">All Quality Statuses</option>
           <option value="Passed">Passed</option>
@@ -157,8 +157,8 @@ export const ComponentRegistryPage: React.FC = () => {
           <option value="Pending">Pending</option>
         </select>
 
-        <span className="text-xs text-[#54ACBF] font-serif ml-auto">
-          Found: <strong className="text-[#D9F5F7] font-mono">{allComponents.length}</strong> items
+        <span className="text-xs text-[#916B60] font-serif ml-auto">
+          Found: <strong className="text-[#E8D8CE] font-mono">{allComponents.length}</strong> items
         </span>
       </div>
 
@@ -166,7 +166,7 @@ export const ComponentRegistryPage: React.FC = () => {
       <div className="vintage-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs font-mono">
-            <thead className="bg-[#073451] text-[#86BFCF] border-b border-[#155477] font-serif text-[11px] uppercase tracking-wider">
+            <thead className="bg-[#60433D] text-[#C1A094] border-b border-[#60433D] font-serif text-[11px] uppercase tracking-wider">
               <tr>
                 <th className="py-3 px-4 font-normal">Serial Number</th>
                 <th className="py-3 px-4 font-normal">Component ID</th>
@@ -178,26 +178,26 @@ export const ComponentRegistryPage: React.FC = () => {
                 <th className="py-3 px-4 text-right font-normal">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#155477] bg-[#011C40]">
+            <tbody className="divide-y divide-[#60433D] bg-[#211B1A]">
               {paginatedComponents.map(c => {
                 const isDefective = c.batchId === 'ABC';
                 return (
                   <tr
                     key={c.serialNumber}
                     onClick={() => setSelectedComponent(c)}
-                    className="hover:bg-[#073451]/50 cursor-pointer transition-colors"
+                    className="hover:bg-[#60433D]/50 cursor-pointer transition-colors"
                   >
-                    <td className={`py-2.5 px-4 font-bold ${isDefective ? 'text-[#F08C8A]' : 'text-[#D9F5F7]'}`}>
+                    <td className={`py-2.5 px-4 font-bold ${isDefective ? 'text-[#F08C8A]' : 'text-[#E8D8CE]'}`}>
                       {c.serialNumber}
                     </td>
-                    <td className="py-2.5 px-4 text-[#86BFCF]">{c.componentId}</td>
+                    <td className="py-2.5 px-4 text-[#C1A094]">{c.componentId}</td>
                     <td className="py-2.5 px-4">
-                      <span className="px-1.5 py-0.5 bg-[#073451] text-[#D9F5F7] border border-[#155477] text-[10px]">
+                      <span className="px-1.5 py-0.5 bg-[#60433D] text-[#E8D8CE] border border-[#60433D] text-[10px]">
                         {c.batchId}
                       </span>
                     </td>
-                    <td className="py-2.5 px-4 text-[#D9F5F7] font-serif">{c.type}</td>
-                    <td className="py-2.5 px-4 text-[#86BFCF] font-serif truncate max-w-[150px]">{c.supplier}</td>
+                    <td className="py-2.5 px-4 text-[#E8D8CE] font-serif">{c.type}</td>
+                    <td className="py-2.5 px-4 text-[#C1A094] font-serif truncate max-w-[150px]">{c.supplier}</td>
                     <td className="py-2.5 px-4">
                       <span
                         className={`px-2 py-0.5 text-[10px] font-mono border ${
@@ -209,11 +209,11 @@ export const ComponentRegistryPage: React.FC = () => {
                         {c.status}
                       </span>
                     </td>
-                    <td className="py-2.5 px-4 text-[#D9F5F7]">
+                    <td className="py-2.5 px-4 text-[#E8D8CE]">
                       {c.installedInProductId ? (
-                        <span className="text-[#D9F5F7] hover:underline">{c.installedInProductId}</span>
+                        <span className="text-[#E8D8CE] hover:underline">{c.installedInProductId}</span>
                       ) : (
-                        <span className="text-[#54ACBF] font-serif">Inventory</span>
+                        <span className="text-[#916B60] font-serif">Inventory</span>
                       )}
                     </td>
                     <td className="py-2.5 px-4 text-right">
@@ -222,7 +222,7 @@ export const ComponentRegistryPage: React.FC = () => {
                           e.stopPropagation();
                           navigate(`/traceability?query=${c.serialNumber}`);
                         }}
-                        className="text-[#D9F5F7] hover:underline font-serif text-[11px]"
+                        className="text-[#E8D8CE] hover:underline font-serif text-[11px]"
                       >
                         Trace
                       </button>
@@ -235,22 +235,22 @@ export const ComponentRegistryPage: React.FC = () => {
         </div>
 
         {/* Pagination Bar */}
-        <div className="p-3 border-t border-[#155477] flex items-center justify-between text-xs font-serif bg-[#062B49]">
-          <span className="text-[#86BFCF]">
+        <div className="p-3 border-t border-[#60433D] flex items-center justify-between text-xs font-serif bg-[#382A28]">
+          <span className="text-[#C1A094]">
             Page {currentPage} of {totalPages}
           </span>
           <div className="flex gap-2">
             <button
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="px-3 py-1 bg-[#073451] hover:bg-[#342f3d] border border-[#155477] disabled:opacity-40 text-[#D9F5F7] transition-colors"
+              className="px-3 py-1 bg-[#60433D] hover:bg-[#342f3d] border border-[#60433D] disabled:opacity-40 text-[#E8D8CE] transition-colors"
             >
               Previous
             </button>
             <button
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="px-3 py-1 bg-[#073451] hover:bg-[#342f3d] border border-[#155477] disabled:opacity-40 text-[#D9F5F7] transition-colors"
+              className="px-3 py-1 bg-[#60433D] hover:bg-[#342f3d] border border-[#60433D] disabled:opacity-40 text-[#E8D8CE] transition-colors"
             >
               Next
             </button>
@@ -260,44 +260,44 @@ export const ComponentRegistryPage: React.FC = () => {
 
       {/* Component Detail Drawer */}
       {selectedComponent && (
-        <div className="fixed inset-0 z-50 bg-[#011C40]/70 backdrop-blur-xs flex justify-end">
-          <div className="w-full max-w-md bg-[#062B49] border-l border-[#155477] h-full p-6 space-y-6 overflow-y-auto shadow-2xl">
-            <div className="flex items-center justify-between pb-4 border-b border-[#155477]">
-              <span className="text-xs font-serif uppercase tracking-wider text-[#86BFCF]">Component Specification</span>
-              <button onClick={() => setSelectedComponent(null)} className="text-[#86BFCF] hover:text-[#D9F5F7]">
+        <div className="fixed inset-0 z-50 bg-[#211B1A]/70 backdrop-blur-xs flex justify-end">
+          <div className="w-full max-w-md bg-[#382A28] border-l border-[#60433D] h-full p-6 space-y-6 overflow-y-auto shadow-2xl">
+            <div className="flex items-center justify-between pb-4 border-b border-[#60433D]">
+              <span className="text-xs font-serif uppercase tracking-wider text-[#C1A094]">Component Specification</span>
+              <button onClick={() => setSelectedComponent(null)} className="text-[#C1A094] hover:text-[#E8D8CE]">
                 <X size={18} />
               </button>
             </div>
 
             <div>
-              <h2 className="text-xl font-normal font-serif text-[#D9F5F7]">{selectedComponent.serialNumber}</h2>
-              <span className="text-xs text-[#54ACBF] font-mono">{selectedComponent.componentId}</span>
+              <h2 className="text-xl font-normal font-serif text-[#E8D8CE]">{selectedComponent.serialNumber}</h2>
+              <span className="text-xs text-[#916B60] font-mono">{selectedComponent.componentId}</span>
             </div>
 
-            <div className="p-4 bg-[#011C40] border border-[#155477] space-y-2.5 text-xs font-mono">
+            <div className="p-4 bg-[#211B1A] border border-[#60433D] space-y-2.5 text-xs font-mono">
               <div className="flex justify-between">
-                <span className="text-[#86BFCF] font-serif">Category:</span>
-                <span className="text-[#D9F5F7] font-serif font-bold">{selectedComponent.type}</span>
+                <span className="text-[#C1A094] font-serif">Category:</span>
+                <span className="text-[#E8D8CE] font-serif font-bold">{selectedComponent.type}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#86BFCF] font-serif">Batch ID:</span>
+                <span className="text-[#C1A094] font-serif">Batch ID:</span>
                 <button
                   onClick={() => navigate(`/batches?search=${selectedComponent.batchId}`)}
-                  className="text-[#D9F5F7] hover:underline"
+                  className="text-[#E8D8CE] hover:underline"
                 >
                   Batch {selectedComponent.batchId}
                 </button>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#86BFCF] font-serif">Manufacturer:</span>
-                <span className="text-[#D9F5F7] font-serif">{selectedComponent.manufacturer}</span>
+                <span className="text-[#C1A094] font-serif">Manufacturer:</span>
+                <span className="text-[#E8D8CE] font-serif">{selectedComponent.manufacturer}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#86BFCF] font-serif">Location:</span>
-                <span className="text-[#D9F5F7] font-serif">{selectedComponent.location}</span>
+                <span className="text-[#C1A094] font-serif">Location:</span>
+                <span className="text-[#E8D8CE] font-serif">{selectedComponent.location}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#86BFCF] font-serif">Quality Status:</span>
+                <span className="text-[#C1A094] font-serif">Quality Status:</span>
                 <span
                   className={
                     selectedComponent.qualityStatus === 'Passed' ? 'text-[#86D6A6] font-bold' : 'text-[#F08C8A] font-bold'
@@ -309,13 +309,13 @@ export const ComponentRegistryPage: React.FC = () => {
             </div>
 
             <div className="space-y-1">
-              <span className="text-xs font-serif uppercase tracking-wider text-[#86BFCF]">Cryptographic Signature</span>
-              <div className="p-2.5 bg-[#011C40] border border-[#155477] font-mono text-[11px] text-[#D9F5F7] break-all">
+              <span className="text-xs font-serif uppercase tracking-wider text-[#C1A094]">Cryptographic Signature</span>
+              <div className="p-2.5 bg-[#211B1A] border border-[#60433D] font-mono text-[11px] text-[#E8D8CE] break-all">
                 {selectedComponent.cryptographicHash}
               </div>
             </div>
 
-            <div className="pt-4 border-t border-[#155477] space-y-2">
+            <div className="pt-4 border-t border-[#60433D] space-y-2">
               <button
                 onClick={() => navigate(`/traceability?query=${selectedComponent.serialNumber}`)}
                 className="w-full btn-vintage-accent text-xs py-2.5 flex items-center justify-center gap-2 uppercase tracking-wider"
