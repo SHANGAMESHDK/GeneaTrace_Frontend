@@ -417,28 +417,31 @@ export const CompanyDefectHubPage: React.FC = () => {
                 </p>
 
                 {/* Locations Summary Breakdown */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                   {batchLocations?.locationsSummary.map(loc => (
                     <div
                       key={loc.location}
-                      className="p-3 bg-[#faf3dc] border border-[#e5e5e5] flex items-center justify-between"
+                      className="p-3.5 bg-[#faf3dc] border border-[#e5e5e5] rounded-none flex flex-col justify-between gap-2.5"
                     >
-                      <div>
-                        <div className="font-medium text-[#413634] flex items-center gap-1.5">
-                          <MapPin size={13} className="text-[#c5716d] shrink-0" />
-                          <span className="truncate">{loc.location}</span>
+                      {/* Top Row: Location Name & Unit Badge */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="font-medium text-[#413634] flex items-start gap-1.5 min-w-0">
+                          <MapPin size={14} className="text-[#c5716d] shrink-0 mt-0.5" />
+                          <span className="leading-snug break-words">{loc.location}</span>
                         </div>
-                        <div className="text-[11px] text-[#666666] mt-0.5">
-                          Carrier: {loc.carrier}
-                        </div>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <span className="px-2 py-0.5 bg-[#c5716d] text-[#fffdf6] font-mono text-xs">
+                        <span className="px-2 py-0.5 bg-[#c5716d] text-[#fffdf6] font-mono text-xs shrink-0 whitespace-nowrap shadow-xs">
                           {loc.count} units
                         </span>
-                        <div className="text-[10px] text-[#8b6c58] mt-0.5">
-                          Shipment {loc.shipmentId}
-                        </div>
+                      </div>
+
+                      {/* Bottom Row: Carrier and Shipment ID aligned */}
+                      <div className="pt-2 border-t border-[#e5e5e5]/80 flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                        <span className="text-[#666666] truncate max-w-[240px]">
+                          Carrier: <strong className="text-[#413634] font-normal">{loc.carrier}</strong>
+                        </span>
+                        <span className="font-mono text-[10px] text-[#8b6c58] bg-[#fffdf6] px-1.5 py-0.5 border border-[#e5e5e5] shrink-0">
+                          {loc.shipmentId}
+                        </span>
                       </div>
                     </div>
                   ))}
