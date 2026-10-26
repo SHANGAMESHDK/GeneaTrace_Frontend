@@ -18,7 +18,8 @@ import {
   Plane,
   Leaf,
   Scale,
-  Award
+  Award,
+  Wrench
 } from 'lucide-react';
 import { GeneaTraceStore } from '../services/dataStore';
 
@@ -112,28 +113,39 @@ export const PassportPage: React.FC = () => {
           </p>
         </div>
 
-        {/* View Mode Toggle */}
-        <div className="flex items-center p-0.5 bg-[#faf3dc] border border-[#e5e5e5] text-xs">
+        {/* View Mode Toggle & Defect Report Action */}
+        <div className="flex flex-wrap items-center gap-2">
           <button
-            onClick={() => setViewMode('internal')}
-            className={`px-3 py-1 transition-all ${
-              viewMode === 'internal'
-                ? 'bg-[#c5716d] text-[#fffdf6]'
-                : 'text-[#413634] hover:text-[#c5716d]'
-            }`}
+            onClick={() => navigate('/shop-portal')}
+            className="btn-vintage-outline text-xs flex items-center gap-1.5"
+            title="Service technician entry for defective unit"
           >
-            Authorized Engineering View
+            <Wrench size={13} className="text-[#c5716d]" />
+            <span>Report Defect as Shopkeeper</span>
           </button>
-          <button
-            onClick={() => setViewMode('public')}
-            className={`px-3 py-1 transition-all ${
-              viewMode === 'public'
-                ? 'bg-[#c5716d] text-[#fffdf6]'
-                : 'text-[#413634] hover:text-[#c5716d]'
-            }`}
-          >
-            Public Consumer View
-          </button>
+
+          <div className="flex items-center p-0.5 bg-[#faf3dc] border border-[#e5e5e5] text-xs">
+            <button
+              onClick={() => setViewMode('internal')}
+              className={`px-3 py-1 transition-all ${
+                viewMode === 'internal'
+                  ? 'bg-[#c5716d] text-[#fffdf6]'
+                  : 'text-[#413634] hover:text-[#c5716d]'
+              }`}
+            >
+              Authorized Engineering View
+            </button>
+            <button
+              onClick={() => setViewMode('public')}
+              className={`px-3 py-1 transition-all ${
+                viewMode === 'public'
+                  ? 'bg-[#c5716d] text-[#fffdf6]'
+                  : 'text-[#413634] hover:text-[#c5716d]'
+              }`}
+            >
+              Public Consumer View
+            </button>
+          </div>
         </div>
       </div>
 

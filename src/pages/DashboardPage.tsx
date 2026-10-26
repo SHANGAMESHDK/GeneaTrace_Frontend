@@ -14,7 +14,11 @@ import {
   Sparkles,
   BatteryCharging,
   HeartPulse,
-  Plane
+  Plane,
+  Wrench,
+  Building2,
+  ShieldCheck,
+  Send
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -131,17 +135,76 @@ export const DashboardPage: React.FC = () => {
             <span>Manufacturing Lineage Intelligence</span>
           </h1>
           <p className="text-xs text-[#666666] mt-1">
-            Blockchain-Linked Digital Product Passport • Electronics, Automotive &amp; EV Batteries, Medical Devices &amp; Aerospace
+            Blockchain-Linked Digital Product Passport • Shopkeeper Incident Ingestion, Defect Matching &amp; Batch Quarantine
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => navigate('/shop-portal')}
+            className="btn-vintage-outline text-xs flex items-center gap-1.5"
+          >
+            <Wrench size={13} className="text-[#c5716d]" />
+            <span>Shopkeeper Entry</span>
+          </button>
+          <button
+            onClick={() => navigate('/company-defects')}
+            className="btn-vintage-accent text-xs flex items-center gap-1.5"
+          >
+            <Building2 size={13} />
+            <span>Corporate Defect Hub</span>
+          </button>
           <button
             onClick={() => navigate('/lineage')}
-            className="btn-vintage-primary"
+            className="btn-vintage-primary text-xs"
           >
             <Sparkles size={13} className="text-[#c5716d]" />
-            <span>Interactive Lineage Graph</span>
+            <span>Lineage Graph</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Two Pillars Workflow Banner: Shopkeeper Incident -> Company Batch Quarantine */}
+      <div className="p-4 vintage-card bg-[#faf3dc] border border-[#413634] grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        <div className="p-3 bg-[#fffdf6] border border-[#e5e5e5] space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="font-medium text-[#413634] flex items-center gap-1.5">
+              <Wrench size={15} className="text-[#c5716d]" />
+              <span>Pillar 1: Shopkeeper &amp; Service Center Portal</span>
+            </span>
+            <span className="text-[10px] px-1.5 py-0.2 bg-[#faf3dc] text-[#c5716d] border border-[#c5716d]/30">
+              Write-Only Access
+            </span>
+          </div>
+          <p className="text-[#666666] text-[11px] leading-relaxed">
+            When a device arrives with an issue, the technician enters the <strong>Serial / IMEI</strong>, <strong>symptoms</strong>, and <strong>suspected cause</strong>. Data is append-only and cannot be altered or overwritten.
+          </p>
+          <button
+            onClick={() => navigate('/shop-portal')}
+            className="text-[#c5716d] hover:underline font-mono text-[11px] flex items-center gap-1 pt-1"
+          >
+            <span>Open Technician Entry Form →</span>
+          </button>
+        </div>
+
+        <div className="p-3 bg-[#fffdf6] border border-[#e5e5e5] space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="font-medium text-[#413634] flex items-center gap-1.5">
+              <Building2 size={15} className="text-[#2e6b4d]" />
+              <span>Pillar 2: Corporate Defect Correlator &amp; Hold Dispatch</span>
+            </span>
+            <span className="text-[10px] px-1.5 py-0.2 bg-[#edf6f0] text-[#2e6b4d] border border-[#2e6b4d]/30">
+              HQ Command Space
+            </span>
+          </div>
+          <p className="text-[#666666] text-[11px] leading-relaxed">
+            Corporate QA views nationwide incident reports, checks for <strong>similar defect matches</strong>, identifies the exact <strong>manufacturing batch &amp; date</strong>, and tracks <strong>where all sister mobiles are located</strong> to issue stop-sale holds.
+          </p>
+          <button
+            onClick={() => navigate('/company-defects')}
+            className="text-[#2e6b4d] hover:underline font-mono text-[11px] flex items-center gap-1 pt-1"
+          >
+            <span>Open Company Defect Space →</span>
           </button>
         </div>
       </div>

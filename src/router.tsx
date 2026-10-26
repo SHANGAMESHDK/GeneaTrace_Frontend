@@ -13,6 +13,8 @@ import { LogisticsPage } from './pages/LogisticsPage';
 import { DeviceSecurityPage } from './pages/DeviceSecurityPage';
 import { BlockchainAuditPage } from './pages/BlockchainAuditPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { ShopkeeperPortalPage } from './pages/ShopkeeperPortalPage';
+import { CompanyDefectHubPage } from './pages/CompanyDefectHubPage';
 
 export const router = createBrowserRouter([
   {
@@ -50,6 +52,14 @@ export const router = createBrowserRouter([
       {
         path: 'recalls',
         element: <RecallManagementPage />,
+      },
+      {
+        path: 'shop-portal',
+        element: <ShopkeeperPortalPage />,
+      },
+      {
+        path: 'company-defects',
+        element: <CompanyDefectHubPage />,
       },
       {
         path: 'logistics',

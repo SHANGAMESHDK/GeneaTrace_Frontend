@@ -16,7 +16,10 @@ import {
   ChevronLeft,
   ChevronRight,
   ShieldCheck,
-  Feather
+  Feather,
+  Wrench,
+  Building2,
+  UserCheck
 } from 'lucide-react';
 import { GeneaTraceStore } from '../../services/dataStore';
 
@@ -27,10 +30,28 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   const store = GeneaTraceStore.getState();
+  const currentUser = GeneaTraceStore.getCurrentUser();
   const hasActiveRecall = store.recallCase.status !== 'Resolved';
+  const defectReportsCount = store.defectReports?.length || 0;
+
+  const isShopkeeper = currentUser.role === 'shopkeeper';
 
   const navItems = [
     { label: 'Overview', path: '/', icon: LayoutDashboard },
+    {
+      label: 'Shop Incident Entry',
+      path: '/shop-portal',
+      icon: Wrench,
+      badge: isShopkeeper ? 'Active Shop' : 'Write-Only',
+      badgeColor: 'bg-[#faf3dc] text-[#c5716d] border-[#c5716d]/40'
+    },
+    {
+      label: 'Corporate Defect Hub',
+      path: '/company-defects',
+      icon: Building2,
+      badge: defectReportsCount > 0 ? `${defectReportsCount} Reports` : undefined,
+      badgeColor: 'bg-[#fef7ec] text-[#b87428] border-[#b87428]/40'
+    },
     { label: 'Manufacturing Lineage', path: '/lineage', icon: GitFork, badge: 'Interactive' },
     { label: 'Component Registry', path: '/components', icon: Cpu },
     { label: 'Batch Management', path: '/batches', icon: Layers, badge: 'Core' },
@@ -135,22 +156,41 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
         })}
       </nav>
 
-      {/* Footer / User Profile */}
-      <div className="p-3 border-t border-[#e5e5e5] bg-[#fffdf6]">
+      {/* Footer / User Profile & Role Switcher */}
+      <div className="p-3 border-t border-[#e5e5e5] bg-[#fffdf6] space-y-2">
         <div className="flex items-center gap-3 px-2 py-2 rounded-none bg-[#faf3dc] border border-[#e5e5e5]">
           <div className="w-7 h-7 rounded-none bg-[#fffdf6] border border-[#413634] flex items-center justify-center text-xs text-[#c5716d] shrink-0 font-normal">
-            GT
+            {isShopkeeper ? 'SK' : 'QA'}
           </div>
           {!collapsed && (
             <div className="flex flex-col min-w-0">
-              <span className="text-xs text-[#413634] truncate">Lead QA Architect</span>
+              <span className="text-xs text-[#413634] truncate font-medium">
+                {currentUser.name}
+              </span>
               <div className="flex items-center gap-1 text-[10px] text-[#2e6b4d]">
                 <ShieldCheck size={11} />
-                <span>Authorized Level 4</span>
+                <span className="truncate">{isShopkeeper ? 'Shop Center (Write-Only)' : 'Corporate Admin'}</span>
               </div>
             </div>
           )}
         </div>
+
+        {/* Quick Role Switcher Button */}
+        {!collapsed && (
+          <div className="flex items-center justify-between text-[10px] text-[#666666] pt-1">
+            <span>Switch Persona:</span>
+            <button
+              onClick={() => {
+                const nextRole = isShopkeeper ? 'company_qa' : 'shopkeeper';
+                GeneaTraceStore.switchUserRole(nextRole);
+                window.location.reload();
+              }}
+              className="text-[#c5716d] hover:underline font-mono"
+            >
+              {isShopkeeper ? '→ Switch to Company QA' : '→ Switch to Shopkeeper'}
+            </button>
+          </div>
+        )}
       </div>
     </aside>
   );

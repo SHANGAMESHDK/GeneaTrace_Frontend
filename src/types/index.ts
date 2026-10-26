@@ -213,9 +213,41 @@ export interface BlockchainAuditBlock {
   blockNumber: number;
   txHash: string;
   timestamp: string;
-  entityType: 'Batch Checkpoint' | 'Passport Issuance' | 'Recall Event' | 'Lock Command';
+  entityType: 'Batch Checkpoint' | 'Passport Issuance' | 'Recall Event' | 'Lock Command' | 'Shop Incident Report';
   entityId: string;
   merkleRoot: string;
   validatorNode: string;
   status: 'Demo Confirmed';
+}
+
+export type UserRole = 'shopkeeper' | 'company_qa';
+
+export interface AuthUser {
+  id: string;
+  name: string;
+  role: UserRole;
+  shopName?: string;
+  city?: string;
+  state?: string;
+  badge: string;
+}
+
+export interface ShopkeeperDefectReport {
+  id: string;
+  serialNumber: string; // Device serial or IMEI
+  productModel: string;
+  reportedAt: string;
+  shopkeeperId: string;
+  shopName: string;
+  location: string;
+  state: string;
+  problemCategory: 'Screen & Display' | 'Battery & Charging' | 'Camera & Sensor' | 'Logic Board / Power' | 'Housing / Assembly' | 'Other';
+  problemDescription: string;
+  suspectedCause: string;
+  severity: 'Minor' | 'Moderate' | 'Critical Failure';
+  batchId?: string;
+  mfgDate?: string;
+  status: 'Pending Review' | 'Investigating' | 'Batch Hold Issued' | 'Resolved / Cleared';
+  companyNotes?: string;
+  isImmutable: boolean; // Cannot be edited or deleted by shopkeeper
 }
