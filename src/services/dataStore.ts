@@ -8,7 +8,8 @@ import {
   SecurityStatus,
   IntegrationStatus,
   BlockchainAuditBlock,
-  ComponentCategory
+  ComponentCategory,
+  IndustrySector
 } from '../types';
 import {
   initialBatches,
@@ -23,7 +24,7 @@ import {
 } from '../data/mockData';
 import { pseudoHash } from '../utils/hashing';
 
-const STORAGE_KEY = 'geneatrace_state_v1';
+const STORAGE_KEY = 'geneatrace_state_v2_multi';
 
 interface AppState {
   batches: BatchRecord[];
@@ -35,6 +36,7 @@ interface AppState {
   securityStatus: SecurityStatus;
   integrations: IntegrationStatus[];
   blockchainBlocks: BlockchainAuditBlock[];
+  activeSector: string; // 'All' or IndustrySector
 }
 
 function loadInitialState(): AppState {
@@ -61,14 +63,14 @@ function loadInitialState(): AppState {
     recallCase: initialRecallCase,
     securityStatus: initialSecurityStatus,
     integrations: initialIntegrations,
-    blockchainBlocks: initialBlockchainBlocks
+    blockchainBlocks: initialBlockchainBlocks,
+    activeSector: 'All'
   };
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   return state;
 }
 
-// In-memory active singleton
 let currentState: AppState = loadInitialState();
 
 export const GeneaTraceStore = {
@@ -78,6 +80,15 @@ export const GeneaTraceStore = {
 
   saveState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(currentState));
+  },
+
+  getActiveSector(): string {
+    return currentState.activeSector || 'All';
+  },
+
+  setActiveSector(sector: string) {
+    currentState.activeSector = sector;
+    this.saveState();
   },
 
   resetDemoData(): AppState {
@@ -96,7 +107,8 @@ export const GeneaTraceStore = {
       recallCase: initialRecallCase,
       securityStatus: initialSecurityStatus,
       integrations: initialIntegrations,
-      blockchainBlocks: initialBlockchainBlocks
+      blockchainBlocks: initialBlockchainBlocks,
+      activeSector: 'All'
     };
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(currentState));
@@ -104,8 +116,13 @@ export const GeneaTraceStore = {
   },
 
   // Batches
-  getBatches(): BatchRecord[] {
-    return [...currentState.batches];
+  getBatches(sector?: string): BatchRecord[] {
+    let list = [...currentState.batches];
+    const s = sector || currentState.activeSector;
+    if (s && s !== 'All') {
+      list = list.filter(b => b.sector === s);
+    }
+    return list;
   },
 
   getBatch(batchId: string): BatchRecord | undefined {
@@ -114,6 +131,7 @@ export const GeneaTraceStore = {
 
   createBatch(newBatch: {
     batchId: string;
+    sector?: IndustrySector;
     componentType: ComponentCategory;
     batchSize: number;
     supplier: string;
@@ -125,8 +143,11 @@ export const GeneaTraceStore = {
       throw new Error(`Batch ID ${newBatch.batchId} already exists in current manufacturing namespace.`);
     }
 
+    const assignedSector: IndustrySector = newBatch.sector || 'Consumer Electronics';
+
     const batchRecord: BatchRecord = {
       batchId: newBatch.batchId.toUpperCase(),
+      sector: assignedSector,
       componentType: newBatch.componentType,
       batchSize: newBatch.batchSize,
       serialPrefix: newBatch.batchId.toUpperCase(),
@@ -141,7 +162,6 @@ export const GeneaTraceStore = {
       checkpointStatus: 'Anchored'
     };
 
-    // Generate component records
     const newComponents: ComponentRecord[] = [];
     for (let i = 1; i <= newBatch.batchSize; i++) {
       const serialNumber = `${newBatch.batchId.toUpperCase()}-${i.toString().padStart(4, '0')}`;
@@ -151,6 +171,7 @@ export const GeneaTraceStore = {
         serialNumber,
         batchId: newBatch.batchId.toUpperCase(),
         type: newBatch.componentType,
+        sector: assignedSector,
         manufacturer: newBatch.supplier,
         supplier: newBatch.supplier,
         location: newBatch.facility,
@@ -170,8 +191,12 @@ export const GeneaTraceStore = {
   },
 
   // Components
-  getComponents(filters?: { type?: string; batchId?: string; qualityStatus?: string; search?: string }): ComponentRecord[] {
+  getComponents(filters?: { type?: string; batchId?: string; qualityStatus?: string; search?: string; sector?: string }): ComponentRecord[] {
     let list = [...currentState.components];
+    const s = filters?.sector || currentState.activeSector;
+    if (s && s !== 'All') {
+      list = list.filter(c => c.sector === s);
+    }
     if (filters?.type && filters.type !== 'All') {
       list = list.filter(c => c.type.toLowerCase() === filters.type?.toLowerCase());
     }
@@ -182,12 +207,12 @@ export const GeneaTraceStore = {
       list = list.filter(c => c.qualityStatus.toLowerCase() === filters.qualityStatus?.toLowerCase());
     }
     if (filters?.search) {
-      const s = filters.search.toLowerCase();
+      const q = filters.search.toLowerCase();
       list = list.filter(c =>
-        c.serialNumber.toLowerCase().includes(s) ||
-        c.componentId.toLowerCase().includes(s) ||
-        c.batchId.toLowerCase().includes(s) ||
-        c.supplier.toLowerCase().includes(s)
+        c.serialNumber.toLowerCase().includes(q) ||
+        c.componentId.toLowerCase().includes(q) ||
+        c.batchId.toLowerCase().includes(q) ||
+        c.supplier.toLowerCase().includes(q)
       );
     }
     return list;
@@ -198,8 +223,13 @@ export const GeneaTraceStore = {
   },
 
   // Products
-  getProducts(): ProductRecord[] {
-    return [...currentState.products];
+  getProducts(sector?: string): ProductRecord[] {
+    let list = [...currentState.products];
+    const s = sector || currentState.activeSector;
+    if (s && s !== 'All') {
+      list = list.filter(p => p.sector === s);
+    }
+    return list;
   },
 
   getProduct(productId: string): ProductRecord | undefined {
@@ -237,22 +267,12 @@ export const GeneaTraceStore = {
     const affectedComponents = currentState.components.filter(c => c.batchId.toUpperCase() === batchId.toUpperCase());
     const componentSerials = new Set(affectedComponents.map(c => c.serialNumber));
 
-    // Find all products containing any of these component serials
     const affectedProducts = currentState.products.filter(p => {
-      const comps = p.installedComponents;
-      return (
-        componentSerials.has(comps.displaySerial) ||
-        componentSerials.has(comps.batterySerial) ||
-        componentSerials.has(comps.pcbSerial) ||
-        componentSerials.has(comps.cameraSerial) ||
-        componentSerials.has(comps.speakerSerial) ||
-        componentSerials.has(comps.frameSerial)
-      );
+      const installedValues = Object.values(p.installedComponents);
+      return installedValues.some(val => componentSerials.has(val));
     });
 
     const affectedProductIds = new Set(affectedProducts.map(p => p.productId));
-
-    // Find all shipments containing affected products
     const affectedShipments = currentState.shipments.filter(s =>
       s.productIds.some(pid => affectedProductIds.has(pid))
     );
@@ -282,7 +302,7 @@ export const GeneaTraceStore = {
     };
   },
 
-  // Backward Traceability: Product ID or IMEI -> Components -> Batches -> Manufacturing Lineage
+  // Backward Traceability
   traceBackwardFromProduct(productIdOrImei: string): {
     product: ProductRecord | undefined;
     components: { category: string; serial: string; batch: string; record?: ComponentRecord }[];
@@ -294,7 +314,7 @@ export const GeneaTraceStore = {
     const cleanQuery = productIdOrImei.trim().toUpperCase();
 
     const product = currentState.products.find(
-      p => p.productId.toUpperCase() === cleanQuery || p.imeiMasked === cleanQuery
+      p => p.productId.toUpperCase() === cleanQuery || p.imeiMasked.toUpperCase() === cleanQuery
     );
 
     if (!product) {
@@ -307,22 +327,21 @@ export const GeneaTraceStore = {
       };
     }
 
-    const comps = [
-      { category: 'Display', serial: product.installedComponents.displaySerial, batch: product.installedBatches.displayBatch },
-      { category: 'Battery', serial: product.installedComponents.batterySerial, batch: product.installedBatches.batteryBatch },
-      { category: 'Main PCB', serial: product.installedComponents.pcbSerial, batch: product.installedBatches.pcbBatch },
-      { category: 'Camera Module', serial: product.installedComponents.cameraSerial, batch: product.installedBatches.cameraBatch },
-      { category: 'Speaker', serial: product.installedComponents.speakerSerial, batch: product.installedBatches.speakerBatch },
-      { category: 'Frame', serial: product.installedComponents.frameSerial, batch: product.installedBatches.frameBatch },
-    ].map(item => ({
-      ...item,
-      record: currentState.components.find(c => c.serialNumber === item.serial)
-    }));
+    const comps = Object.entries(product.installedComponents).map(([category, serial]) => {
+      const rec = currentState.components.find(c => c.serialNumber === serial);
+      const batch = rec?.batchId || serial.split('-')[0] || 'N/A';
+      return {
+        category,
+        serial,
+        batch,
+        record: rec
+      };
+    });
 
-    // Collect assembly events for product and manufacturing events for installed display
     const productEvents = currentState.events.filter(e => e.entityId === product.productId);
-    const displayEvents = currentState.events.filter(e => e.entityId === product.installedComponents.displaySerial);
-    const allEvents = [...displayEvents, ...productEvents];
+    const displaySerial = product.installedComponents['Display Module'] || Object.values(product.installedComponents)[0];
+    const compEvents = displaySerial ? currentState.events.filter(e => e.entityId === displaySerial) : [];
+    const allEvents = [...compEvents, ...productEvents];
 
     const shipment = currentState.shipments.find(s => s.shipmentId === product.shipmentId);
     const traversalTimeMs = Math.max(15, Math.round((performance.now() - start) * 100) / 100);
@@ -345,7 +364,6 @@ export const GeneaTraceStore = {
       batch.defectReason = reason;
     }
 
-    // Flag affected components
     currentState.components.forEach(c => {
       if (c.batchId.toUpperCase() === batchId.toUpperCase()) {
         c.status = 'Recalled';
@@ -354,7 +372,6 @@ export const GeneaTraceStore = {
       }
     });
 
-    // Flag affected products
     const affectedProdIds = new Set(trace.affectedProducts.map(p => p.productId));
     currentState.products.forEach(p => {
       if (affectedProdIds.has(p.productId)) {
@@ -362,10 +379,10 @@ export const GeneaTraceStore = {
       }
     });
 
-    // Record or update recall case
     const recallCase: RecallCase = {
       recallId: `REC-${Date.now().toString().slice(-4)}`,
       batchId: batchId.toUpperCase(),
+      sector: batch?.sector || 'Consumer Electronics',
       componentType: batch?.componentType || 'Display',
       defectCategory: 'Thermal Delamination & Stress Fracture',
       severity: 'Critical',
@@ -383,7 +400,7 @@ export const GeneaTraceStore = {
       rootCause: 'Machine process tolerance drift detected in automated optical inspection audit.',
       actionsTaken: [
         `Batch ${batchId} flagged defective in Merkle-DAG ledger`,
-        `Identified ${trace.affectedProducts.length} finished devices in ${trace.traversalTimeMs}ms`,
+        `Identified ${trace.affectedProducts.length} finished units in ${trace.traversalTimeMs}ms`,
         `Dispatched automatic hold commands to ${trace.affectedShipments.length} active carrier manifests`,
         `Digital Product Passport flags pushed to consumer verification portal`
       ]
@@ -408,13 +425,13 @@ export const GeneaTraceStore = {
         signatureValid: false,
         componentsAuthentic: false,
         status: 'Confirmed Tampering',
-        anomalyDetails: 'IMEI signature mismatch detected: Display cryptographic commitment differs from factory DPP manifest. Unofficial screen module detected.',
+        anomalyDetails: 'Identity signature mismatch detected: Hardware cryptographic commitment differs from factory DPP manifest. Unofficial module detected.',
         lockCommandStatus: 'Authorized',
         simulatedAuditLogs: [
           ...currentState.securityStatus.simulatedAuditLogs,
           {
             timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
-            event: 'Component Identity Anomaly Detected (Display Serial Mismatch)',
+            event: 'Component Identity Anomaly Detected (Hardware Commitment Mismatch)',
             actor: 'GeneaTrace DPP Attestation Agent (v2.4)',
             hash: pseudoHash(`ANOMALY-${Date.now()}`)
           },
@@ -452,14 +469,14 @@ export const GeneaTraceStore = {
         ...currentState.securityStatus.simulatedAuditLogs,
         {
           timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
-          event: 'Signed Lock Command Delivered via Apple/Android Enterprise MDM API',
+          event: 'Signed Lock Command Delivered via Enterprise MDM API',
           actor: 'GeneaTrace Security Gateway',
           hash: pseudoHash(`LOCK-CMD-${Date.now()}`)
         },
         {
           timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
           event: 'Device Screen Secured: Red Tamper Warning Lock Activated',
-          actor: 'Managed Device Client Agent (GT-DEV-00000851)',
+          actor: `Managed Client Agent (${deviceId})`,
           hash: pseudoHash(`EXEC-CONFIRM-${Date.now()}`)
         }
       ]

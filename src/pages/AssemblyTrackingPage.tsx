@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Smartphone,
+  BatteryCharging,
+  HeartPulse,
+  Plane,
   Cpu,
   Layers,
   Activity,
@@ -10,23 +13,53 @@ import {
   ArrowRight,
   ExternalLink,
   ShieldCheck,
-  Zap,
-  Radio
+  Zap
 } from 'lucide-react';
 import { GeneaTraceStore } from '../services/dataStore';
+import { IndustrySector } from '../types';
 
 export const AssemblyTrackingPage: React.FC = () => {
   const navigate = useNavigate();
-  const products = GeneaTraceStore.getProducts();
+  const [selectedSector, setSelectedSector] = useState<IndustrySector>('Consumer Electronics');
+  const products = GeneaTraceStore.getProducts(selectedSector);
 
-  const assemblySteps = [
-    { id: '1', step: 'PCB Assembly', machine: 'SMT-01', eventId: 'EVT-100201', desc: 'Main logic board placement & solder paste reflow', time: '11:00:00', result: 'OK', status: 'Completed' },
-    { id: '2', step: 'Component Mounting', machine: 'AS-02', eventId: 'EVT-100202', desc: 'Display, camera arrays & battery automated robotic mounting', time: '11:12:00', result: 'OK', status: 'Completed' },
-    { id: '3', step: 'Main Assembly', machine: 'AS-03', eventId: 'EVT-100203', desc: 'Internal chassis routing, shielding & acoustic sealing', time: '11:24:00', result: 'OK', status: 'Completed' },
-    { id: '4', step: 'Final Assembly & Sealing', machine: 'FA-01', eventId: 'EVT-100204', desc: 'IP68 waterproof seal, titanium rim screw fastening', time: '11:36:00', result: 'OK', status: 'Completed' },
-    { id: '5', step: 'Functional Test', machine: 'FT-01', eventId: 'EVT-100205', desc: 'Screen color calibration, RF signal BIST & sensor audit', time: '11:48:00', result: 'OK', status: 'Completed' },
-    { id: '6', step: 'Packaging & DPP Laser', machine: 'PK-01', eventId: 'EVT-100206', desc: 'Laser engraving QR code, box sealing & Merkle commit', time: '12:00:00', result: 'OK', status: 'Completed' },
-  ];
+  // Sector-Specific Assembly Stages
+  const sectorAssemblyLines: Record<IndustrySector, any[]> = {
+    'Consumer Electronics': [
+      { id: '1', step: 'PCB Assembly', machine: 'SMT-01', eventId: 'EVT-100201', desc: 'Main logic board placement & solder paste reflow', time: '11:00:00', result: 'OK' },
+      { id: '2', step: 'Component Mounting', machine: 'AS-02', eventId: 'EVT-100202', desc: 'Display, camera arrays & battery automated robotic mounting', time: '11:12:00', result: 'OK' },
+      { id: '3', step: 'Main Assembly', machine: 'AS-03', eventId: 'EVT-100203', desc: 'Internal chassis routing, shielding & acoustic sealing', time: '11:24:00', result: 'OK' },
+      { id: '4', step: 'Final Assembly & Sealing', machine: 'FA-01', eventId: 'EVT-100204', desc: 'IP68 waterproof seal, titanium rim screw fastening', time: '11:36:00', result: 'OK' },
+      { id: '5', step: 'Functional Test', machine: 'FT-01', eventId: 'EVT-100205', desc: 'Screen color calibration, RF signal BIST & sensor audit', time: '11:48:00', result: 'OK' },
+      { id: '6', step: 'Packaging & DPP Laser', machine: 'PK-01', eventId: 'EVT-100206', desc: 'Laser engraving QR code, box sealing & Merkle commit', time: '12:00:00', result: 'OK' },
+    ],
+    'Automotive & EV Battery': [
+      { id: '1', step: 'Ultrasonic Tab Welding', machine: 'WELD-01', eventId: 'EVT-EVB-01', desc: 'Laser and ultrasonic joining of 96 prismatic cell tabs', time: '14:00:00', result: 'OK' },
+      { id: '2', step: 'Thermal Barrier Layer', machine: 'INS-02', eventId: 'EVT-EVB-02', desc: 'Aerogel phase-change insulation barrier between modules', time: '14:15:00', result: 'OK' },
+      { id: '3', step: 'Cold Plate Pressure Test', machine: 'PR-03', eventId: 'EVT-EVB-03', desc: 'Glycol liquid cooling loop 4.5 Bar helium leak check', time: '14:30:00', result: 'OK' },
+      { id: '4', step: 'BMS Wire Harness AOI', machine: 'BMS-04', eventId: 'EVT-EVB-04', desc: 'Optical inspection of cell monitoring sensor harness', time: '14:45:00', result: 'OK' },
+      { id: '5', step: '800V Hi-Pot Dielectric Test', machine: 'HIPOT-05', eventId: 'EVT-EVB-05', desc: '2500V DC high-voltage isolation safety attestation', time: '15:00:00', result: 'OK' },
+      { id: '6', step: 'EU Battery DPP QR Laser', machine: 'LASER-06', eventId: 'EVT-EVB-06', desc: 'Permanent QR code marking compliant with EU 2023/1542', time: '15:15:00', result: 'OK' },
+    ],
+    'Medical Technology': [
+      { id: '1', step: 'Titanium Feedthrough Weld', machine: 'LASER-M1', eventId: 'EVT-MED-01', desc: 'Hermetic glass-to-metal seal laser micro-welding', time: '09:00:00', result: 'OK' },
+      { id: '2', step: 'ASIC Telemetry Wirebond', machine: 'BOND-M2', eventId: 'EVT-MED-02', desc: 'Gold wire bonding for sub-microamp telemetry chip', time: '09:20:00', result: 'OK' },
+      { id: '3', step: 'Helium Fine Leak BIST', machine: 'LEAK-M3', eventId: 'EVT-MED-03', desc: 'Mass spectrometer hermetic rate < 10^-9 atm cc/sec', time: '09:40:00', result: 'OK' },
+      { id: '4', step: 'Bio-Polymer Encapsulation', machine: 'ENC-M4', eventId: 'EVT-MED-04', desc: 'Medical Grade silicone header attachment & curing', time: '10:00:00', result: 'OK' },
+      { id: '5', step: 'EtO Sterilization Validation', machine: 'STER-M5', eventId: 'EVT-MED-05', desc: 'Ethylene oxide exposure cycle & biological indicator', time: '10:30:00', result: 'OK' },
+      { id: '6', step: 'FDA UDI Laser Engraving', machine: 'UDI-M6', eventId: 'EVT-MED-06', desc: 'Direct Part Marking of UDI barcode 21 CFR 830', time: '11:00:00', result: 'OK' },
+    ],
+    'Industrial & Aerospace': [
+      { id: '1', step: 'Class 3 IPC-A-610 SMT', machine: 'AERO-SMT1', eventId: 'EVT-AVN-01', desc: 'High-reliability lead-free solder assembly with X-Ray', time: '08:00:00', result: 'OK' },
+      { id: '2', step: 'Parylene Conformal Coat', machine: 'COAT-02', eventId: 'EVT-AVN-02', desc: 'Moisture and dielectric vapor deposition coating', time: '08:30:00', result: 'OK' },
+      { id: '3', step: 'Thermal Vacuum Cycling', machine: 'TVAC-03', eventId: 'EVT-AVN-03', desc: '-55°C to +125°C 10^-5 Torr chamber burn-in cycle', time: '09:15:00', result: 'OK' },
+      { id: '4', step: 'Tri-Axis Random Vibration', machine: 'VIB-04', eventId: 'EVT-AVN-04', desc: 'MIL-STD-810H random vibration sweep 20G RMS', time: '10:00:00', result: 'OK' },
+      { id: '5', step: 'DO-254 Hardware BIST', machine: 'TEST-05', eventId: 'EVT-AVN-05', desc: 'Fault injection test on triple-redundant flight logic', time: '10:45:00', result: 'OK' },
+      { id: '6', step: 'Flight Proven Seal Laser', machine: 'SEAL-06', eventId: 'EVT-AVN-06', desc: 'Airworthiness certification commitment to ledger', time: '11:30:00', result: 'OK' },
+    ]
+  };
+
+  const steps = sectorAssemblyLines[selectedSector];
 
   return (
     <div className="space-y-6">
@@ -34,38 +67,53 @@ export const AssemblyTrackingPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-            <Smartphone className="text-indigo-400" size={24} />
-            <span>Smartphone Final Assembly Line Tracking</span>
+            <Cpu className="text-indigo-400" size={24} />
+            <span>Industrial Assembly Line Tracking &amp; Work Orders</span>
           </h1>
           <p className="text-sm text-slate-400 mt-0.5">
-            Sequential work order execution across Cleanroom Mega-Hub 4, Line 2. Unit-level event generation for every section.
+            Sequential work order execution across Cleanroom &amp; Gigafactory assembly cells. Unit-level event generation for every section.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-xs font-mono text-emerald-400">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-            <span>Conveyor Line 2 Active (99.4% OEE)</span>
-          </span>
+        {/* Sector Tabs */}
+        <div className="flex items-center p-1 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono">
+          {(['Consumer Electronics', 'Automotive & EV Battery', 'Medical Technology', 'Industrial & Aerospace'] as IndustrySector[]).map(s => (
+            <button
+              key={s}
+              onClick={() => setSelectedSector(s)}
+              className={`px-3 py-1.5 rounded-md transition-all ${
+                selectedSector === s
+                  ? 'bg-indigo-600 text-white font-bold shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              {s === 'Consumer Electronics' && '📱 Electronics'}
+              {s === 'Automotive & EV Battery' && '🚗 EV Battery'}
+              {s === 'Medical Technology' && '🩺 Medical'}
+              {s === 'Industrial & Aerospace' && '🛰️ Aerospace'}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Assembly Pipeline Visual Cards (Infographic Section 3) */}
+      {/* Assembly Pipeline Visual Cards */}
       <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-white">Sequential Assembly Stages &amp; Recorded Machine Events</h3>
-          <span className="text-xs font-mono text-slate-400">Target Device: GT-DEV-00000851</span>
+          <h3 className="text-sm font-semibold text-white">
+            {selectedSector} — Sequential Assembly Stages &amp; Machine Events
+          </h3>
+          <span className="text-xs font-mono text-indigo-400">Automated MES Cell Line 4</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
-          {assemblySteps.map((step, idx) => (
+          {steps.map((step, idx) => (
             <div
               key={step.id}
               className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 hover:border-indigo-500/50 transition-all flex flex-col justify-between space-y-3"
             >
               <div>
                 <div className="flex items-center justify-between text-[10px] font-mono pb-1 border-b border-slate-800/80">
-                  <span className="text-indigo-400 font-bold">Stage 3.{idx + 1}</span>
+                  <span className="text-indigo-400 font-bold">Stage {idx + 1}</span>
                   <span className="px-1.5 py-0.2 rounded bg-slate-900 text-slate-300">{step.machine}</span>
                 </div>
                 <h4 className="font-bold text-xs text-white mt-2 leading-tight">{step.step}</h4>
@@ -78,7 +126,7 @@ export const AssemblyTrackingPage: React.FC = () => {
                   <span className="text-cyan-400">{step.eventId}</span>
                 </div>
                 <div className="flex justify-between text-slate-500">
-                  <span>Inspection:</span>
+                  <span>Status:</span>
                   <span className="text-emerald-400 font-bold">{step.result}</span>
                 </div>
               </div>
@@ -87,22 +135,17 @@ export const AssemblyTrackingPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Assembled Devices Stream */}
+      {/* Tracked Products for this Sector */}
       <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-semibold text-white">Recently Assembled Smartphones ({products.length} Tracked)</h3>
+            <h3 className="text-sm font-semibold text-white">
+              {selectedSector} — Assembled Products ({products.length} Tracked)
+            </h3>
             <p className="text-xs text-slate-400">
-              Each completed assembly links exactly one serial from Display, Battery, PCB, Camera, Speaker, and Frame.
+              Each unit links its respective registered sub-assemblies into an immutable Digital Product Passport.
             </p>
           </div>
-          <button
-            onClick={() => navigate('/passport/GT-DEV-00000851')}
-            className="text-xs font-mono text-cyan-400 hover:underline flex items-center gap-1"
-          >
-            <span>Flagship: GT-DEV-00000851</span>
-            <ExternalLink size={12} />
-          </button>
         </div>
 
         <div className="max-h-96 overflow-y-auto rounded-lg border border-slate-800">
@@ -110,22 +153,20 @@ export const AssemblyTrackingPage: React.FC = () => {
             <thead className="bg-slate-950 text-slate-400 sticky top-0 border-b border-slate-800">
               <tr>
                 <th className="py-2.5 px-3">Product ID</th>
-                <th className="py-2.5 px-3">Display Serial</th>
-                <th className="py-2.5 px-3">Battery Serial</th>
-                <th className="py-2.5 px-3">PCB Serial</th>
-                <th className="py-2.5 px-3">Camera Serial</th>
+                <th className="py-2.5 px-3">Product Model</th>
+                <th className="py-2.5 px-3">Identifier / UDI</th>
+                <th className="py-2.5 px-3">Assembly Facility</th>
                 <th className="py-2.5 px-3">Status</th>
-                <th className="py-2.5 px-3 text-right">Passport</th>
+                <th className="py-2.5 px-3 text-right">Digital Passport</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60">
-              {products.slice(0, 20).map(p => (
+              {products.map(p => (
                 <tr key={p.productId} className="hover:bg-slate-800/40 transition-colors">
                   <td className="py-2 px-3 font-bold text-white">{p.productId}</td>
-                  <td className="py-2 px-3 text-cyan-400">{p.installedComponents.displaySerial}</td>
-                  <td className="py-2 px-3 text-slate-300">{p.installedComponents.batterySerial}</td>
-                  <td className="py-2 px-3 text-slate-300">{p.installedComponents.pcbSerial}</td>
-                  <td className="py-2 px-3 text-slate-300">{p.installedComponents.cameraSerial}</td>
+                  <td className="py-2 px-3 text-cyan-400">{p.productModel}</td>
+                  <td className="py-2 px-3 text-slate-400 truncate max-w-[160px]">{p.imeiMasked}</td>
+                  <td className="py-2 px-3 text-slate-300">{p.assemblyFacility}</td>
                   <td className="py-2 px-3">
                     <span
                       className={`px-1.5 py-0.5 rounded text-[10px] ${
@@ -140,9 +181,10 @@ export const AssemblyTrackingPage: React.FC = () => {
                   <td className="py-2 px-3 text-right">
                     <button
                       onClick={() => navigate(`/passport/${p.productId}`)}
-                      className="text-cyan-400 hover:underline"
+                      className="text-cyan-400 hover:underline flex items-center gap-1 ml-auto"
                     >
-                      View
+                      <span>Open DPP</span>
+                      <ExternalLink size={10} />
                     </button>
                   </td>
                 </tr>

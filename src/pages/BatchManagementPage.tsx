@@ -14,23 +14,29 @@ import {
   Download,
   AlertTriangle,
   Blocks,
-  X
+  X,
+  BatteryCharging,
+  HeartPulse,
+  Plane,
+  Smartphone
 } from 'lucide-react';
 import { GeneaTraceStore } from '../services/dataStore';
-import { BatchRecord, ComponentCategory } from '../types';
+import { BatchRecord, ComponentCategory, IndustrySector } from '../types';
 
 export const BatchManagementPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const initialSearch = searchParams.get('search') || '';
 
-  const [batches, setBatches] = useState<BatchRecord[]>(GeneaTraceStore.getBatches());
+  const [batches, setBatches] = useState<BatchRecord[]>(GeneaTraceStore.getBatches('All'));
   const [selectedBatchId, setSelectedBatchId] = useState<string>('ABC');
   const [searchTerm, setSearchTerm] = useState(initialSearch);
+  const [selectedSectorFilter, setSelectedSectorFilter] = useState<string>('All');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // New Batch Form State
   const [newBatchId, setNewBatchId] = useState('');
+  const [newSector, setNewSector] = useState<IndustrySector>('Consumer Electronics');
   const [newType, setNewType] = useState<ComponentCategory>('Display');
   const [newBatchSize, setNewBatchSize] = useState<number>(100);
   const [newSupplier, setNewSupplier] = useState('');
@@ -45,21 +51,27 @@ export const BatchManagementPage: React.FC = () => {
   // Components belonging to the selected batch
   const batchComponents = useMemo(() => {
     if (!activeBatch) return [];
-    return GeneaTraceStore.getComponents({ batchId: activeBatch.batchId });
+    return GeneaTraceStore.getComponents({ batchId: activeBatch.batchId, sector: 'All' });
   }, [activeBatch]);
 
   // Filter batches list
   const filteredBatches = useMemo(() => {
-    if (!searchTerm) return batches;
-    return batches.filter(
-      b =>
-        b.batchId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        b.componentType.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        b.supplier.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [batches, searchTerm]);
+    let list = batches;
+    if (selectedSectorFilter !== 'All') {
+      list = list.filter(b => b.sector === selectedSectorFilter);
+    }
+    if (searchTerm) {
+      list = list.filter(
+        b =>
+          b.batchId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          b.componentType.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          b.supplier.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    return list;
+  }, [batches, selectedSectorFilter, searchTerm]);
 
-  // Generate preview of serial numbers
+  // Preview serial numbers
   const previewSerials = useMemo(() => {
     const id = newBatchId.trim().toUpperCase() || 'NEW';
     const count = Math.min(newBatchSize || 10, 5);
@@ -74,21 +86,22 @@ export const BatchManagementPage: React.FC = () => {
     e.preventDefault();
     setFormError('');
     if (!newBatchId.trim()) {
-      setFormError('Batch ID is required (e.g. DSP-02)');
+      setFormError('Batch ID is required (e.g. CELL-97, DSP-02)');
       return;
     }
 
     try {
       GeneaTraceStore.createBatch({
         batchId: newBatchId.trim().toUpperCase(),
+        sector: newSector,
         componentType: newType,
         batchSize: Number(newBatchSize) || 100,
-        supplier: newSupplier.trim() || 'Samsung Electronics Global Supply',
-        facility: newFacility.trim() || 'Cleanroom Mega-Facility Alpha',
+        supplier: newSupplier.trim() || 'Global Certified Enterprise Tier-1 Supplier',
+        facility: newFacility.trim() || 'Industrial Smart Cleanroom Facility Alpha',
         productionDate: new Date().toISOString().split('T')[0]
       });
 
-      const updated = GeneaTraceStore.getBatches();
+      const updated = GeneaTraceStore.getBatches('All');
       setBatches(updated);
       setSelectedBatchId(newBatchId.trim().toUpperCase());
       setIsCreateModalOpen(false);
@@ -101,7 +114,7 @@ export const BatchManagementPage: React.FC = () => {
   const handleMarkDefective = (batchId: string) => {
     if (window.confirm(`Mark Batch ${batchId} as Defective? This will automatically initiate precision recall traversal and flag all affected finished products.`)) {
       GeneaTraceStore.triggerBatchRecall(batchId, 'Critical defect flagged by QA inspection during reliability stress test.');
-      setBatches(GeneaTraceStore.getBatches());
+      setBatches(GeneaTraceStore.getBatches('All'));
       navigate('/recalls');
     }
   };
@@ -113,10 +126,10 @@ export const BatchManagementPage: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
             <Layers className="text-cyan-400" size={24} />
-            <span>Manufacturing Batch Management</span>
+            <span>Industrial Batch Management &amp; Serialization</span>
           </h1>
           <p className="text-sm text-slate-400 mt-0.5">
-            Cryptographic batch grouping with individual unit-level serial number generation (100 units/batch).
+            Cryptographic batch grouping with individual unit-level serial number generation across industries.
           </p>
         </div>
 
@@ -136,15 +149,29 @@ export const BatchManagementPage: React.FC = () => {
         {/* Left Column: Batches Selector */}
         <div className="lg:col-span-4 space-y-4">
           <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-3">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search batches..."
-                value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-200 placeholder-slate-500 font-mono focus:outline-none focus:border-cyan-500"
-              />
-              <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" />
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  placeholder="Search batches..."
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  className="w-full pl-8 pr-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-200 placeholder-slate-500 font-mono focus:outline-none focus:border-cyan-500"
+                />
+                <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" />
+              </div>
+
+              <select
+                value={selectedSectorFilter}
+                onChange={e => setSelectedSectorFilter(e.target.value)}
+                className="px-2 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-[11px] text-slate-300 font-mono"
+              >
+                <option value="All">All Sectors</option>
+                <option value="Consumer Electronics">Electronics</option>
+                <option value="Automotive & EV Battery">EV Battery</option>
+                <option value="Medical Technology">Medical</option>
+                <option value="Industrial & Aerospace">Aerospace</option>
+              </select>
             </div>
 
             <div className="space-y-2 max-h-[600px] overflow-y-auto">
@@ -183,8 +210,8 @@ export const BatchManagementPage: React.FC = () => {
                     </div>
 
                     <div className="mt-2 text-xs text-slate-400 flex items-center justify-between font-mono">
-                      <span>Size: {b.batchSize} units</span>
-                      <span className="text-[11px] text-slate-500">{b.productionDate}</span>
+                      <span className="text-cyan-400 text-[10px]">{b.sector}</span>
+                      <span className="text-[11px] text-slate-500">{b.batchSize} units</span>
                     </div>
                   </div>
                 );
@@ -211,6 +238,9 @@ export const BatchManagementPage: React.FC = () => {
                       <h2 className="text-xl font-bold text-white font-mono">Batch ID: {activeBatch.batchId}</h2>
                       <span className="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-xs font-semibold">
                         {activeBatch.componentType}
+                      </span>
+                      <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-xs font-mono">
+                        {activeBatch.sector}
                       </span>
                       <span
                         className={`px-2 py-0.5 rounded text-xs font-bold font-mono ${
@@ -278,15 +308,15 @@ export const BatchManagementPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* 100 Individual Serials Table */}
+              {/* Individual Serials Table */}
               <div className="p-5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-sm font-semibold text-white">
-                      Individual Unit Serial Registry ({batchComponents.length} units)
+                      Unit Serial Registry ({batchComponents.length} units in Batch {activeBatch.batchId})
                     </h3>
                     <p className="text-xs text-slate-400">
-                      Each component possesses a distinct cryptographic serial. ABC is the batch identifier; ABC-0001 is the unit serial.
+                      Individual unit-level identification. {activeBatch.batchId} is the batch; {activeBatch.batchId}-0001 is the unit serial.
                     </p>
                   </div>
                   <span className="text-xs font-mono text-slate-400">Showing all {batchComponents.length} units</span>
@@ -298,6 +328,7 @@ export const BatchManagementPage: React.FC = () => {
                       <tr>
                         <th className="py-2.5 px-3">Serial Number</th>
                         <th className="py-2.5 px-3">Component ID</th>
+                        <th className="py-2.5 px-3">Sector</th>
                         <th className="py-2.5 px-3">Status</th>
                         <th className="py-2.5 px-3">Quality</th>
                         <th className="py-2.5 px-3">Assigned Product</th>
@@ -309,6 +340,7 @@ export const BatchManagementPage: React.FC = () => {
                         <tr key={c.serialNumber} className="hover:bg-slate-800/50 transition-colors">
                           <td className="py-2 px-3 font-bold text-cyan-400">{c.serialNumber}</td>
                           <td className="py-2 px-3 text-slate-300">{c.componentId}</td>
+                          <td className="py-2 px-3 text-slate-400 text-[10px]">{c.sector}</td>
                           <td className="py-2 px-3">
                             <span
                               className={`px-1.5 py-0.5 rounded text-[10px] ${
@@ -377,7 +409,21 @@ export const BatchManagementPage: React.FC = () => {
             <form onSubmit={handleCreateBatch} className="space-y-4 text-xs font-sans">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-slate-400 mb-1 font-medium">Component Category</label>
+                  <label className="block text-slate-400 mb-1 font-medium">Industry Sector</label>
+                  <select
+                    value={newSector}
+                    onChange={e => setNewSector(e.target.value as IndustrySector)}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
+                  >
+                    <option value="Consumer Electronics">Consumer Electronics</option>
+                    <option value="Automotive & EV Battery">Automotive & EV Battery</option>
+                    <option value="Medical Technology">Medical Technology</option>
+                    <option value="Industrial & Aerospace">Industrial & Aerospace</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-slate-400 mb-1 font-medium">Component Type</label>
                   <select
                     value={newType}
                     onChange={e => setNewType(e.target.value as ComponentCategory)}
@@ -387,35 +433,41 @@ export const BatchManagementPage: React.FC = () => {
                     <option value="Battery">Battery</option>
                     <option value="Main PCB">Main PCB</option>
                     <option value="Camera Module">Camera Module</option>
-                    <option value="Speaker">Speaker</option>
+                    <option value="Prismatic Cell">Prismatic Cell (EV)</option>
+                    <option value="BMS Module">BMS Module (EV)</option>
+                    <option value="Thermal Cooling Plate">Thermal Cooling Plate (EV)</option>
+                    <option value="Biocompatible Housing">Biocompatible Housing (Medical)</option>
+                    <option value="Telemetry ASIC">Telemetry ASIC (Medical)</option>
+                    <option value="Radiation-Tolerant MCU">Radiation-Tolerant MCU (Aerospace)</option>
                     <option value="Frame">Frame</option>
-                    <option value="Sensors">Sensors</option>
                     <option value="Other">Other</option>
                   </select>
                 </div>
+              </div>
 
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-slate-400 mb-1 font-medium">Batch ID Code (e.g. DSP-02)</label>
+                  <label className="block text-slate-400 mb-1 font-medium">Batch ID Code (e.g. CELL-97)</label>
                   <input
                     type="text"
                     value={newBatchId}
                     onChange={e => setNewBatchId(e.target.value)}
-                    placeholder="DSP-02"
+                    placeholder="CELL-97"
                     className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
                   />
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-slate-400 mb-1 font-medium">Batch Size (Units to Generate)</label>
-                <input
-                  type="number"
-                  value={newBatchSize}
-                  onChange={e => setNewBatchSize(Number(e.target.value))}
-                  min={1}
-                  max={500}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
-                />
+                <div>
+                  <label className="block text-slate-400 mb-1 font-medium">Batch Size (Units to Generate)</label>
+                  <input
+                    type="number"
+                    value={newBatchSize}
+                    onChange={e => setNewBatchSize(Number(e.target.value))}
+                    min={1}
+                    max={500}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
+                  />
+                </div>
               </div>
 
               <div>
@@ -424,7 +476,7 @@ export const BatchManagementPage: React.FC = () => {
                   type="text"
                   value={newSupplier}
                   onChange={e => setNewSupplier(e.target.value)}
-                  placeholder="Samsung Display Corp / Sony Semiconductor"
+                  placeholder="Northvolt Gigafactory / CATL / Medtronic / Sony"
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
                 />
               </div>
@@ -432,7 +484,7 @@ export const BatchManagementPage: React.FC = () => {
               {/* Preview of serial numbers */}
               <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 space-y-1.5">
                 <span className="text-[11px] font-mono uppercase text-slate-400 font-semibold">
-                  Serial Number Range Preview:
+                  Serial Range Preview:
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {previewSerials.map(s => (

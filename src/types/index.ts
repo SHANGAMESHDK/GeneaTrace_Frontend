@@ -1,4 +1,11 @@
+export type IndustrySector =
+  | 'Consumer Electronics'
+  | 'Automotive & EV Battery'
+  | 'Medical Technology'
+  | 'Industrial & Aerospace';
+
 export type ComponentCategory =
+  // Consumer Electronics
   | 'Display'
   | 'Battery'
   | 'Main PCB'
@@ -6,7 +13,22 @@ export type ComponentCategory =
   | 'Speaker'
   | 'Frame'
   | 'Sensors'
-  | 'Other';
+  | 'Other'
+  // Automotive & EV Battery
+  | 'Prismatic Cell'
+  | 'BMS Module'
+  | 'Thermal Cooling Plate'
+  | 'High-Voltage Contactor'
+  | 'Busbar System'
+  // Medical Technology
+  | 'Biocompatible Housing'
+  | 'Telemetry ASIC'
+  | 'Hermetic Feedthrough'
+  | 'Micro-Electrode'
+  // Industrial & Aerospace
+  | 'Radiation-Tolerant MCU'
+  | 'MIL-SPEC Enclosure'
+  | 'Fiber-Optic Gyroscope';
 
 export type ComponentStatus =
   | 'Registered'
@@ -18,9 +40,10 @@ export type ComponentStatus =
 
 export interface ComponentRecord {
   componentId: string;
-  serialNumber: string; // e.g. ABC-0042
-  batchId: string;      // e.g. ABC
+  serialNumber: string;
+  batchId: string;
   type: ComponentCategory;
+  sector: IndustrySector;
   manufacturer: string;
   supplier: string;
   location: string;
@@ -34,9 +57,10 @@ export interface ComponentRecord {
 }
 
 export interface BatchRecord {
-  batchId: string; // e.g. ABC
+  batchId: string;
+  sector: IndustrySector;
   componentType: ComponentCategory;
-  batchSize: number; // e.g. 100
+  batchSize: number;
   serialPrefix: string;
   supplier: string;
   facility: string;
@@ -62,11 +86,11 @@ export type OperationState =
 export interface ManufacturingEvent {
   eventId: string;
   entityType: 'Component' | 'Product';
-  entityId: string; // ABC-0042 or GT-DEV-00000851
+  entityId: string;
   batchId: string;
   operationId: string;
   operationName: string;
-  section: 'Component Manufacturing' | 'Smartphone Assembly';
+  section: string;
   machineId: string;
   operator: string;
   startTimestamp: string;
@@ -81,26 +105,13 @@ export interface ManufacturingEvent {
 }
 
 export interface ProductRecord {
-  productId: string; // e.g. GT-DEV-00000851
+  productId: string; // e.g. GT-DEV-00000851, GT-EVB-00094120, GT-MED-00041289
   productModel: string;
-  imeiMasked: string; // e.g. 356789123456780
-  installedComponents: {
-    displaySerial: string;
-    batterySerial: string;
-    pcbSerial: string;
-    cameraSerial: string;
-    speakerSerial: string;
-    frameSerial: string;
-    othersSerial?: string;
-  };
-  installedBatches: {
-    displayBatch: string;
-    batteryBatch: string;
-    pcbBatch: string;
-    cameraBatch: string;
-    speakerBatch: string;
-    frameBatch: string;
-  };
+  sector: IndustrySector;
+  productTypeDisplay: string; // e.g. 'Smartphone', '800V EV Battery Pack', 'Cardiac Implant'
+  imeiMasked: string; // Serial / Unique Device Identifier (UDI / VIN association)
+  installedComponents: Record<string, string>;
+  installedBatches: Record<string, string>;
   assemblyDate: string;
   assemblyFacility: string;
   status: 'Assembled' | 'In Quality Check' | 'Packed' | 'Shipped' | 'Delivered' | 'Recall Flagged' | 'Locked';
@@ -111,6 +122,14 @@ export interface ProductRecord {
   isTampered?: boolean;
   isLocked?: boolean;
   lockReason?: string;
+
+  // Multi-Industry Compliance & ESG Metrics
+  complianceStandards?: string[];
+  carbonFootprintKg?: number;
+  recycledContentPct?: number;
+  esgScore?: string;
+  batteryChemistry?: string; // For EV Battery DPP
+  stateOfHealth?: number;    // % SoH
 }
 
 export interface ShipmentCheckpoint {
@@ -123,7 +142,7 @@ export interface ShipmentCheckpoint {
 }
 
 export interface ShipmentRecord {
-  shipmentId: string; // e.g. GT-SHP-00000326
+  shipmentId: string;
   packageIds: string[];
   productIds: string[];
   origin: string;
@@ -141,6 +160,7 @@ export interface ShipmentRecord {
 export interface RecallCase {
   recallId: string;
   batchId: string;
+  sector: IndustrySector;
   componentType: ComponentCategory;
   defectCategory: string;
   severity: 'Low' | 'Medium' | 'High' | 'Critical';

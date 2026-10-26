@@ -13,9 +13,12 @@ import {
   Copy,
   ExternalLink,
   CheckCircle2,
-  Lock,
-  Eye,
-  FileText
+  BatteryCharging,
+  HeartPulse,
+  Plane,
+  Leaf,
+  Scale,
+  Award
 } from 'lucide-react';
 import { GeneaTraceStore } from '../services/dataStore';
 import { formatAddress } from '../utils/hashing';
@@ -28,10 +31,9 @@ export const PassportPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<'internal' | 'public'>('internal');
   const [copied, setCopied] = useState(false);
 
-  const product = GeneaTraceStore.getProduct(productId) || GeneaTraceStore.getProduct('GT-DEV-00000851');
-  const events = product ? GeneaTraceStore.getEventsForEntity(product.productId) : [];
-  const displayEvents = product ? GeneaTraceStore.getEventsForEntity(product.installedComponents.displaySerial) : [];
-  const shipment = product ? GeneaTraceStore.getShipment(product.shipmentId) : undefined;
+  const product = GeneaTraceStore.getProduct(productId) || GeneaTraceStore.getProduct('GT-DEV-00000851')!;
+  const events = GeneaTraceStore.getEventsForEntity(product.productId);
+  const shipment = GeneaTraceStore.getShipment(product.shipmentId);
 
   const passportUrl = `${window.location.origin}/passport/${productId}`;
 
@@ -41,21 +43,15 @@ export const PassportPage: React.FC = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  if (!product) {
-    return (
-      <div className="p-12 text-center text-slate-400">
-        <p>Product Passport not found for ID: {productId}</p>
-        <button
-          onClick={() => navigate('/passport/GT-DEV-00000851')}
-          className="mt-4 px-4 py-2 rounded-lg bg-cyan-600 text-white text-xs font-semibold"
-        >
-          View Flagship Passport (GT-DEV-00000851)
-        </button>
-      </div>
-    );
-  }
-
   const isRecallFlagged = product.status === 'Recall Flagged';
+
+  // Sector preset buttons
+  const sectorPresets = [
+    { id: 'GT-DEV-00000851', label: '📱 Smartphone (Galaxy S24)', sector: 'Consumer Electronics' },
+    { id: 'GT-EVB-00094120', label: '🚗 800V EV Battery Pack (EU Battery DPP)', sector: 'Automotive & EV Battery' },
+    { id: 'GT-MED-00041289', label: '🩺 Cardiac Implant (FDA UDI)', sector: 'Medical Technology' },
+    { id: 'GT-AVN-00018902', label: '🛰️ Avionics Controller (FAA DO-254)', sector: 'Industrial & Aerospace' },
+  ];
 
   return (
     <div className="space-y-6">
@@ -65,9 +61,9 @@ export const PassportPage: React.FC = () => {
           <div className="flex items-center gap-3">
             <AlertTriangle className="text-red-400 shrink-0" size={20} />
             <div>
-              <span className="font-bold text-sm text-red-200">DPP Recall Flag Active</span>
+              <span className="font-bold text-sm text-red-200">DPP Precision Recall Flag Active</span>
               <p className="text-xs text-red-300/80">
-                This device carries Display serial <strong className="font-mono text-white">{product.installedComponents.displaySerial}</strong> from defective Batch ABC.
+                This unit carries Display serial <strong className="font-mono text-white">{product.installedComponents['Display Module']}</strong> from defective Batch ABC.
               </p>
             </div>
           </div>
@@ -80,6 +76,28 @@ export const PassportPage: React.FC = () => {
         </div>
       )}
 
+      {/* Cross-Sector Showcase Switcher */}
+      <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800 flex flex-wrap items-center justify-between gap-2">
+        <span className="text-xs font-mono uppercase text-slate-400 font-semibold">
+          Multi-Industry DPP Showcase:
+        </span>
+        <div className="flex flex-wrap gap-2">
+          {sectorPresets.map(preset => (
+            <button
+              key={preset.id}
+              onClick={() => navigate(`/passport/${preset.id}`)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all ${
+                product.productId === preset.id
+                  ? 'bg-cyan-600 text-white font-bold shadow-md shadow-cyan-600/30'
+                  : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
+              }`}
+            >
+              {preset.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Header and View Mode Toggle */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
@@ -89,11 +107,11 @@ export const PassportPage: React.FC = () => {
               <span>Digital Product Passport (DPP)</span>
             </h1>
             <span className="px-2 py-0.5 rounded text-xs font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
-              Demo Verified
+              {product.sector}
             </span>
           </div>
           <p className="text-sm text-slate-400 mt-0.5">
-            Cryptographic identity, immutable component lineage, and lifecycle passport.
+            Immutable blockchain-linked passport compliant with European ESPR, Battery Regulation, and FDA UDI standards.
           </p>
         </div>
 
@@ -117,31 +135,56 @@ export const PassportPage: React.FC = () => {
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            Public Consumer View
+            Public Consumer / Customs View
           </button>
         </div>
       </div>
 
-      {/* Flagship Card with QR Code and Hardware Details */}
+      {/* Main Grid: Left Device Showcase & QR, Right Passport Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left: Device Card & QR Code */}
         <div className="lg:col-span-4 space-y-4">
           <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 text-center space-y-4 shadow-xl">
-            {/* Phone Mockup or Photo */}
-            <div className="relative mx-auto w-40 h-56 rounded-2xl overflow-hidden border-2 border-slate-700 bg-slate-950 flex items-center justify-center group shadow-2xl">
-              <img
-                src="/s24ultra.jpg"
-                alt="Smartphone Device"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                onError={(e) => {
-                  // Fallback visual if image file not loaded
-                  (e.target as HTMLElement).style.display = 'none';
-                }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80" />
-              <div className="absolute bottom-2 left-2 right-2 text-left">
-                <span className="text-[10px] font-mono text-cyan-400 font-bold">GT-SERIES TITANIUM</span>
-                <p className="text-xs font-bold text-white leading-tight">{product.productModel}</p>
+            {/* Visual Header / Sector Badge */}
+            <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs font-mono">
+              <span className="text-slate-400">{product.productTypeDisplay}</span>
+              <span className="text-cyan-400 font-bold">DPP PASS #24</span>
+            </div>
+
+            {/* Photo / Graphic */}
+            <div className="relative mx-auto w-44 h-56 rounded-2xl overflow-hidden border-2 border-slate-700 bg-slate-950 flex flex-col items-center justify-center p-3 group shadow-2xl">
+              {product.sector === 'Consumer Electronics' ? (
+                <img
+                  src="/s24ultra.jpg"
+                  alt={product.productModel}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  onError={e => {
+                    (e.target as HTMLElement).style.display = 'none';
+                  }}
+                />
+              ) : product.sector === 'Automotive & EV Battery' ? (
+                <div className="flex flex-col items-center justify-center text-amber-400 space-y-3">
+                  <BatteryCharging size={54} className="animate-pulse" />
+                  <span className="text-xs font-mono font-bold text-white text-center">800V 96kWh PACK</span>
+                  <span className="text-[10px] text-amber-300 font-mono">EU Battery Passport 2023/1542</span>
+                </div>
+              ) : product.sector === 'Medical Technology' ? (
+                <div className="flex flex-col items-center justify-center text-emerald-400 space-y-3">
+                  <HeartPulse size={54} className="animate-pulse" />
+                  <span className="text-xs font-mono font-bold text-white text-center">CardioPulse Implant</span>
+                  <span className="text-[10px] text-emerald-300 font-mono">FDA UDI Class III Sterile</span>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center text-indigo-400 space-y-3">
+                  <Plane size={54} className="animate-pulse" />
+                  <span className="text-xs font-mono font-bold text-white text-center">Avionics DO-254</span>
+                  <span className="text-[10px] text-indigo-300 font-mono">Flight Controller DAL-A</span>
+                </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80 pointer-events-none" />
+              <div className="absolute bottom-2 left-2 right-2 text-left pointer-events-none">
+                <span className="text-[9px] font-mono text-cyan-400 font-bold uppercase">{product.sector}</span>
+                <p className="text-xs font-bold text-white leading-tight truncate">{product.productModel}</p>
               </div>
             </div>
 
@@ -151,34 +194,34 @@ export const PassportPage: React.FC = () => {
                 <QRCodeSVG value={passportUrl} size={130} level="H" includeMargin />
               </div>
               <div className="text-center">
-                <span className="text-xs font-bold text-white">Scan to Verify Authenticity</span>
-                <p className="text-[10px] text-slate-500 font-mono mt-0.5">Route: /passport/{product.productId}</p>
+                <span className="text-xs font-bold text-white">Scan for Official Blockchain Proof</span>
+                <p className="text-[10px] text-slate-500 font-mono mt-0.5">{product.productId}</p>
               </div>
               <button
                 onClick={() => copyToClipboard(passportUrl)}
                 className="w-full py-1.5 px-3 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-[11px] font-mono flex items-center justify-center gap-1.5 transition-colors"
               >
                 <Copy size={12} />
-                <span>{copied ? 'Passport URL Copied!' : 'Copy Verification URL'}</span>
+                <span>{copied ? 'URL Copied!' : 'Copy DPP Shareable URL'}</span>
               </button>
             </div>
 
-            {/* Quick Specs */}
+            {/* Quick Identification */}
             <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 text-left text-xs font-mono space-y-2">
               <div className="flex justify-between">
-                <span className="text-slate-500">Product ID:</span>
+                <span className="text-slate-500">Unique ID:</span>
                 <span className="text-white font-bold">{product.productId}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">IMEI (Protected):</span>
-                <span className="text-cyan-400">{product.imeiMasked}</span>
+                <span className="text-slate-500">Identifier / UDI:</span>
+                <span className="text-cyan-400 truncate max-w-[170px]">{product.imeiMasked}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Assembly Hub:</span>
-                <span className="text-slate-300">{product.assemblyFacility}</span>
+                <span className="text-slate-300 truncate max-w-[170px]">{product.assemblyFacility}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Shipment ID:</span>
+                <span className="text-slate-500">Shipment Ref:</span>
                 <button
                   onClick={() => navigate(`/logistics?search=${product.shipmentId}`)}
                   className="text-amber-400 hover:underline flex items-center gap-1"
@@ -193,84 +236,100 @@ export const PassportPage: React.FC = () => {
 
         {/* Right: Comprehensive Lineage Breakdown */}
         <div className="lg:col-span-8 space-y-6">
-          {/* Installed Components Grid */}
+          {/* ESG & Compliance Metric Banner */}
+          <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+                <Award className="text-cyan-400" size={16} />
+                <span>Regulatory Compliance &amp; Sustainability Passport (ESPR &amp; EU Battery Directive)</span>
+              </h3>
+              <span className="text-xs font-mono text-emerald-400 font-bold">{product.esgScore}</span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono pt-1">
+              <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
+                <span className="text-slate-500 flex items-center gap-1">
+                  <Leaf size={12} className="text-emerald-400" />
+                  <span>Carbon Footprint:</span>
+                </span>
+                <p className="text-sm font-bold text-white mt-1">{product.carbonFootprintKg} kg CO₂e</p>
+                <span className="text-[10px] text-slate-500">Lifecycle Scope 1-3</span>
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
+                <span className="text-slate-500 flex items-center gap-1">
+                  <Scale size={12} className="text-cyan-400" />
+                  <span>Recycled Content:</span>
+                </span>
+                <p className="text-sm font-bold text-cyan-400 mt-1">{product.recycledContentPct}% Verified</p>
+                <span className="text-[10px] text-slate-500">Critical Raw Materials</span>
+              </div>
+
+              {product.batteryChemistry && (
+                <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
+                  <span className="text-slate-500">Chemistry:</span>
+                  <p className="text-sm font-bold text-amber-400 mt-1 truncate">{product.batteryChemistry}</p>
+                  <span className="text-[10px] text-slate-500">State of Health: {product.stateOfHealth}%</span>
+                </div>
+              )}
+
+              <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
+                <span className="text-slate-500">Compliance Directives:</span>
+                <div className="mt-1 flex flex-wrap gap-1">
+                  {product.complianceStandards?.map(std => (
+                    <span key={std} className="px-1.5 py-0.2 rounded bg-slate-900 text-slate-300 text-[9px] border border-slate-800">
+                      {std}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Installed Components BOM with Serial Numbers */}
           <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-white">Cryptographically Registered Components</h3>
+                <h3 className="text-sm font-semibold text-white">Bill of Materials (BOM) Component Lineage</h3>
                 <p className="text-xs text-slate-400">
-                  Every critical module has a dedicated serial and cryptographic commitment.
+                  Every sub-assembly is registered with its source batch and individual unit serial number.
                 </p>
               </div>
-              <span className="text-xs font-mono text-cyan-400">7 Sub-systems</span>
+              <span className="text-xs font-mono text-cyan-400">{Object.keys(product.installedComponents).length} Modules</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-xs">
-              {/* Display */}
-              <div
-                className={`p-3 rounded-xl border ${
-                  product.installedBatches.displayBatch === 'ABC'
-                    ? 'bg-red-950/30 border-red-500/50'
-                    : 'bg-slate-950/60 border-slate-800'
-                }`}
-              >
-                <div className="flex items-center justify-between text-slate-400">
-                  <span>Display Module</span>
-                  <span className="text-[10px] text-red-400 font-bold">Batch: {product.installedBatches.displayBatch}</span>
-                </div>
-                <div className="text-sm font-bold text-white mt-1">{product.installedComponents.displaySerial}</div>
-                <div className="text-[10px] text-slate-500 mt-1">Samsung OLED 120Hz LTPO 3.0</div>
-              </div>
-
-              {/* Battery */}
-              <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-                <div className="flex items-center justify-between text-slate-400">
-                  <span>Battery Cell</span>
-                  <span className="text-[10px] text-cyan-400">Batch: {product.installedBatches.batteryBatch}</span>
-                </div>
-                <div className="text-sm font-bold text-white mt-1">{product.installedComponents.batterySerial}</div>
-                <div className="text-[10px] text-slate-500 mt-1">ATL 5,000mAh High-Density Li-Po</div>
-              </div>
-
-              {/* Main PCB */}
-              <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-                <div className="flex items-center justify-between text-slate-400">
-                  <span>Main Motherboard PCB</span>
-                  <span className="text-[10px] text-cyan-400">Batch: {product.installedBatches.pcbBatch}</span>
-                </div>
-                <div className="text-sm font-bold text-white mt-1">{product.installedComponents.pcbSerial}</div>
-                <div className="text-[10px] text-slate-500 mt-1">Snapdragon 8 Gen 3 SMT Line 4</div>
-              </div>
-
-              {/* Camera Module */}
-              <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-                <div className="flex items-center justify-between text-slate-400">
-                  <span>Camera Array (200MP)</span>
-                  <span className="text-[10px] text-cyan-400">Batch: {product.installedBatches.cameraBatch}</span>
-                </div>
-                <div className="text-sm font-bold text-white mt-1">{product.installedComponents.cameraSerial}</div>
-                <div className="text-[10px] text-slate-500 mt-1">Sony Semiconductor Quad-OIS</div>
-              </div>
-
-              {/* Speaker */}
-              <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-                <div className="flex items-center justify-between text-slate-400">
-                  <span>Stereo Speaker</span>
-                  <span className="text-[10px] text-cyan-400">Batch: {product.installedBatches.speakerBatch}</span>
-                </div>
-                <div className="text-sm font-bold text-white mt-1">{product.installedComponents.speakerSerial}</div>
-                <div className="text-[10px] text-slate-500 mt-1">AAC Micro-Acoustics SPL 98dB</div>
-              </div>
-
-              {/* Frame */}
-              <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-                <div className="flex items-center justify-between text-slate-400">
-                  <span>Titanium Frame</span>
-                  <span className="text-[10px] text-cyan-400">Batch: {product.installedBatches.frameBatch}</span>
-                </div>
-                <div className="text-sm font-bold text-white mt-1">{product.installedComponents.frameSerial}</div>
-                <div className="text-[10px] text-slate-500 mt-1">Grade 5 Aerospace CNC Anodized</div>
-              </div>
+              {Object.entries(product.installedComponents).map(([moduleName, serial]) => {
+                const isDefectiveDisplay = serial === 'ABC-0042' || serial.startsWith('ABC-');
+                return (
+                  <div
+                    key={moduleName}
+                    className={`p-3 rounded-xl border transition-all ${
+                      isDefectiveDisplay
+                        ? 'bg-red-950/30 border-red-500/50'
+                        : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between text-slate-400">
+                      <span>{moduleName}</span>
+                      <span className={`text-[10px] font-bold ${isDefectiveDisplay ? 'text-red-400' : 'text-cyan-400'}`}>
+                        {isDefectiveDisplay ? 'Flagged Batch ABC' : 'Verified'}
+                      </span>
+                    </div>
+                    <div className="text-sm font-bold text-white mt-1">{serial}</div>
+                    <div className="flex items-center justify-between mt-1 pt-1 border-t border-slate-800/60 text-[10px] text-slate-500">
+                      <span>Cryptographic Attestation</span>
+                      <button
+                        onClick={() => navigate(`/traceability?query=${serial}`)}
+                        className="text-cyan-400 hover:underline flex items-center gap-0.5"
+                      >
+                        <span>Trace</span>
+                        <ExternalLink size={9} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -279,7 +338,7 @@ export const PassportPage: React.FC = () => {
             <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-semibold text-white">Unit Manufacturing Operations Ledger</h3>
+                  <h3 className="text-sm font-semibold text-white">Assembly &amp; Quality Inspection Ledger</h3>
                   <p className="text-xs text-slate-400">
                     Chronological verification events recorded by MES &amp; SCADA gateways.
                   </p>
@@ -291,8 +350,7 @@ export const PassportPage: React.FC = () => {
               </div>
 
               <div className="space-y-2 max-h-72 overflow-y-auto">
-                {/* Assembly Events */}
-                {events.map((e) => (
+                {events.map(e => (
                   <div
                     key={e.eventId}
                     className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between text-xs font-mono"
@@ -323,19 +381,19 @@ export const PassportPage: React.FC = () => {
                 <Blocks size={15} className="text-violet-400" />
                 <span>Merkle-DAG Integrity &amp; Demo Ledger Anchor</span>
               </span>
-              <span className="text-[11px] text-violet-400">EVM Demo Contract</span>
+              <span className="text-[11px] text-violet-400">EVM Smart Contract</span>
             </div>
             <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5 text-[11px]">
               <div className="flex justify-between">
                 <span className="text-slate-500">Root Merkle Hash:</span>
-                <span className="text-slate-300 font-bold">{product.merkleRoot}</span>
+                <span className="text-slate-300 font-bold truncate max-w-[280px] sm:max-w-none">{product.merkleRoot}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Anchor Transaction ID:</span>
-                <span className="text-cyan-400">{product.blockchainTx}</span>
+                <span className="text-cyan-400 truncate max-w-[280px] sm:max-w-none">{product.blockchainTx}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Verification Consensus:</span>
+                <span className="text-slate-500">Consensus Verification:</span>
                 <span className="text-emerald-400 font-bold">12/12 Enterprise Validator Nodes Confirmed</span>
               </div>
             </div>
