@@ -215,13 +215,19 @@ export const GeneaTraceStore = {
     this.saveState();
   },
 
-  // Shopkeeper Defect Reports (Write-Only from Shopkeeper, Read & Action from Company HQ)
   getDefectReports(): ShopkeeperDefectReport[] {
     return [...currentState.defectReports];
   },
 
   getDefectReportById(id: string): ShopkeeperDefectReport | undefined {
     return currentState.defectReports.find(r => r.id === id);
+  },
+
+  getDefectReportBySerial(serialNumber: string): ShopkeeperDefectReport | undefined {
+    const clean = serialNumber.trim().toUpperCase();
+    return currentState.defectReports.find(
+      r => r.serialNumber.toUpperCase() === clean || clean.includes(r.serialNumber.toUpperCase())
+    );
   },
 
   submitShopkeeperDefectReport(reportInput: {
