@@ -10,7 +10,11 @@ import {
   ChevronRight,
   Download,
   AlertTriangle,
-  X
+  X,
+  MapPin,
+  Building2,
+  Truck,
+  Smartphone
 } from 'lucide-react';
 import { GeneaTraceStore } from '../services/dataStore';
 import { BatchRecord, ComponentCategory, IndustrySector } from '../types';
@@ -25,6 +29,13 @@ export const BatchManagementPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState(initialSearch);
   const [selectedSectorFilter, setSelectedSectorFilter] = useState<string>('All');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  // Unit Location Tracing Modal State
+  const [selectedTraceUnit, setSelectedTraceUnit] = useState<{
+    serialNumber: string;
+    componentId: string;
+    installedProductId?: string;
+  } | null>(null);
 
   // New Batch Form State
   const [newBatchId, setNewBatchId] = useState('');
@@ -359,8 +370,12 @@ export const BatchManagementPage: React.FC = () => {
                           </td>
                           <td className="py-2 px-3 text-right">
                             <button
-                              onClick={() => navigate(`/traceability?query=${c.serialNumber}`)}
-                              className="text-[11px] text-[#413634] hover:text-[#c5716d]"
+                              onClick={() => setSelectedTraceUnit({
+                                serialNumber: c.serialNumber,
+                                componentId: c.componentId,
+                                installedProductId: c.installedInProductId
+                              })}
+                              className="btn-vintage-outline py-0.5 px-2 text-[11px] text-[#413634] hover:text-[#c5716d] hover:border-[#c5716d]"
                             >
                               Trace
                             </button>
@@ -507,6 +522,153 @@ export const BatchManagementPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* REAL-TIME UNIT LOCATION & SISTER UNITS MODAL */}
+      {selectedTraceUnit && (() => {
+        const prod = selectedTraceUnit.installedProductId
+          ? GeneaTraceStore.getProduct(selectedTraceUnit.installedProductId)
+          : null;
+        const shp = prod?.shipmentId ? GeneaTraceStore.getShipment(prod.shipmentId) : null;
+        
+        // Batch locations lookup
+        const batchLocs = activeBatch?.batchId ? GeneaTraceStore.getBatchLocations(activeBatch.batchId) : null;
+        
+        // Current location of this product
+        const currentLocation = shp?.currentLocation ||
+          (prod ? (prod.status === 'Delivered' ? 'Authorized Retailer Shop' : 'Factory Assembly Floor') : 'Raw Component Inventory / Factory Line');
+        
+        // Count how many sister units from the same batch are currently at this exact location
+        const sisterUnitsInThisLocation = batchLocs?.units.filter(u => u.currentLocation === currentLocation) || [];
+        const sisterCount = sisterUnitsInThisLocation.length || (prod ? 1 : 0);
+
+        return (
+          <div className="fixed inset-0 z-50 bg-[#413634]/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
+            <div className="w-full max-w-2xl bg-[#fffdf6] border border-[#413634] p-6 space-y-5 shadow-2xl">
+              {/* Modal Header */}
+              <div className="flex items-start justify-between pb-3 border-b border-[#e5e5e5]">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="text-[#c5716d]" size={18} />
+                    <h3 className="text-base text-[#413634] font-medium">
+                      Real-Time Product Location &amp; Sister Units Trace
+                    </h3>
+                  </div>
+                  <p className="text-xs text-[#666666] mt-0.5">
+                    Unit: <strong className="font-mono text-[#c5716d]">{selectedTraceUnit.serialNumber}</strong> • Batch: <strong className="font-mono">{activeBatch.batchId}</strong>
+                  </p>
+                </div>
+                <button
+                  onClick={() => setSelectedTraceUnit(null)}
+                  className="p-1 text-[#666666] hover:text-[#413634]"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* 1. Exactly Where the Product is Right Now */}
+              <div className="p-4 bg-[#faf3dc] border border-[#e5e5e5] space-y-2">
+                <span className="text-[10px] uppercase tracking-wider text-[#b84a44] font-semibold flex items-center gap-1.5">
+                  <MapPin size={13} />
+                  <span>Where the product is right now:</span>
+                </span>
+                <div className="text-base text-[#413634] font-medium flex items-center justify-between">
+                  <span>{currentLocation}</span>
+                  <span className="px-2 py-0.5 text-xs font-mono bg-[#c5716d] text-white">
+                    {shp?.currentStatus || prod?.status || 'In Inventory'}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 pt-2 text-[11px] text-[#666666] border-t border-[#e5e5e5]">
+                  <div>
+                    <span>Assigned Product: </span>
+                    <strong className="text-[#413634] font-mono">
+                      {selectedTraceUnit.installedProductId || 'Not yet assembled in finished device'}
+                    </strong>
+                  </div>
+                  <div>
+                    <span>Logistics Carrier: </span>
+                    <strong className="text-[#413634]">
+                      {shp?.carrier || 'Factory Internal Depot'}
+                    </strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. Along with its sisters: how many mobiles are in that exact location */}
+              <div className="p-4 vintage-card space-y-3 bg-[#fffcf8]">
+                <div className="flex items-center justify-between border-b border-[#e5e5e5] pb-2">
+                  <div className="flex items-center gap-2">
+                    <Building2 size={16} className="text-[#2e6b4d]" />
+                    <h4 className="text-xs font-medium text-[#413634] uppercase tracking-wide">
+                      Sister Units in this Same Location
+                    </h4>
+                  </div>
+                  <span className="px-2.5 py-0.5 bg-[#edf6f0] border border-[#2e6b4d] text-[#2e6b4d] font-mono text-xs font-bold">
+                    {sisterCount} Mobiles at this Location
+                  </span>
+                </div>
+
+                <p className="text-xs text-[#666666]">
+                  Along with <strong className="font-mono">{selectedTraceUnit.installedProductId || selectedTraceUnit.serialNumber}</strong>, there are currently <strong className="text-[#c5716d] font-bold">{sisterCount} sister units</strong> from Batch <strong>{activeBatch.batchId}</strong> located together at <strong>{currentLocation}</strong>.
+                </p>
+
+                {/* Sister Units List */}
+                {sisterUnitsInThisLocation.length > 0 && (
+                  <div className="max-h-36 overflow-y-auto border border-[#e5e5e5] text-xs">
+                    <table className="w-full text-left divide-y divide-[#e5e5e5] font-mono">
+                      <thead className="bg-[#faf3dc] text-[#666666] text-[10px] uppercase">
+                        <tr>
+                          <th className="p-2">Sister Product ID</th>
+                          <th className="p-2">Model</th>
+                          <th className="p-2">Shipment ID</th>
+                          <th className="p-2">Hold Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[#e5e5e5] text-[11px] bg-[#fffdf6]">
+                        {sisterUnitsInThisLocation.map(s => (
+                          <tr key={s.productId} className="hover:bg-[#faf3dc]">
+                            <td className="p-2 text-[#c5716d]">{s.productId}</td>
+                            <td className="p-2 text-[#413634]">{s.model}</td>
+                            <td className="p-2 text-[#666666]">{s.shipmentId}</td>
+                            <td className="p-2">
+                              <span className="px-1.5 py-0.2 text-[9px] bg-[#fdf2f1] text-[#b84a44] border border-[#b84a44]">
+                                HOLD
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+
+              {/* Actions Footer */}
+              <div className="flex items-center justify-between pt-2 border-t border-[#e5e5e5] text-xs">
+                {selectedTraceUnit.installedProductId ? (
+                  <button
+                    onClick={() => {
+                      const pid = selectedTraceUnit.installedProductId;
+                      setSelectedTraceUnit(null);
+                      navigate(`/passport/${pid}`);
+                    }}
+                    className="btn-vintage-outline flex items-center gap-1.5"
+                  >
+                    <span>Inspect Full Passport</span>
+                    <ArrowRight size={13} />
+                  </button>
+                ) : <span />}
+
+                <button
+                  onClick={() => setSelectedTraceUnit(null)}
+                  className="btn-vintage-accent"
+                >
+                  Close Trace View
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };
