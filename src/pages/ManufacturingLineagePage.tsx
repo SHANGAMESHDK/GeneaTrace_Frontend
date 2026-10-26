@@ -30,54 +30,54 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-// Custom Node for Manufacturing Operations
+// Custom Node for Manufacturing Operations in Vintage Aesthetic
 const OperationNode = ({ data }: { data: any }) => {
   const isDefective = data.isDefective;
   const isAssembly = data.section?.includes('Assembly');
 
   return (
     <div
-      className={`px-3 py-2.5 rounded-xl border text-xs font-sans min-w-[170px] shadow-lg transition-all cursor-pointer ${
+      className={`px-3 py-2.5 rounded-none border text-xs min-w-[170px] shadow-sm transition-all cursor-pointer font-serif-vintage ${
         isDefective
-          ? 'bg-red-950/80 border-red-500 text-red-100 ring-2 ring-red-500/50 shadow-red-950/50'
+          ? 'bg-[#fdf2f1] border-[#b84a44] text-[#b84a44]'
           : isAssembly
-          ? 'bg-slate-900/90 border-indigo-500/50 text-indigo-100 hover:border-indigo-400'
-          : 'bg-slate-900/90 border-cyan-500/50 text-cyan-100 hover:border-cyan-400'
+          ? 'bg-[#faf3dc] border-[#413634] text-[#413634]'
+          : 'bg-[#fffcf8] border-[#413634] text-[#413634]'
       }`}
     >
-      <Handle type="target" position={Position.Left} className="bg-slate-500! w-2! h-2!" />
-      <div className="flex items-center justify-between pb-1 border-b border-slate-800">
-        <span className="font-mono text-[10px] text-slate-400 uppercase tracking-wider">{data.step}</span>
+      <Handle type="target" position={Position.Left} className="bg-[#413634]! w-1.5! h-1.5!" />
+      <div className="flex items-center justify-between pb-1 border-b border-[#e5e5e5]">
+        <span className="font-mono text-[9px] uppercase tracking-wider text-[#666666]">{data.step}</span>
         <span
-          className={`px-1.5 py-0.2 rounded text-[9px] font-mono font-bold ${
-            isDefective ? 'bg-red-500 text-white' : 'bg-slate-800 text-slate-300'
+          className={`px-1 py-0.2 rounded-none text-[9px] font-mono ${
+            isDefective ? 'bg-[#b84a44] text-white' : 'bg-[#faf3dc] text-[#413634] border border-[#e5e5e5]'
           }`}
         >
           {data.machine}
         </span>
       </div>
-      <div className="font-semibold text-xs mt-1 text-slate-100 leading-tight">{data.label}</div>
-      <div className="mt-1 flex items-center justify-between text-[10px] text-slate-400 font-mono">
+      <div className="text-xs mt-1 text-[#413634] leading-tight font-normal">{data.label}</div>
+      <div className="mt-1 flex items-center justify-between text-[10px] text-[#666666] font-mono">
         <span>{data.event}</span>
-        <span className={data.result === 'OK' ? 'text-emerald-400' : 'text-red-400'}>{data.result}</span>
+        <span className={data.result === 'OK' ? 'text-[#2e6b4d]' : 'text-[#b84a44]'}>{data.result}</span>
       </div>
-      <Handle type="source" position={Position.Right} className="bg-cyan-500! w-2! h-2!" />
+      <Handle type="source" position={Position.Right} className="bg-[#c5716d]! w-1.5! h-1.5!" />
     </div>
   );
 };
 
-// Custom Node for Component Junction
+// Custom Node for Component Junction in Vintage Aesthetic
 const ComponentJunctionNode = ({ data }: { data: any }) => {
   return (
-    <div className="px-3.5 py-2.5 rounded-xl bg-slate-900 border-2 border-amber-500/60 text-xs min-w-[190px] shadow-xl shadow-amber-950/30">
-      <Handle type="target" position={Position.Left} className="bg-amber-500! w-2! h-2!" />
-      <div className="flex items-center gap-2 text-amber-400 font-semibold mb-1">
-        <Cpu size={14} />
-        <span>{data.title}</span>
+    <div className="px-3.5 py-2.5 rounded-none bg-[#faf3dc] border border-[#413634] text-xs min-w-[190px] shadow-sm font-serif-vintage">
+      <Handle type="target" position={Position.Left} className="bg-[#413634]! w-1.5! h-1.5!" />
+      <div className="flex items-center gap-1.5 text-[#c5716d] mb-1">
+        <Cpu size={13} />
+        <span className="text-xs">{data.title}</span>
       </div>
-      <div className="text-[11px] text-slate-300">{data.desc}</div>
-      <div className="mt-1 text-[10px] font-mono text-cyan-400">Batch: {data.batchId}</div>
-      <Handle type="source" position={Position.Right} className="bg-amber-500! w-2! h-2!" />
+      <div className="text-[11px] text-[#666666]">{data.desc}</div>
+      <div className="mt-1 text-[10px] font-mono text-[#8b6c58]">Batch: {data.batchId}</div>
+      <Handle type="source" position={Position.Right} className="bg-[#413634]! w-1.5! h-1.5!" />
     </div>
   );
 };
@@ -89,9 +89,8 @@ const nodeTypes = {
 
 export const ManufacturingLineagePage: React.FC = () => {
   const navigate = useNavigate();
-  const [activeWorkflow, setActiveWorkflow] = useState<'electronics' | 'ev_battery' | 'medical'>('electronics');
+  const [activeWorkflow, setActiveWorkflow] = useState<'electronics' | 'ev_battery'>('electronics');
   const [selectedNode, setSelectedNode] = useState<any>(null);
-  const [highlightDefect, setHighlightDefect] = useState(true);
 
   // Workflow 1: Display Component & Smartphone Assembly
   const electronicsNodes: Node[] = [
@@ -120,27 +119,27 @@ export const ManufacturingLineagePage: React.FC = () => {
   ];
 
   const electronicsEdges: Edge[] = [
-    { id: 'e1-2', source: '1.1', target: '1.2', animated: true, style: { stroke: '#06b6d4' } },
-    { id: 'e2-3', source: '1.2', target: '1.3', animated: true, style: { stroke: '#06b6d4' } },
-    { id: 'e3-4', source: '1.3', target: '1.4', animated: true, style: { stroke: '#06b6d4' } },
-    { id: 'e4-5', source: '1.4', target: '1.5', animated: true, style: { stroke: '#ef4444', strokeWidth: 2 } },
-    { id: 'e5-6', source: '1.5', target: '1.6', animated: true, style: { stroke: '#ef4444', strokeWidth: 2 } },
-    { id: 'e6-7', source: '1.6', target: '1.7', animated: true, style: { stroke: '#ef4444', strokeWidth: 2 } },
-    { id: 'e7-8', source: '1.7', target: '1.8', animated: true, style: { stroke: '#ef4444', strokeWidth: 2 } },
-    { id: 'e8-9', source: '1.8', target: '1.9', animated: true, style: { stroke: '#ef4444', strokeWidth: 2 } },
-    { id: 'e9-hub', source: '1.9', target: 'hub-display', animated: true, style: { stroke: '#ef4444', strokeWidth: 3 } },
-    { id: 'e-disp-asm', source: 'hub-display', target: '3.1', animated: true, style: { stroke: '#ef4444', strokeWidth: 2 } },
-    { id: 'e-btr-asm', source: 'hub-battery', target: '3.1', style: { stroke: '#64748b' } },
-    { id: 'e-pcb-asm', source: 'hub-pcb', target: '3.1', style: { stroke: '#64748b' } },
-    { id: 'e31-32', source: '3.1', target: '3.2', animated: true, style: { stroke: '#6366f1' } },
-    { id: 'e32-33', source: '3.2', target: '3.3', animated: true, style: { stroke: '#6366f1' } },
-    { id: 'e33-34', source: '3.3', target: '3.4', animated: true, style: { stroke: '#6366f1' } },
-    { id: 'e34-35', source: '3.4', target: '3.5', animated: true, style: { stroke: '#6366f1' } },
-    { id: 'e35-36', source: '3.5', target: '3.6', animated: true, style: { stroke: '#6366f1' } },
-    { id: 'e36-prod', source: '3.6', target: 'product-851', animated: true, style: { stroke: '#ef4444', strokeWidth: 2 } },
+    { id: 'e1-2', source: '1.1', target: '1.2', animated: true, style: { stroke: '#413634', strokeWidth: 1 } },
+    { id: 'e2-3', source: '1.2', target: '1.3', animated: true, style: { stroke: '#413634', strokeWidth: 1 } },
+    { id: 'e3-4', source: '1.3', target: '1.4', animated: true, style: { stroke: '#413634', strokeWidth: 1 } },
+    { id: 'e4-5', source: '1.4', target: '1.5', animated: true, style: { stroke: '#b84a44', strokeWidth: 1.5 } },
+    { id: 'e5-6', source: '1.5', target: '1.6', animated: true, style: { stroke: '#b84a44', strokeWidth: 1.5 } },
+    { id: 'e6-7', source: '1.6', target: '1.7', animated: true, style: { stroke: '#b84a44', strokeWidth: 1.5 } },
+    { id: 'e7-8', source: '1.7', target: '1.8', animated: true, style: { stroke: '#b84a44', strokeWidth: 1.5 } },
+    { id: 'e8-9', source: '1.8', target: '1.9', animated: true, style: { stroke: '#b84a44', strokeWidth: 1.5 } },
+    { id: 'e9-hub', source: '1.9', target: 'hub-display', animated: true, style: { stroke: '#b84a44', strokeWidth: 2 } },
+    { id: 'e-disp-asm', source: 'hub-display', target: '3.1', animated: true, style: { stroke: '#b84a44', strokeWidth: 1.5 } },
+    { id: 'e-btr-asm', source: 'hub-battery', target: '3.1', style: { stroke: '#8b6c58', strokeWidth: 1 } },
+    { id: 'e-pcb-asm', source: 'hub-pcb', target: '3.1', style: { stroke: '#8b6c58', strokeWidth: 1 } },
+    { id: 'e31-32', source: '3.1', target: '3.2', animated: true, style: { stroke: '#413634', strokeWidth: 1 } },
+    { id: 'e32-33', source: '3.2', target: '3.3', animated: true, style: { stroke: '#413634', strokeWidth: 1 } },
+    { id: 'e33-34', source: '3.3', target: '3.4', animated: true, style: { stroke: '#413634', strokeWidth: 1 } },
+    { id: 'e34-35', source: '3.4', target: '3.5', animated: true, style: { stroke: '#413634', strokeWidth: 1 } },
+    { id: 'e35-36', source: '3.5', target: '3.6', animated: true, style: { stroke: '#413634', strokeWidth: 1 } },
+    { id: 'e36-prod', source: '3.6', target: 'product-851', animated: true, style: { stroke: '#c5716d', strokeWidth: 1.5 } },
   ];
 
-  // Workflow 2: EV Battery Cell-to-Pack Gigafactory Lineage
+  // Workflow 2: EV Battery Cell-to-Pack
   const evNodes: Node[] = [
     { id: 'ev-1', type: 'operation', position: { x: 50, y: 150 }, data: { step: 'B.1 Raw Slurry', label: 'NCM 811 Active Material Mixing', machine: 'MIX-01', event: 'Cathode Slurry', result: 'OK', section: 'Gigafactory Cell Fab' } },
     { id: 'ev-2', type: 'operation', position: { x: 280, y: 150 }, data: { step: 'B.2 Foil Coating', label: 'Continuous Double-Side Coating', machine: 'COAT-02', event: 'Foil Lamination', result: 'OK', section: 'Gigafactory Cell Fab' } },
@@ -154,14 +153,14 @@ export const ManufacturingLineagePage: React.FC = () => {
   ];
 
   const evEdges: Edge[] = [
-    { id: 'ev-e1', source: 'ev-1', target: 'ev-2', animated: true, style: { stroke: '#06b6d4' } },
-    { id: 'ev-e2', source: 'ev-2', target: 'ev-3', animated: true, style: { stroke: '#06b6d4' } },
-    { id: 'ev-e3', source: 'ev-3', target: 'ev-4', animated: true, style: { stroke: '#06b6d4' } },
-    { id: 'ev-e4', source: 'ev-4', target: 'ev-hub', animated: true, style: { stroke: '#06b6d4' } },
-    { id: 'ev-e5', source: 'ev-hub', target: 'ev-5', animated: true, style: { stroke: '#f59e0b', strokeWidth: 2 } },
-    { id: 'ev-e6', source: 'ev-5', target: 'ev-6', animated: true, style: { stroke: '#6366f1' } },
-    { id: 'ev-e7', source: 'ev-6', target: 'ev-7', animated: true, style: { stroke: '#6366f1' } },
-    { id: 'ev-e8', source: 'ev-7', target: 'ev-pack', animated: true, style: { stroke: '#10b981', strokeWidth: 2 } },
+    { id: 'ev-e1', source: 'ev-1', target: 'ev-2', animated: true, style: { stroke: '#413634' } },
+    { id: 'ev-e2', source: 'ev-2', target: 'ev-3', animated: true, style: { stroke: '#413634' } },
+    { id: 'ev-e3', source: 'ev-3', target: 'ev-4', animated: true, style: { stroke: '#413634' } },
+    { id: 'ev-e4', source: 'ev-4', target: 'ev-hub', animated: true, style: { stroke: '#413634' } },
+    { id: 'ev-e5', source: 'ev-hub', target: 'ev-5', animated: true, style: { stroke: '#b87428' } },
+    { id: 'ev-e6', source: 'ev-5', target: 'ev-6', animated: true, style: { stroke: '#413634' } },
+    { id: 'ev-e7', source: 'ev-6', target: 'ev-7', animated: true, style: { stroke: '#413634' } },
+    { id: 'ev-e8', source: 'ev-7', target: 'ev-pack', animated: true, style: { stroke: '#2e6b4d', strokeWidth: 1.5 } },
   ];
 
   const currentNodes = activeWorkflow === 'electronics' ? electronicsNodes : evNodes;
@@ -170,7 +169,7 @@ export const ManufacturingLineagePage: React.FC = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(currentNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(currentEdges);
 
-  const switchWorkflow = (wf: 'electronics' | 'ev_battery' | 'medical') => {
+  const switchWorkflow = (wf: 'electronics' | 'ev_battery') => {
     setActiveWorkflow(wf);
     if (wf === 'electronics') {
       setNodes(electronicsNodes);
@@ -186,48 +185,48 @@ export const ManufacturingLineagePage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-4 h-[calc(100vh-100px)] flex flex-col">
-      {/* Header Bar with Workflow Selector */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shrink-0">
+    <div className="space-y-4 h-[calc(100vh-100px)] flex flex-col font-serif-vintage">
+      {/* Header Bar */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shrink-0 pb-2 border-b border-[#e5e5e5]">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-            <GitFork className="text-cyan-400" size={22} />
+          <h1 className="text-xl text-[#413634] flex items-center gap-2">
+            <GitFork className="text-[#c5716d]" size={20} />
             <span>Manufacturing Lineage Map (Multi-Sector Merkle-DAG)</span>
           </h1>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-[#666666]">
             Interactive visual graph of component fabrication and end-product assembly.
           </p>
         </div>
 
         {/* Workflow Switcher */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center p-1 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono">
+          <div className="flex items-center p-0.5 rounded-none bg-[#faf3dc] border border-[#e5e5e5] text-xs">
             <button
               onClick={() => switchWorkflow('electronics')}
-              className={`px-3 py-1.5 rounded-md transition-all ${
+              className={`px-3 py-1 rounded-none transition-all ${
                 activeWorkflow === 'electronics'
-                  ? 'bg-cyan-600 text-white font-bold'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-[#c5716d] text-[#fffdf6]'
+                  : 'text-[#413634] hover:text-[#c5716d]'
               }`}
             >
-              📱 Display &amp; Smartphone Lineage
+              📱 Display &amp; Mobile Lineage
             </button>
             <button
               onClick={() => switchWorkflow('ev_battery')}
-              className={`px-3 py-1.5 rounded-md transition-all ${
+              className={`px-3 py-1 rounded-none transition-all ${
                 activeWorkflow === 'ev_battery'
-                  ? 'bg-amber-600 text-white font-bold'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-[#c5716d] text-[#fffdf6]'
+                  : 'text-[#413634] hover:text-[#c5716d]'
               }`}
             >
-              🚗 EV Battery Cell-to-Pack Lineage
+              🚗 EV Battery Cell-to-Pack
             </button>
           </div>
         </div>
       </div>
 
       {/* Main Graph Area */}
-      <div className="flex-1 rounded-xl border border-slate-800 bg-slate-950 relative overflow-hidden flex">
+      <div className="flex-1 border border-[#e5e5e5] bg-[#fffdf6] relative overflow-hidden flex shadow-xs">
         <div className="flex-1 h-full">
           <ReactFlow
             nodes={nodes}
@@ -241,89 +240,89 @@ export const ManufacturingLineagePage: React.FC = () => {
             minZoom={0.2}
             maxZoom={1.5}
           >
-            <Background color="#1e293b" gap={20} size={1} />
-            <Controls className="bg-slate-900! border-slate-800! text-slate-300!" />
+            <Background color="#e5e5e5" gap={20} size={1} />
+            <Controls className="bg-[#fffcf8]! border-[#e5e5e5]! text-[#413634]!" />
             <MiniMap
               nodeColor={node => {
                 const d = node.data as any;
-                if (d?.isDefective) return '#ef4444';
-                if (d?.section?.includes('Assembly')) return '#6366f1';
-                return '#06b6d4';
+                if (d?.isDefective) return '#b84a44';
+                if (d?.section?.includes('Assembly')) return '#8b6c58';
+                return '#c5716d';
               }}
-              className="bg-slate-900/90! border-slate-800! rounded-lg!"
+              className="bg-[#faf3dc]! border-[#e5e5e5]!"
             />
           </ReactFlow>
         </div>
 
         {/* Node Detail Inspector Drawer */}
         {selectedNode && (
-          <div className="w-80 md:w-96 bg-slate-900/95 border-l border-slate-800 p-5 flex flex-col justify-between overflow-y-auto backdrop-blur-md shadow-2xl z-20">
+          <div className="w-80 md:w-96 bg-[#fffcf8] border-l border-[#e5e5e5] p-5 flex flex-col justify-between overflow-y-auto shadow-md z-20">
             <div className="space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                <span className="text-xs font-mono uppercase tracking-wider text-cyan-400 font-semibold">
+              <div className="flex items-center justify-between pb-2 border-b border-[#e5e5e5]">
+                <span className="text-xs uppercase tracking-wider text-[#c5716d]">
                   Unit-Level Event Inspector
                 </span>
                 <button
                   onClick={() => setSelectedNode(null)}
-                  className="text-slate-400 hover:text-white text-xs px-2 py-0.5 rounded bg-slate-800"
+                  className="text-[#666666] hover:text-[#413634] text-xs px-2 py-0.5 border border-[#e5e5e5] bg-[#faf3dc]"
                 >
                   Close
                 </button>
               </div>
 
               <div>
-                <h3 className="text-base font-bold text-white">{selectedNode.data.label || selectedNode.data.title}</h3>
-                <span className="text-xs font-mono text-slate-400">{selectedNode.data.step || selectedNode.id}</span>
+                <h3 className="text-base text-[#413634]">{selectedNode.data.label || selectedNode.data.title}</h3>
+                <span className="text-xs font-mono text-[#8b6c58]">{selectedNode.data.step || selectedNode.id}</span>
               </div>
 
-              <div className="p-3 rounded-lg bg-slate-950/70 border border-slate-800 space-y-2 text-xs font-mono">
+              <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5] space-y-2 text-xs font-mono">
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Machine / Station:</span>
-                  <span className="text-slate-200">{selectedNode.data.machine || 'Automated Hub'}</span>
+                  <span className="text-[#666666]">Machine / Station:</span>
+                  <span className="text-[#413634]">{selectedNode.data.machine || 'Automated Hub'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Operator Identity:</span>
-                  <span className="text-slate-200">{selectedNode.data.operator || 'SYSTEM_ROBOTIC'}</span>
+                  <span className="text-[#666666]">Operator Identity:</span>
+                  <span className="text-[#413634]">{selectedNode.data.operator || 'SYSTEM_ROBOTIC'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Event Execution:</span>
-                  <span className="text-cyan-400">{selectedNode.data.event || selectedNode.data.batchId}</span>
+                  <span className="text-[#666666]">Event Execution:</span>
+                  <span className="text-[#c5716d]">{selectedNode.data.event || selectedNode.data.batchId}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Inspection Status:</span>
-                  <span className={selectedNode.data.isDefective ? 'text-red-400 font-bold' : 'text-emerald-400'}>
+                  <span className="text-[#666666]">Inspection Status:</span>
+                  <span className={selectedNode.data.isDefective ? 'text-[#b84a44] font-bold' : 'text-[#2e6b4d]'}>
                     {selectedNode.data.result || 'Anchored OK'}
                   </span>
                 </div>
               </div>
 
               {selectedNode.data.isDefective && (
-                <div className="p-3 rounded-lg bg-red-950/40 border border-red-500/40 text-xs text-red-200 space-y-1">
-                  <div className="flex items-center gap-1.5 font-bold text-red-400">
+                <div className="p-3 bg-[#fdf2f1] border border-[#b84a44] text-xs text-[#b84a44] space-y-1">
+                  <div className="flex items-center gap-1.5 font-normal">
                     <AlertTriangle size={14} />
                     <span>Defect Root Cause Registered</span>
                   </div>
-                  <p className="text-[11px] text-red-300">
+                  <p className="text-[11px] text-[#413634] leading-relaxed">
                     Oven PH-07 thermal variance caused premature crystallization of the optical adhesive (AG-05). All 100 display serials (ABC-0001 to ABC-0100) are flagged.
                   </p>
                 </div>
               )}
 
-              <div className="space-y-1.5">
-                <span className="text-[11px] font-mono uppercase text-slate-400">Merkle Cryptographic Hash</span>
-                <div className="p-2 rounded bg-slate-950 border border-slate-800 font-mono text-[10px] text-slate-300 break-all">
+              <div className="space-y-1">
+                <span className="text-[11px] uppercase tracking-wider text-[#666666]">Merkle Hash Commitment</span>
+                <div className="p-2 bg-[#faf3dc] border border-[#e5e5e5] font-mono text-[10px] text-[#413634] break-all">
                   0x94bca001e8812cfa09923847529841bb2347890123...
                 </div>
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-800 space-y-2">
+            <div className="pt-4 border-t border-[#e5e5e5] space-y-2">
               <button
                 onClick={() => navigate(`/traceability?query=${selectedNode.data.batchId || 'ABC'}`)}
-                className="w-full py-2 px-3 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-colors"
+                className="btn-vintage-primary w-full justify-center"
               >
                 <span>Forward Trace From Node</span>
-                <ChevronRight size={14} />
+                <ChevronRight size={13} />
               </button>
             </div>
           </div>

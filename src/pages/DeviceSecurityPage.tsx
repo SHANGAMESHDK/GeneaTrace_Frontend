@@ -54,20 +54,20 @@ export const DeviceSecurityPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#e5e5e5] pb-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-            <ShieldAlert className="text-red-400" size={24} />
+          <h1 className="text-2xl font-normal font-serif tracking-tight text-[#413634] flex items-center gap-2">
+            <ShieldAlert className="text-[#c5716d]" size={22} />
             <span>Hardware Tamper Detection &amp; Automated Device Security</span>
           </h1>
-          <p className="text-sm text-slate-400 mt-0.5">
+          <p className="text-xs text-[#666666] font-serif mt-1">
             Component signature attestation, unauthorized swap detection, and simulated MDM auto-lock.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="text-xs font-mono px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300">
-            Target: <strong className="text-cyan-400 font-bold">{product.productId}</strong>
+          <span className="text-xs font-serif px-3 py-1.5 bg-[#faf3dc] border border-[#e5e5e5] text-[#413634]">
+            Target: <strong className="font-mono text-[#c5716d] font-bold">{product.productId}</strong>
           </span>
         </div>
       </div>
@@ -78,40 +78,40 @@ export const DeviceSecurityPage: React.FC = () => {
         <div className="lg:col-span-7 space-y-6">
           {/* Security Overview Card */}
           <div
-            className={`p-5 rounded-2xl border transition-all ${
+            className={`p-5 vintage-card transition-all ${
               isLocked || isTampered
-                ? 'bg-red-950/20 border-red-500/60 shadow-xl shadow-red-950/30'
-                : 'bg-slate-900/60 border-slate-800'
+                ? 'bg-[#fdf2f1] border-[#f5c6cb]'
+                : 'bg-[#fffcf8] border-[#e5e5e5]'
             }`}
           >
-            <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+            <div className="flex items-center justify-between pb-4 border-b border-[#e5e5e5]">
               <div className="flex items-center gap-3">
                 <div
-                  className={`p-2.5 rounded-xl border ${
+                  className={`p-2.5 border ${
                     isLocked || isTampered
-                      ? 'bg-red-500/20 border-red-500/40 text-red-400'
-                      : 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400'
+                      ? 'bg-[#fdf2f1] border-[#f5c6cb] text-[#b84a44]'
+                      : 'bg-[#edf6f0] border-[#c3e6cb] text-[#2e6b4d]'
                   }`}
                 >
-                  {isLocked ? <Lock size={22} /> : isTampered ? <AlertTriangle size={22} /> : <ShieldCheck size={22} />}
+                  {isLocked ? <Lock size={20} /> : isTampered ? <AlertTriangle size={20} /> : <ShieldCheck size={20} />}
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-base font-bold text-white font-mono">{product.productId}</span>
+                    <span className="text-base font-normal font-serif text-[#413634]">{product.productId}</span>
                     <span
-                      className={`text-xs px-2 py-0.5 rounded font-mono font-bold uppercase ${
+                      className={`text-xs px-2 py-0.5 font-serif uppercase tracking-wider border ${
                         isLocked
-                          ? 'bg-red-600 text-white animate-pulse'
+                          ? 'bg-[#b84a44] text-white border-[#b84a44] animate-pulse'
                           : isTampered
-                          ? 'bg-red-500/20 text-red-400 border border-red-500/30'
-                          : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                          ? 'bg-[#fdf2f1] text-[#b84a44] border-[#f5c6cb]'
+                          : 'bg-[#edf6f0] text-[#2e6b4d] border-[#c3e6cb]'
                       }`}
                     >
                       {isLocked ? 'DEVICE LOCKED' : securityStatus.status}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    Model: {product.productModel} • IMEI: {product.imeiMasked}
+                  <p className="text-xs text-[#666666] font-serif mt-0.5">
+                    Model: {product.productModel} • Identifier: {product.imeiMasked}
                   </p>
                 </div>
               </div>
@@ -120,31 +120,31 @@ export const DeviceSecurityPage: React.FC = () => {
               {(isLocked || isTampered) && (
                 <button
                   onClick={handleRecoverDevice}
-                  className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 transition-colors"
+                  className="px-3 py-1.5 bg-[#faf3dc] hover:bg-[#eee4d5] text-xs font-serif text-[#2e6b4d] border border-[#413634] flex items-center gap-1.5 transition-colors uppercase tracking-wider"
                 >
-                  <Unlock size={14} />
+                  <Unlock size={13} />
                   <span>Authorized Clear</span>
                 </button>
               )}
             </div>
 
             {/* Checklist items */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 text-xs font-mono">
-              <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800">
-                <span className="text-slate-500">Hardware Commitment:</span>
-                <p className={`font-bold mt-1 ${securityStatus.hardwareHashMatches ? 'text-emerald-400' : 'text-red-400'}`}>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 text-xs font-serif">
+              <div className="p-3 bg-[#fffdf6] border border-[#e5e5e5]">
+                <span className="text-[#8b6c58]">Hardware Commitment:</span>
+                <p className={`font-bold mt-1 ${securityStatus.hardwareHashMatches ? 'text-[#2e6b4d]' : 'text-[#b84a44]'}`}>
                   {securityStatus.hardwareHashMatches ? '✓ Matches DPP Root' : '✗ Commitment Drift'}
                 </p>
               </div>
-              <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800">
-                <span className="text-slate-500">Device Cryptographic Sig:</span>
-                <p className={`font-bold mt-1 ${securityStatus.signatureValid ? 'text-emerald-400' : 'text-red-400'}`}>
+              <div className="p-3 bg-[#fffdf6] border border-[#e5e5e5]">
+                <span className="text-[#8b6c58]">Device Signature:</span>
+                <p className={`font-bold mt-1 ${securityStatus.signatureValid ? 'text-[#2e6b4d]' : 'text-[#b84a44]'}`}>
                   {securityStatus.signatureValid ? '✓ Valid Enclave Key' : '✗ Invalid Signature'}
                 </p>
               </div>
-              <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800">
-                <span className="text-slate-500">Components Authentic:</span>
-                <p className={`font-bold mt-1 ${securityStatus.componentsAuthentic ? 'text-emerald-400' : 'text-red-400'}`}>
+              <div className="p-3 bg-[#fffdf6] border border-[#e5e5e5]">
+                <span className="text-[#8b6c58]">Components Authentic:</span>
+                <p className={`font-bold mt-1 ${securityStatus.componentsAuthentic ? 'text-[#2e6b4d]' : 'text-[#b84a44]'}`}>
                   {securityStatus.componentsAuthentic ? '✓ All Modules Factory' : '✗ Unverified Display'}
                 </p>
               </div>
@@ -152,20 +152,20 @@ export const DeviceSecurityPage: React.FC = () => {
 
             {/* Anomaly Details if detected */}
             {isTampered && (
-              <div className="mt-4 p-3.5 rounded-xl bg-red-950/40 border border-red-500/50 text-xs text-red-200 space-y-1">
-                <div className="flex items-center gap-2 font-bold text-red-400">
+              <div className="mt-4 p-3.5 bg-[#fdf2f1] border border-[#f5c6cb] text-xs text-[#b84a44] space-y-1 font-serif">
+                <div className="flex items-center gap-2 font-bold text-[#b84a44]">
                   <AlertTriangle size={15} />
-                  <span>Tampering Detected (Display Serial / IMEI Mismatch)</span>
+                  <span>Tampering Detected (Display Serial / Root Mismatch)</span>
                 </div>
-                <p className="text-[11px] text-red-300">{securityStatus.anomalyDetails}</p>
+                <p className="text-[11px] text-[#b84a44]/90">{securityStatus.anomalyDetails}</p>
               </div>
             )}
           </div>
 
           {/* Simulation Action Triggers */}
-          <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
-            <h3 className="text-sm font-semibold text-white">Interactive Simulation Controls</h3>
-            <p className="text-xs text-slate-400">
+          <div className="p-5 vintage-card space-y-4">
+            <h3 className="text-sm font-normal font-serif text-[#413634]">Interactive Simulation Controls</h3>
+            <p className="text-xs text-[#666666] font-serif">
               Test how GeneaTrace attestation engine reacts when an unauthorized component is swapped or spoofed.
             </p>
 
@@ -174,9 +174,9 @@ export const DeviceSecurityPage: React.FC = () => {
                 <button
                   onClick={handleTriggerTampering}
                   disabled={isSimulating}
-                  className="px-4 py-2.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-semibold text-xs flex items-center gap-2 shadow-lg shadow-red-950 transition-all"
+                  className="btn-vintage-accent text-xs py-2.5 px-4 flex items-center gap-2 uppercase tracking-wider"
                 >
-                  <AlertTriangle size={15} />
+                  <AlertTriangle size={14} />
                   <span>Simulate Component Replacement Tamper</span>
                 </button>
               ) : null}
@@ -185,9 +185,9 @@ export const DeviceSecurityPage: React.FC = () => {
                 <button
                   onClick={handleExecuteLockCommand}
                   disabled={isSimulating}
-                  className="px-4 py-2.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-semibold text-xs flex items-center gap-2 shadow-lg shadow-red-950 animate-pulse transition-all"
+                  className="btn-vintage-accent text-xs py-2.5 px-4 flex items-center gap-2 animate-pulse uppercase tracking-wider"
                 >
-                  <Lock size={15} />
+                  <Lock size={14} />
                   <span>Execute Signed Auto-Lock Command via MDM</span>
                 </button>
               ) : null}
@@ -195,33 +195,33 @@ export const DeviceSecurityPage: React.FC = () => {
               {isLocked || isTampered ? (
                 <button
                   onClick={handleRecoverDevice}
-                  className="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs flex items-center gap-2 transition-colors"
+                  className="px-4 py-2.5 bg-[#faf3dc] hover:bg-[#eee4d5] border border-[#413634] text-[#413634] text-xs font-serif flex items-center gap-2 transition-colors uppercase tracking-wider"
                 >
-                  <RefreshCw size={14} />
-                  <span>Reset / Authorized Service Technician Unlock</span>
+                  <RefreshCw size={13} />
+                  <span>Reset / Authorized Technician Unlock</span>
                 </button>
               ) : null}
             </div>
           </div>
 
           {/* Audit Log Stream */}
-          <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3 font-mono text-xs">
-            <div className="flex items-center justify-between text-slate-300">
-              <span className="font-bold flex items-center gap-2">
-                <Terminal size={15} className="text-cyan-400" />
+          <div className="p-5 vintage-card space-y-3 font-serif text-xs">
+            <div className="flex items-center justify-between text-[#413634] border-b border-[#e5e5e5] pb-2">
+              <span className="font-normal flex items-center gap-2">
+                <Terminal size={14} className="text-[#c5716d]" />
                 <span>Security Engine Attestation Audit Trail</span>
               </span>
-              <span className="text-[11px] text-slate-500">{securityStatus.simulatedAuditLogs.length} Events</span>
+              <span className="text-[11px] text-[#8b6c58] font-mono">{securityStatus.simulatedAuditLogs.length} Events</span>
             </div>
 
             <div className="space-y-2 max-h-52 overflow-y-auto">
               {securityStatus.simulatedAuditLogs.map((log, idx) => (
-                <div key={idx} className="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80 space-y-1">
+                <div key={idx} className="p-2.5 bg-[#fffdf6] border border-[#e5e5e5] space-y-1">
                   <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-cyan-400 font-bold">{log.actor}</span>
-                    <span className="text-slate-500">{log.timestamp}</span>
+                    <span className="text-[#c5716d] font-mono font-bold">{log.actor}</span>
+                    <span className="text-[#8b6c58] font-mono">{log.timestamp}</span>
                   </div>
-                  <p className="text-slate-300 text-xs">{log.event}</p>
+                  <p className="text-[#413634] text-xs">{log.event}</p>
                 </div>
               ))}
             </div>
@@ -231,75 +231,75 @@ export const DeviceSecurityPage: React.FC = () => {
         {/* Right Column: Interactive Smartphone Test Frame */}
         <div className="lg:col-span-5 flex flex-col items-center justify-center">
           <div className="text-center mb-3">
-            <span className="text-xs font-mono uppercase text-slate-400 font-semibold">
+            <span className="text-xs font-serif uppercase tracking-wider text-[#8b6c58]">
               Live Managed Device Screen State
             </span>
           </div>
 
           {/* Smartphone Frame */}
-          <div className="relative w-[280px] h-[560px] rounded-[44px] bg-black border-4 border-slate-700 shadow-2xl p-3 flex flex-col justify-between overflow-hidden ring-1 ring-slate-800">
+          <div className="relative w-[280px] h-[560px] rounded-[44px] bg-[#1a1716] border-4 border-[#413634] shadow-2xl p-3 flex flex-col justify-between overflow-hidden ring-1 ring-[#e5e5e5]">
             {/* Top Speaker / Dynamic Island */}
-            <div className="w-24 h-4 rounded-full bg-slate-900 mx-auto mt-1 z-20 shrink-0" />
+            <div className="w-24 h-4 rounded-full bg-black mx-auto mt-1 z-20 shrink-0" />
 
             {/* Screen Content */}
             {isLocked ? (
-              // LOCKED SCREEN STATE (Section 9 in infographic)
-              <div className="flex-1 rounded-[32px] bg-red-950/90 border border-red-600/50 flex flex-col items-center justify-center p-6 text-center text-white space-y-4 my-2 z-10 animate-fade-in shadow-inner">
-                <div className="w-16 h-16 rounded-full bg-red-600/30 border border-red-500 flex items-center justify-center text-red-500 animate-pulse">
+              // LOCKED SCREEN STATE
+              <div className="flex-1 rounded-[32px] bg-[#2a0e0e] border border-[#c5716d]/50 flex flex-col items-center justify-center p-6 text-center text-white space-y-4 my-2 z-10 animate-fade-in shadow-inner">
+                <div className="w-16 h-16 rounded-full bg-[#c5716d]/30 border border-[#c5716d] flex items-center justify-center text-[#c5716d] animate-pulse">
                   <Lock size={32} />
                 </div>
                 <div className="space-y-2">
-                  <h4 className="text-sm font-extrabold uppercase tracking-wider text-red-200">
+                  <h4 className="text-sm font-normal font-serif uppercase tracking-wider text-[#faf3dc]">
                     Device Automatically Locked
                   </h4>
-                  <p className="text-[11px] text-red-300/90 leading-relaxed font-sans">
+                  <p className="text-[11px] text-[#fdf2f1] leading-relaxed font-serif">
                     This device has been locked due to unauthorized hardware tampering.
                   </p>
-                  <p className="text-[10px] text-slate-400 font-sans">
+                  <p className="text-[10px] text-[#faf3dc]/70 font-serif">
                     Display serial mismatch verified against GeneaTrace Merkle DAG. Please contact an authorized service center.
                   </p>
                 </div>
                 <div className="pt-2">
-                  <span className="text-[9px] font-mono text-red-400/80 bg-red-900/40 px-2 py-1 rounded border border-red-500/30">
+                  <span className="text-[9px] font-mono text-[#fdf2f1] bg-[#413634]/80 px-2 py-1 rounded border border-[#c5716d]/30">
                     MDM_POLICY_TAMPER_KILL_0x44
                   </span>
                 </div>
               </div>
             ) : isTampered ? (
               // WARNING SCREEN STATE
-              <div className="flex-1 rounded-[32px] bg-amber-950/80 border border-amber-600/50 flex flex-col items-center justify-center p-6 text-center text-white space-y-3 my-2 z-10">
-                <AlertTriangle size={36} className="text-amber-400 animate-bounce" />
-                <h4 className="text-xs font-bold text-amber-200 uppercase">Hardware Anomaly Alert</h4>
-                <p className="text-[11px] text-amber-300/90 leading-relaxed font-sans">
+              <div className="flex-1 rounded-[32px] bg-[#3a200a] border border-[#b87428]/50 flex flex-col items-center justify-center p-6 text-center text-white space-y-3 my-2 z-10">
+                <AlertTriangle size={36} className="text-[#f8dc68] animate-bounce" />
+                <h4 className="text-xs font-normal font-serif text-[#faf3dc] uppercase">Hardware Anomaly Alert</h4>
+                <p className="text-[11px] text-[#fef7ec] leading-relaxed font-serif">
                   Attestation failed: Installed screen does not match factory DPP cryptographic fingerprint.
                 </p>
-                <span className="text-[9px] font-mono text-amber-400">Lock Command Pending Authorization</span>
+                <span className="text-[9px] font-mono text-[#f8dc68]">Lock Command Pending Authorization</span>
               </div>
             ) : (
               // NORMAL SECURE STATE
-              <div className="flex-1 rounded-[32px] bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 flex flex-col items-center justify-between p-6 text-center text-white my-2 z-10 border border-slate-800">
+              <div className="flex-1 rounded-[32px] bg-gradient-to-b from-[#2a2422] to-[#1a1716] flex flex-col items-center justify-between p-6 text-center text-white my-2 z-10 border border-[#413634]">
                 <div className="space-y-1 pt-4">
-                  <span className="text-[10px] font-mono text-cyan-400">SECURE ENCLAVE ACTIVE</span>
-                  <h4 className="text-base font-bold">Galaxy S24 Ultra</h4>
-                  <span className="text-[11px] text-slate-400 font-mono">GT-DEV-00000851</span>
+                  <span className="text-[10px] font-mono text-[#faf3dc]">SECURE ENCLAVE ACTIVE</span>
+                  <h4 className="text-base font-normal font-serif text-[#fffdf6]">Galaxy S24 Ultra</h4>
+                  <span className="text-[11px] text-[#faf3dc]/70 font-mono">GT-DEV-00000851</span>
                 </div>
 
-                <div className="w-20 h-20 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-lg shadow-cyan-500/10">
+                <div className="w-20 h-20 rounded-full bg-[#c5716d]/20 border border-[#c5716d]/40 flex items-center justify-center text-[#c5716d] shadow-lg">
                   <ShieldCheck size={36} />
                 </div>
 
                 <div className="space-y-1 pb-4">
-                  <div className="flex items-center justify-center gap-1.5 text-emerald-400 text-xs font-semibold">
+                  <div className="flex items-center justify-center gap-1.5 text-[#2e6b4d] text-xs font-serif font-bold">
                     <CheckCircle2 size={13} />
                     <span>GeneaTrace DPP Verified</span>
                   </div>
-                  <p className="text-[10px] text-slate-500 font-mono">All 7 Modules Factory Signed</p>
+                  <p className="text-[10px] text-[#faf3dc]/60 font-mono">All 7 Modules Factory Signed</p>
                 </div>
               </div>
             )}
 
             {/* Bottom Home Indicator */}
-            <div className="w-32 h-1 rounded-full bg-slate-700 mx-auto mb-1 z-20 shrink-0" />
+            <div className="w-32 h-1 rounded-full bg-[#666666] mx-auto mb-1 z-20 shrink-0" />
           </div>
         </div>
       </div>

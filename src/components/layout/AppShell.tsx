@@ -7,7 +7,7 @@ export const AppShell: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-[#fffdf6] text-[#413634] flex flex-col font-serif-vintage">
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
       <Topbar collapsed={collapsed} />
 

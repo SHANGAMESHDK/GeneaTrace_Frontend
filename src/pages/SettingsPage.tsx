@@ -44,13 +44,13 @@ export const SettingsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#e5e5e5] pb-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-            <Settings className="text-cyan-400" size={24} />
+          <h1 className="text-2xl font-normal font-serif tracking-tight text-[#413634] flex items-center gap-2">
+            <Settings className="text-[#c5716d]" size={22} />
             <span>Industrial Integrations &amp; System Configuration</span>
           </h1>
-          <p className="text-sm text-slate-400 mt-0.5">
+          <p className="text-xs text-[#666666] font-serif mt-1">
             ERP, MES, SCADA data ingestion gateways, demo environment controls, and data management.
           </p>
         </div>
@@ -58,58 +58,58 @@ export const SettingsPage: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleResetData}
-            className="px-3.5 py-2 rounded-lg bg-red-950/40 hover:bg-red-900/40 border border-red-500/40 text-red-200 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+            className="px-3.5 py-2 bg-[#fdf2f1] hover:bg-[#fae7e6] border border-[#f5c6cb] text-[#b84a44] text-xs font-serif flex items-center gap-1.5 transition-colors uppercase tracking-wider"
           >
-            <RotateCcw size={14} />
+            <RotateCcw size={13} />
             <span>Reset Demo Data</span>
           </button>
         </div>
       </div>
 
       {feedback && (
-        <div className="p-3 rounded-xl bg-cyan-950/60 border border-cyan-500/50 text-xs text-cyan-200">
+        <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5] text-xs text-[#413634] font-serif">
           {feedback}
         </div>
       )}
 
-      {/* Industrial Integration Dashboard (Section 8 of Master Prompt) */}
-      <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
-        <div className="flex items-center justify-between">
+      {/* Industrial Integration Dashboard */}
+      <div className="p-5 vintage-card space-y-4">
+        <div className="flex items-center justify-between border-b border-[#e5e5e5] pb-2">
           <div>
-            <h3 className="text-sm font-semibold text-white">Enterprise Industrial Systems Integration</h3>
-            <p className="text-xs text-slate-400">
+            <h3 className="text-sm font-normal font-serif text-[#413634]">Enterprise Industrial Systems Integration</h3>
+            <p className="text-xs text-[#666666] font-serif">
               Clean abstraction architecture ready to attach live OPC UA, MQTT Sparkplug B, and REST endpoints.
             </p>
           </div>
-          <span className="text-xs font-mono text-cyan-400">6 Gateways Connected</span>
+          <span className="text-xs font-serif text-[#c5716d]">6 Gateways Connected</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {integrations.map(int => (
-            <div key={int.id} className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+            <div key={int.id} className="p-4 bg-[#fffdf6] border border-[#e5e5e5] space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-slate-900 text-cyan-400 border border-slate-800">
+                <span className="text-[10px] font-serif uppercase tracking-wider px-2 py-0.5 bg-[#faf3dc] text-[#413634] border border-[#e5e5e5]">
                   {int.category}
                 </span>
-                <span className="flex items-center gap-1.5 text-[11px] font-mono text-emerald-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                <span className="flex items-center gap-1.5 text-[11px] font-serif text-[#2e6b4d]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#2e6b4d]" />
                   <span>{int.status}</span>
                 </span>
               </div>
 
               <div>
-                <h4 className="font-bold text-xs text-white">{int.name}</h4>
-                <p className="text-[11px] text-slate-400 mt-1 line-clamp-2 leading-relaxed">{int.description}</p>
+                <h4 className="font-normal font-serif text-xs text-[#413634]">{int.name}</h4>
+                <p className="text-[11px] text-[#666666] font-serif mt-1 line-clamp-2 leading-relaxed">{int.description}</p>
               </div>
 
-              <div className="pt-2 border-t border-slate-800/80 grid grid-cols-2 gap-2 text-[10px] font-mono text-slate-400">
+              <div className="pt-2 border-t border-[#e5e5e5] grid grid-cols-2 gap-2 text-[10px] font-mono text-[#8b6c58]">
                 <div>
-                  <span>Protocol:</span>
-                  <p className="text-slate-200 font-medium truncate">{int.protocol}</p>
+                  <span className="font-serif">Protocol:</span>
+                  <p className="text-[#413634] font-medium truncate">{int.protocol}</p>
                 </div>
                 <div>
-                  <span>Ingested Events:</span>
-                  <p className="text-cyan-400 font-bold truncate">{int.eventsIngested.toLocaleString()}</p>
+                  <span className="font-serif">Ingested:</span>
+                  <p className="text-[#49627d] font-bold truncate">{int.eventsIngested.toLocaleString()}</p>
                 </div>
               </div>
             </div>
@@ -119,35 +119,35 @@ export const SettingsPage: React.FC = () => {
 
       {/* Demo Controls & State Management */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3 text-xs">
-          <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-            <Database size={16} className="text-cyan-400" />
+        <div className="p-5 vintage-card space-y-3 text-xs font-serif">
+          <h3 className="text-sm font-normal text-[#413634] flex items-center gap-2">
+            <Database size={15} className="text-[#c5716d]" />
             <span>Demonstration State Storage</span>
           </h3>
-          <p className="text-slate-400">
+          <p className="text-[#666666]">
             Current changes are saved to browser local state for immediate interactive demonstration.
           </p>
           <div className="flex gap-2 pt-2">
             <button
               onClick={handleExportStateJson}
-              className="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold flex items-center gap-1.5 transition-colors"
+              className="btn-vintage-primary text-xs py-2 px-3.5 flex items-center gap-1.5 uppercase tracking-wider"
             >
-              <Download size={14} />
+              <Download size={13} />
               <span>Export State JSON</span>
             </button>
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3 text-xs">
-          <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-            <Layers size={16} className="text-cyan-400" />
+        <div className="p-5 vintage-card space-y-3 text-xs font-serif">
+          <h3 className="text-sm font-normal text-[#413634] flex items-center gap-2">
+            <Layers size={15} className="text-[#c5716d]" />
             <span>Manufacturing Batch Configuration</span>
           </h3>
-          <p className="text-slate-400">
+          <p className="text-[#666666]">
             Standard demonstration batch size is configured to <strong>100 units/batch</strong> (e.g. ABC-0001 through ABC-0100).
           </p>
-          <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 font-mono text-[11px] text-slate-300">
-            Batch Namespace: <span className="text-cyan-400 font-bold">GT-KOREA-GUMI-L2</span>
+          <div className="p-3 bg-[#fffdf6] border border-[#e5e5e5] font-mono text-[11px] text-[#413634]">
+            Batch Namespace: <span className="text-[#c5716d] font-bold">GT-KOREA-GUMI-L2</span>
           </div>
         </div>
       </div>
