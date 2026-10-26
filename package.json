@@ -1,0 +1,23 @@
+﻿{
+  "name": "geneatrace",
+  "version": "1.0.0",
+  "description": "GeneaTrace — Unified ERP + MES + SCADA Manufacturing Traceability Platform",
+  "main": "frontend/index.html",
+  "scripts": {
+    "dev": "npx --yes serve frontend -l 3000",
+    "start": "npx --yes serve frontend -l 3000",
+    "serve": "npx --yes serve frontend",
+    "open": "cmd /c start frontend/index.html"
+  },
+  "keywords": [
+    "traceability",
+    "merkle-dag",
+    "erp",
+    "mes",
+    "scada",
+    "dpp",
+    "hackathon"
+  ],
+  "author": "Sudhir",
+  "license": "MIT"
+}

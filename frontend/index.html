@@ -1,0 +1,2158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="GeneaTrace — Unified Industrial Digital Product Passport (DPP) Platform. Unified ERP, MES and SCADA traceability." />
+  <title>GeneaTrace | Digital Product Passport Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=15" />
+</head>
+<body class="theme-slate-mist">
+
+  <!-- ==================== SIDEBAR ==================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon-wrap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon>
+          <circle cx="12" cy="12" r="3.5" fill="currentColor"></circle>
+        </svg>
+      </div>
+      <span class="brand-name">GeneaTrace</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-page="dashboard" id="nav-dashboard">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+          <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+          <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+          <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+        </svg>
+        <span>Dashboard</span>
+      </a>
+
+      <a href="#" class="nav-item" data-page="passport" id="nav-passport">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+          <line x1="8" y1="6" x2="16" y2="6"></line>
+          <line x1="8" y1="10" x2="16" y2="10"></line>
+          <line x1="8" y1="14" x2="12" y2="14"></line>
+        </svg>
+        <span>Product Passport</span>
+      </a>
+
+      <a href="#" class="nav-item" data-page="lineage" id="nav-lineage">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="18" cy="5" r="3"></circle>
+          <circle cx="6" cy="12" r="3"></circle>
+          <circle cx="18" cy="19" r="3"></circle>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+        </svg>
+        <span>Traceability</span>
+      </a>
+
+      <a href="#" class="nav-item" data-page="erp" id="nav-erp">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="7" width="20" height="14" rx="2"></rect>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+        </svg>
+        <span>ERP</span>
+      </a>
+
+      <a href="#" class="nav-item" data-page="mes" id="nav-mes">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M12 7v5l3.5 3.5"></path>
+        </svg>
+        <span>MES</span>
+      </a>
+
+      <a href="#" class="nav-item" data-page="scada" id="nav-scada">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+        </svg>
+        <span>SCADA</span>
+      </a>
+
+      <a href="#" class="nav-item" data-page="recall" id="nav-recall">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+        </svg>
+        <span>Reports</span>
+      </a>
+
+      <a href="#" class="nav-item" data-page="settings" id="nav-settings" onclick="toast('GeneaTrace Enterprise Settings (v2.4 LTS) Synced', 'info')">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-badge">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+        <span>Secure • Transparent • Trusted</span>
+      </div>
+      <span class="sidebar-footer-sub">Powered by GeneaTrace</span>
+    </div>
+  </aside>
+
+  <!-- ==================== MAIN WRAPPER ==================== -->
+  <div class="main-wrapper">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left" style="position:relative">
+        <div class="global-search">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="global-search-input" placeholder="Search by Serial No. / Batch No. / Product ID..." oninput="handleGlobalSearchInput(this.value)" onkeydown="if(event.key==='Enter') executeTopSearch(this.value)" />
+        </div>
+        <!-- Auto-complete Search Suggestions Dropdown -->
+        <div id="search-suggestions-dropdown" class="search-dropdown-menu" style="display:none;position:absolute;top:44px;left:0;right:0;background:#FFFFFF;border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-lg);z-index:999;padding:6px 0;max-height:280px;overflow-y:auto"></div>
+      </div>
+
+      <div class="topbar-right">
+        <!-- Live Palette Switcher Pill -->
+        <div class="theme-switcher-pill" id="theme-switcher-wrap">
+          <button class="theme-pill-btn active" id="btn-theme-brown-gold" onclick="setAppTheme('brown-gold')" title="Palette 1: Brown, Gold and Amber">
+            <span class="theme-dot" style="background:#D97706"></span>
+            <span>Brown &amp; Gold</span>
+          </button>
+          <button class="theme-pill-btn" id="btn-theme-glacier-uv" onclick="setAppTheme('glacier-uv')" title="Palette 2: Glacier Blue, Ultraviolet and Grey">
+            <span class="theme-dot" style="background:#0284C7"></span>
+            <span>Glacier &amp; UV</span>
+          </button>
+          <button class="theme-pill-btn" id="btn-theme-charcoal-red" onclick="setAppTheme('charcoal-red')" title="Palette 3: Charcoal Grey, Moonlit Silver and Signal Red">
+            <span class="theme-dot" style="background:#E11D48"></span>
+            <span>Charcoal &amp; Red</span>
+          </button>
+          <button class="theme-pill-btn" id="btn-theme-slate-mist" onclick="setAppTheme('slate-mist')" title="Requested Palette: Slate & Mist (#4A5C6A, #9BA8AB)">
+            <span class="theme-dot" style="background:#4A5C6A"></span>
+            <span>Slate &amp; Mist</span>
+          </button>
+        </div>
+
+        <button class="topbar-icon-btn" onclick="toast('3 Cleanroom notifications: Line 3 SMT nominal, Batch B-2305-14 dispatched', 'info')" title="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span class="topbar-notif-dot"></span>
+        </button>
+
+        <div class="user-profile-chip" onclick="toast('Logged in as Enterprise Administrator', 'info')">
+          <div class="user-avatar-img">A</div>
+          <div class="user-info">
+            <span class="user-name">Admin</span>
+            <span class="user-role">System</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content Container -->
+    <main class="page-content">
+
+      <!-- ==================== 1. MAIN DASHBOARD ==================== -->
+      <section class="page" id="page-dashboard">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1>Welcome to GeneaTrace</h1>
+            <p>Unified Cryptographic Product Passport &amp; Merkle-DAG Lineage Engine</p>
+          </div>
+          <div class="view-header-right">
+            <span class="header-datetime" id="dashboard-clock">Mon, 26 May 2025 | 10:24 AM</span>
+          </div>
+        </div>
+
+        <!-- 4 KPI Cards (Top Row - GeneaTrace Idea Metrics) -->
+        <div class="gt-kpi-grid">
+          <div class="gt-kpi-card" onclick="showPage('passport')">
+            <div class="kpi-icon-box teal">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              </svg>
+            </div>
+            <div class="kpi-details">
+              <span class="kpi-title">Digital Passports</span>
+              <span class="kpi-val">1,000</span>
+              <div class="kpi-sub-row">
+                <span class="kpi-sub-label">Cryptographic DPPs</span>
+                <span class="kpi-trend up">100% Sealed</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="gt-kpi-card" onclick="showPage('lineage')">
+            <div class="kpi-icon-box emerald">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+              </svg>
+            </div>
+            <div class="kpi-details">
+              <span class="kpi-title">Operational Silos</span>
+              <span class="kpi-val">3 Unified</span>
+              <div class="kpi-sub-row">
+                <span class="kpi-sub-label">ERP + MES + SCADA</span>
+                <span class="kpi-trend up">Merkle-DAG</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="gt-kpi-card" onclick="showPage('recall')">
+            <div class="kpi-icon-box cyan">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+            </div>
+            <div class="kpi-details">
+              <span class="kpi-title">Surgical Recall</span>
+              <span class="kpi-val">99.7%</span>
+              <div class="kpi-sub-row">
+                <span class="kpi-sub-label">142 Isolated vs 50k</span>
+                <span class="kpi-trend up">$24.9M Saved</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="gt-kpi-card" onclick="runAncestralIntersectionDemo()">
+            <div class="kpi-icon-box rose">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline>
+              </svg>
+            </div>
+            <div class="kpi-details">
+              <span class="kpi-title">Intersection Latency</span>
+              <span class="kpi-val">18 ms</span>
+              <div class="kpi-sub-row">
+                <span class="kpi-sub-label">vs 12.4s SQL CTE</span>
+                <span class="kpi-trend up">~690x Faster</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 Columns (Production Flow, Batch Status Donut, Recent Activity) -->
+        <div class="gt-dash-tri-grid">
+          
+          <!-- Column 1: Production Flow -->
+          <div class="gt-card">
+            <div class="gt-card-header">
+              <span class="gt-card-title">Production Flow</span>
+            </div>
+
+            <div class="production-flow-container">
+              <div class="flow-stepper">
+                <div class="flow-step completed">
+                  <div class="flow-step-circle">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    </svg>
+                  </div>
+                  <span class="flow-step-label">Raw Materials</span>
+                </div>
+
+                <div class="flow-connector-arrow">➔</div>
+
+                <div class="flow-step completed">
+                  <div class="flow-step-circle">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="3"></circle>
+                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                  </div>
+                  <span class="flow-step-label">Machining</span>
+                </div>
+
+                <div class="flow-connector-arrow">➔</div>
+
+                <div class="flow-step active">
+                  <div class="flow-step-circle">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                    </svg>
+                  </div>
+                  <span class="flow-step-label">Assembly</span>
+                </div>
+
+                <div class="flow-connector-arrow">➔</div>
+
+                <div class="flow-step">
+                  <div class="flow-step-circle">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 14 14"></polyline>
+                    </svg>
+                  </div>
+                  <span class="flow-step-label">Testing</span>
+                </div>
+
+                <div class="flow-connector-arrow">➔</div>
+
+                <div class="flow-step">
+                  <div class="flow-step-circle">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    </svg>
+                  </div>
+                  <span class="flow-step-label">Packaging</span>
+                </div>
+
+                <div class="flow-connector-arrow">➔</div>
+
+                <div class="flow-step">
+                  <div class="flow-step-circle">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="1" y="3" width="15" height="13"></rect>
+                      <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                      <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                      <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                    </svg>
+                  </div>
+                  <span class="flow-step-label">Dispatch</span>
+                </div>
+              </div>
+
+              <!-- Dark Blue Banner -->
+              <div class="flow-hero-banner">
+                <div class="flow-hero-text">
+                  <h3>From raw materials to the end product, GeneaTrace keeps every step connected.</h3>
+                  <p>Trace. Verify. Recall. Faster.</p>
+                </div>
+                <div class="flow-hero-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <polyline points="9 12 11 14 15 10"></polyline>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2: Batch Status Donut Chart -->
+          <div class="gt-card">
+            <div class="gt-card-header">
+              <span class="gt-card-title">Batch Status</span>
+            </div>
+
+            <div class="batch-status-body">
+              <div class="donut-chart-wrap">
+                <svg class="donut-svg" viewBox="0 0 36 36">
+                  <!-- Background Track -->
+                  <circle cx="18" cy="18" r="14" fill="transparent" stroke="#F1F5F9" stroke-width="3.6"></circle>
+                  <!-- Completed (91.2%) Green -->
+                  <circle cx="18" cy="18" r="14" fill="transparent" stroke="#10B981" stroke-width="3.6"
+                          stroke-dasharray="80.25 88" stroke-dashoffset="0"></circle>
+                  <!-- In Progress (7.8%) Cyan -->
+                  <circle cx="18" cy="18" r="14" fill="transparent" stroke="#0284C7" stroke-width="3.6"
+                          stroke-dasharray="6.86 88" stroke-dashoffset="-80.25"></circle>
+                  <!-- On Hold (0.8%) Amber -->
+                  <circle cx="18" cy="18" r="14" fill="transparent" stroke="#F59E0B" stroke-width="3.6"
+                          stroke-dasharray="0.7 88" stroke-dashoffset="-87.11"></circle>
+                  <!-- Rejected (0.2%) Red -->
+                  <circle cx="18" cy="18" r="14" fill="transparent" stroke="#EF4444" stroke-width="3.6"
+                          stroke-dasharray="0.18 88" stroke-dashoffset="-87.81"></circle>
+                </svg>
+                <div class="donut-center-info">
+                  <div class="donut-center-val">1,000</div>
+                  <div class="donut-center-lbl">Total Units</div>
+                </div>
+              </div>
+
+              <div class="batch-status-legend">
+                <div class="legend-item">
+                  <div class="legend-left">
+                    <span class="legend-dot green"></span>
+                    <span>Completed</span>
+                  </div>
+                  <span class="legend-val">912</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-left">
+                    <span class="legend-dot cyan"></span>
+                    <span>In Progress</span>
+                  </div>
+                  <span class="legend-val">78</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-left">
+                    <span class="legend-dot amber"></span>
+                    <span>On Hold</span>
+                  </div>
+                  <span class="legend-val">8</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-left">
+                    <span class="legend-dot red"></span>
+                    <span>Rejected</span>
+                  </div>
+                  <span class="legend-val">2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 3: Recent Activity -->
+          <div class="gt-card">
+            <div class="gt-card-header">
+              <span class="gt-card-title">Recent Activity</span>
+            </div>
+
+            <div class="activity-list">
+              <div class="activity-item">
+                <span class="activity-dot green"></span>
+                <div class="activity-content">
+                  <div class="activity-desc">Batch B-2305-14 dispatched to Chennai</div>
+                  <div class="activity-time">2 hours ago</div>
+                </div>
+              </div>
+
+              <div class="activity-item">
+                <span class="activity-dot red"></span>
+                <div class="activity-content">
+                  <div class="activity-desc">Quality alert raised for Batch B-2305-11</div>
+                  <div class="activity-time">4 hours ago</div>
+                </div>
+              </div>
+
+              <div class="activity-item">
+                <span class="activity-dot blue"></span>
+                <div class="activity-content">
+                  <div class="activity-desc">New production batch B-2305-15 started</div>
+                  <div class="activity-time">6 hours ago</div>
+                </div>
+              </div>
+
+              <div class="activity-item" style="cursor:pointer" onclick="openBatchTracker('B-2504-17', '2025-04-12', '14:32')">
+                <span class="activity-dot orange"></span>
+                <div class="activity-content">
+                  <div class="activity-desc" style="display:flex;align-items:center;justify-content:space-between">
+                    <span>SCADA anomaly detected (Line 2 · Batch B-2504-17)</span>
+                    <span style="font-size:11px;color:var(--brand-blue);font-weight:600">Locate Units →</span>
+                  </div>
+                  <div class="activity-time">8 hours ago · Thermal Chamber drift flagged</div>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <!-- GeneaTrace PDF Architecture: Live Root Cause & Cryptographic Demos -->
+        <div class="idea-action-bar" style="margin-top:16px;margin-bottom:14px;">
+          <div class="idea-action-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="color:var(--brand-blue)">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+              <polyline points="2 17 12 22 22 17"></polyline>
+              <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+            <span>GeneaTrace Root Cause &amp; Merkle Verification Suite:</span>
+          </div>
+          <div class="idea-action-btns">
+            <button class="idea-btn idea-btn-primary" onclick="runAncestralIntersectionDemo()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline></svg>
+              <span>Run 18ms Ancestral Intersection (3 Returns)</span>
+            </button>
+            <button class="idea-btn idea-btn-tamper" onclick="simulateTamperInjection()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              <span>Simulate SCADA Tamper &amp; SHA-256 Invalidation</span>
+            </button>
+            <button class="idea-btn idea-btn-outline" onclick="locateBlastRadiusUnits()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              <span>Locate Units Across Stores &amp; Warehouses</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Demo Output Container -->
+        <div id="dash-interactive-result" style="display:none;margin-bottom:16px;"></div>
+
+        <!-- Store Distribution Matrix Preview Card -->
+        <div class="gt-table-card" style="margin-top:4px">
+          <div style="padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">
+            <div>
+              <h3 style="font-size:13.5px;font-weight:700;color:var(--text-heading)">Dispatched Mobiles — Multi-Store Geolocation Matrix</h3>
+              <p style="font-size:11.5px;color:var(--text-muted);margin-top:2px">Real-time inventory and shelf positioning across 48 flagship store locations.</p>
+            </div>
+            <button class="btn btn-sm btn-outline" onclick="showPage('passport')">Open Digital Product Passport →</button>
+          </div>
+          <table class="gt-table">
+            <thead>
+              <tr>
+                <th>Store &amp; Location</th>
+                <th>Assigned Batch</th>
+                <th>Dispatched Range</th>
+                <th>Units On Shelf</th>
+                <th>Backroom Stock</th>
+                <th>Store Directives</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Samsung Flagship Experience Center</strong><br><span style="font-size:11px;color:var(--text-muted)">BKC Mumbai · Store #101</span></td>
+                <td><span class="status-pill in-progress">BAT-2024-X49</span></td>
+                <td style="font-family:var(--mono);font-size:11.5px">SM-S928-IND-00800 → 00841</td>
+                <td><span class="status-pill in-stock">31 Units</span></td>
+                <td>11 Units</td>
+                <td><button class="btn btn-sm btn-outline" onclick="loadPassport('SM-S928-IND-00841')">Trace Serial →</button></td>
+              </tr>
+              <tr>
+                <td><strong>Samsung Opera House Flagship</strong><br><span style="font-size:11px;color:var(--text-muted)">Central Delhi · Store #305</span></td>
+                <td><span class="status-pill in-progress">BAT-2024-X49</span></td>
+                <td style="font-family:var(--mono);font-size:11.5px">SM-S928-IND-00910 → 00964</td>
+                <td><span class="status-pill in-stock">47 Units</span></td>
+                <td>8 Units</td>
+                <td><button class="btn btn-sm btn-outline" onclick="loadPassport('SM-S928-IND-00841')">Trace Serial →</button></td>
+              </tr>
+              <tr>
+                <td><strong>Chennai Experience Store</strong><br><span style="font-size:11px;color:var(--text-muted)">Anna Salai, Chennai · Store #ELC001</span></td>
+                <td><span class="status-pill in-progress">B-2504-17</span></td>
+                <td style="font-family:var(--mono);font-size:11.5px">S24U123456789 → 00890</td>
+                <td><span class="status-pill in-stock">45 Units</span></td>
+                <td>12 Units</td>
+                <td><button class="btn btn-sm btn-outline" onclick="loadPassport('S24U123456789')">Inspect Unit →</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== 2. PRODUCT PASSPORT ==================== -->
+      <section class="page hidden" id="page-passport">
+        <div class="view-header">
+          <div>
+            <a class="passport-back-link" onclick="showPage('dashboard')">← Product Passport</a>
+            <p style="font-size:12.5px;color:var(--text-muted)">Complete product lineage and manufacturing history</p>
+          </div>
+          <div class="passport-top-search">
+            <input type="text" id="passport-serial-input" placeholder="Enter Serial Number" value="S24U123456789" onkeydown="if(event.key==='Enter') loadPassport(this.value)" />
+            <button class="passport-search-btn" onclick="loadPassport(document.getElementById('passport-serial-input').value)" title="Search Serial">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Top Product Hero Card -->
+        <div class="passport-hero-card">
+          <div class="passport-product-left">
+            <img src="s24ultra.jpg" alt="Galaxy S24 Ultra" class="passport-device-img" />
+            <div class="passport-product-meta">
+              <h2>Galaxy S24 Ultra</h2>
+              <div class="passport-serial-tag">Serial No. : <span id="pp-serial-display">S24U123456789</span></div>
+              <div class="passport-pills-row">
+                <span class="status-pill finished">Finished Product</span>
+                <span class="status-pill in-stock">In Stock</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="passport-location-meta">
+            <div class="passport-location-label">Current Location</div>
+            <div class="passport-location-val" id="pp-location-display">Chennai Store - ELC001</div>
+            <div class="passport-dispatched-date">Dispatched On: <strong>18 Apr 2025</strong></div>
+          </div>
+        </div>
+
+        <!-- Passport Tabs Bar -->
+        <div class="passport-tabs-bar">
+          <span class="passport-tab active" data-pp-tab="overview" onclick="switchPassportTab(this, 'overview')">Overview</span>
+          <span class="passport-tab" data-pp-tab="lineage" onclick="switchPassportTab(this, 'lineage')">Lineage</span>
+          <span class="passport-tab" data-pp-tab="batch" onclick="switchPassportTab(this, 'batch')">Batch Details</span>
+          <span class="passport-tab" data-pp-tab="location" onclick="switchPassportTab(this, 'location')">Location History</span>
+          <span class="passport-tab" data-pp-tab="sensor" onclick="switchPassportTab(this, 'sensor')">Sensor Data</span>
+          <span class="passport-tab" data-pp-tab="docs" onclick="switchPassportTab(this, 'docs')">Documents</span>
+        </div>
+
+        <!-- Passport Tab Content Views -->
+        <!-- TAB 1: OVERVIEW (Default 3-Column Content Grid) -->
+        <div class="passport-3col-grid" id="pp-view-overview">
+          
+          <!-- Column 1: Product Information -->
+          <div class="gt-card">
+            <div class="gt-card-header">
+              <span class="gt-card-title">Product Information</span>
+            </div>
+            <div>
+              <div class="info-item-row">
+                <span class="info-item-label">Product Name</span>
+                <span class="info-item-value">Galaxy S24 Ultra</span>
+              </div>
+              <div class="info-item-row">
+                <span class="info-item-label">Serial Number</span>
+                <span class="info-item-value" style="font-family:var(--mono)" id="pp-info-serial">S24U123456789</span>
+              </div>
+              <div class="info-item-row">
+                <span class="info-item-label">Batch No.</span>
+                <span class="info-item-value" style="font-family:var(--mono)" id="pp-info-batch">B-2504-17</span>
+              </div>
+              <div class="info-item-row">
+                <span class="info-item-label">Manufacturing Date</span>
+                <span class="info-item-value">12 Apr 2025</span>
+              </div>
+              <div class="info-item-row">
+                <span class="info-item-label">Dispatch Date</span>
+                <span class="info-item-value">18 Apr 2025</span>
+              </div>
+              <div class="info-item-row">
+                <span class="info-item-label">Current Location</span>
+                <span class="info-item-value" id="pp-info-loc">Chennai Store - ELC001</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2: Lineage Stepper Flow -->
+          <div class="gt-card">
+            <div class="gt-card-header">
+              <span class="gt-card-title">Lineage</span>
+            </div>
+
+            <div class="passport-lineage-flow">
+              <div class="passport-lineage-node">
+                <div class="node-icon-box green">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                  </svg>
+                </div>
+                <div class="node-info">
+                  <div class="node-label">Raw Material Batches</div>
+                  <div class="node-code">RM-B-1042</div>
+                </div>
+              </div>
+
+              <div class="passport-lineage-node">
+                <div class="node-icon-box blue">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                  </svg>
+                </div>
+                <div class="node-info">
+                  <div class="node-label">Machining</div>
+                  <div class="node-code">MCH-3321</div>
+                </div>
+              </div>
+
+              <div class="passport-lineage-node">
+                <div class="node-icon-box purple">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                  </svg>
+                </div>
+                <div class="node-info">
+                  <div class="node-label">Assembly</div>
+                  <div class="node-code">ASM-7765</div>
+                </div>
+              </div>
+
+              <div class="passport-lineage-node">
+                <div class="node-icon-box dark">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="5" y="2" width="14" height="20" rx="2"></rect>
+                    <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                  </svg>
+                </div>
+                <div class="node-info">
+                  <div class="node-label">Finished Product</div>
+                  <div class="node-code" id="pp-lineage-finished">S24U123456789</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 3: Quick Actions -->
+          <div class="gt-card">
+            <div class="gt-card-header">
+              <span class="gt-card-title">Quick Actions</span>
+            </div>
+
+            <div>
+              <div class="quick-action-link" onclick="showPage('lineage')">
+                <div class="qa-left">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
+                  <span>View Full Trace</span>
+                </div>
+                <span>›</span>
+              </div>
+
+              <div class="quick-action-link" onclick="downloadPassportCertificate()">
+                <div class="qa-left">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  <span>Download Passport</span>
+                </div>
+                <span>›</span>
+              </div>
+
+              <div class="quick-action-link" onclick="showPage('lineage')">
+                <div class="qa-left">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="18" cy="5" r="3"></circle>
+                    <circle cx="6" cy="12" r="3"></circle>
+                    <circle cx="18" cy="19" r="3"></circle>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                  </svg>
+                  <span>View in Graph</span>
+                </div>
+                <span>›</span>
+              </div>
+
+              <div class="quick-action-link" onclick="showPage('recall')">
+                <div class="qa-left" style="color:var(--brand-rose)">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="12 2 22 19 2 19 12 2"></polygon>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                  <span>Report Issue</span>
+                </div>
+                <span>›</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: BATCH DETAILS (Hidden by default) -->
+        <div class="gt-table-card" id="pp-view-batch" style="display:none">
+          <div style="padding:16px 20px;border-bottom:1px solid var(--border)">
+            <h3 style="font-size:13.5px;font-weight:700;color:var(--text-heading)">Bill of Materials &amp; Sub-Component Provenance</h3>
+            <p style="font-size:11.5px;color:var(--text-muted);margin-top:2px">Cryptographically anchored component lots for Galaxy S24 Ultra</p>
+          </div>
+          <table class="gt-table">
+            <thead>
+              <tr><th>Component</th><th>Batch Lot ID</th><th>Supplier / Manufacturer</th><th>Specification</th><th>MTC Status</th><th>Hash Seal</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Battery Pack</strong></td>
+                <td style="font-family:var(--mono);color:var(--erp);font-weight:600">BAT-2024-X49</td>
+                <td>Samsung SDI Co., Ltd.</td>
+                <td>5000 mAh Dual-Cell NMC 811</td>
+                <td><span class="status-pill delivered">MTC 3.1 PASS</span></td>
+                <td style="font-family:var(--mono);font-size:11px">0xa3f7c1d9...b22e</td>
+              </tr>
+              <tr>
+                <td><strong>Dynamic AMOLED 2X</strong></td>
+                <td style="font-family:var(--mono);color:var(--mes);font-weight:600">DISP-QHD-882</td>
+                <td>Samsung Display</td>
+                <td>6.8" 120Hz LTPO 2600 nits</td>
+                <td><span class="status-pill delivered">PASS</span></td>
+                <td style="font-family:var(--mono);font-size:11px">0xb8e4a912...cc31</td>
+              </tr>
+              <tr>
+                <td><strong>Application Processor</strong></td>
+                <td style="font-family:var(--mono);color:var(--brand-blue);font-weight:600">AP-8GEN3-LOT9</td>
+                <td>Qualcomm / TSMC</td>
+                <td>Snapdragon 8 Gen 3 for Galaxy (4nm)</td>
+                <td><span class="status-pill delivered">PASS</span></td>
+                <td style="font-family:var(--mono);font-size:11px">0xd1293fe0...7a1b</td>
+              </tr>
+              <tr>
+                <td><strong>Chassis Frame</strong></td>
+                <td style="font-family:var(--mono);color:var(--lineage);font-weight:600">CHAS-TI-042</td>
+                <td>Foxconn Precision</td>
+                <td>Aerospace Grade 5 Titanium</td>
+                <td><span class="status-pill delivered">PASS</span></td>
+                <td style="font-family:var(--mono);font-size:11px">0xf4b67c3a...9012</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- TAB 3: LOCATION HISTORY (Hidden by default) -->
+        <div class="gt-card" id="pp-view-location" style="display:none">
+          <div class="gt-card-header"><span class="gt-card-title">Device Physical Transit &amp; Custody Trail</span></div>
+          <div class="activity-list" style="padding:10px 0">
+            <div class="activity-item">
+              <span class="activity-dot green"></span>
+              <div class="activity-content">
+                <div class="activity-desc"><strong>Active on Retail Display Shelf</strong> · Chennai Store - ELC001 (Anna Salai, Chennai)</div>
+                <div class="activity-time">Arrived 18 Apr 2025 14:20 IST · Stock ID: ST-CHN-8841</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <span class="activity-dot blue"></span>
+              <div class="activity-content">
+                <div class="activity-desc"><strong>Regional Hub Logistics Outbound</strong> · Bhiwandi Transit Corridor Hub</div>
+                <div class="activity-time">Dispatched 15 Apr 2025 08:30 IST · Waybill: BLR-MAA-9921</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <span class="activity-dot green"></span>
+              <div class="activity-content">
+                <div class="activity-desc"><strong>Cleanroom Packaging &amp; Cryptographic Sealing</strong> · Factory Bay 2</div>
+                <div class="activity-time">Completed 12 Apr 2025 16:45 IST · SMT-002</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: SENSOR DATA (Hidden by default) -->
+        <div class="gt-card" id="pp-view-sensor" style="display:none">
+          <div class="gt-card-header"><span class="gt-card-title">Cleanroom SMT Manufacturing Telemetry Log</span></div>
+          <div class="sensor-tiles-grid" style="margin-top:8px">
+            <div class="sensor-tile-card">
+              <span class="sensor-tile-label">SMT Reflow Peak Liquidus</span>
+              <span class="sensor-tile-value">242.4 °C</span>
+              <span class="status-pill delivered" style="margin-top:6px;width:fit-content">Within Limit (250°C)</span>
+            </div>
+            <div class="sensor-tile-card">
+              <span class="sensor-tile-label">Ultrasonic Welder Energy</span>
+              <span class="sensor-tile-value">38.5 J</span>
+              <span class="status-pill delivered" style="margin-top:6px;width:fit-content">Bond Formed</span>
+            </div>
+            <div class="sensor-tile-card">
+              <span class="sensor-tile-label">ISO Class 5 Particulates</span>
+              <span class="sensor-tile-value">28 ct/m³</span>
+              <span class="status-pill delivered" style="margin-top:6px;width:fit-content">&lt; 3,520 Standard</span>
+            </div>
+            <div class="sensor-tile-card">
+              <span class="sensor-tile-label">5G RF Sensitivity</span>
+              <span class="sensor-tile-value">-94.2 dBm</span>
+              <span class="status-pill delivered" style="margin-top:6px;width:fit-content">Pass Criteria</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 5: DOCUMENTS (Hidden by default) -->
+        <div class="gt-card" id="pp-view-docs" style="display:none">
+          <div class="gt-card-header"><span class="gt-card-title">Official Product Compliance Certifications</span></div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div class="quick-action-link" onclick="toast('Downloading EU DPP Declaration of Conformity', 'success')">
+              <div class="qa-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                <span>EU Declaration of Conformity (DoC) · Regulation (EU) 2024/1781</span>
+              </div>
+              <span class="status-pill delivered">Download PDF</span>
+            </div>
+            <div class="quick-action-link" onclick="toast('Downloading RoHS & REACH Material Assay', 'success')">
+              <div class="qa-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                <span>RoHS 3 &amp; REACH Compliance Assay (Heavy Metals: 0.00 ppm)</span>
+              </div>
+              <span class="status-pill delivered">Download PDF</span>
+            </div>
+            <div class="quick-action-link" onclick="toast('Downloading UN 38.3 Lithium Battery Safety Certificate', 'success')">
+              <div class="qa-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                <span>UN 38.3 Lithium Battery Safety &amp; Transport Certificate</span>
+              </div>
+              <span class="status-pill delivered">Download PDF</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cryptographic Verification Banner -->
+        <div class="passport-crypto-banner">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <polyline points="9 12 11 14 15 10"></polyline>
+          </svg>
+          <span>This product's history is protected with cryptographic hashes and a Merkle-DAG structure.</span>
+        </div>
+      </section>
+
+      <!-- ==================== 3. ERP MODULE ==================== -->
+      <section class="page hidden" id="page-erp">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1>ERP</h1>
+            <p>Manage orders, materials, suppliers and production planning</p>
+          </div>
+          <div class="view-header-right">
+            <button class="btn btn-outline" onclick="toast('PO Exported as CSV', 'success')">Export Orders</button>
+            <button class="btn btn-primary" onclick="toast('New Purchase Order Created', 'success')">+ New Order</button>
+          </div>
+        </div>
+
+        <!-- 4 KPI Cards -->
+        <div class="gt-kpi-grid">
+          <div class="gt-kpi-card">
+            <div class="kpi-icon-box cyan">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2"></rect>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+              </svg>
+            </div>
+            <div class="kpi-details">
+              <span class="kpi-title">Purchase Orders</span>
+              <span class="kpi-val">48</span>
+              <div class="kpi-sub-row">
+                <span class="kpi-sub-label">Active POs</span>
+                <span class="kpi-trend up">↑ 10%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="gt-kpi-card">
+            <div class="kpi-icon-box teal">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <div class="kpi-details">
+              <span class="kpi-title">Suppliers</span>
+              <span class="kpi-val">32</span>
+              <div class="kpi-sub-row">
+                <span class="kpi-sub-label">Approved</span>
+                <span class="kpi-trend up">↑ 5%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="gt-kpi-card">
+            <div class="kpi-icon-box cyan">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              </svg>
+            </div>
+            <div class="kpi-details">
+              <span class="kpi-title">Materials</span>
+              <span class="kpi-val">256</span>
+              <div class="kpi-sub-row">
+                <span class="kpi-sub-label">Catalog Items</span>
+                <span class="kpi-trend up">↑ 8%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="gt-kpi-card">
+            <div class="kpi-icon-box emerald">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 14 14"></polyline>
+              </svg>
+            </div>
+            <div class="kpi-details">
+              <span class="kpi-title">Production Orders</span>
+              <span class="kpi-val">18</span>
+              <div class="kpi-sub-row">
+                <span class="kpi-sub-label">Active Schedule</span>
+                <span class="kpi-trend up">↑ 3%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub Tabs -->
+        <div class="gt-subtab-bar">
+          <span class="gt-subtab active" onclick="switchERPSubtab(this, 'orders')">Orders</span>
+          <span class="gt-subtab" onclick="switchERPSubtab(this, 'materials')">Materials</span>
+          <span class="gt-subtab" onclick="switchERPSubtab(this, 'suppliers')">Suppliers</span>
+          <span class="gt-subtab" onclick="switchERPSubtab(this, 'plan')">Production Plan</span>
+        </div>
+
+        <!-- Grid: Recent Purchase Orders + Material Inventory Donut & Top Suppliers -->
+        <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:16px">
+          
+          <!-- Left Table: Recent Purchase Orders -->
+          <div class="gt-table-card">
+            <div style="padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">
+              <h3 style="font-size:13.5px;font-weight:700;color:var(--text-heading)">Recent Purchase Orders</h3>
+              <a href="#" class="gt-card-action" onclick="toast('Showing all 48 purchase orders', 'info')">View All</a>
+            </div>
+            <table class="gt-table">
+              <thead>
+                <tr>
+                  <th>PO No.</th>
+                  <th>Supplier</th>
+                  <th>Material</th>
+                  <th>Quantity</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-family:var(--mono);font-weight:600">PO-1081</td>
+                  <td>Samsung SDI</td>
+                  <td>Battery Cell</td>
+                  <td>10,000</td>
+                  <td><span class="status-pill delivered">Delivered</span></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--mono);font-weight:600">PO-1082</td>
+                  <td>LG Chem</td>
+                  <td>Display Panel</td>
+                  <td>8,000</td>
+                  <td><span class="status-pill in-transit">In Transit</span></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--mono);font-weight:600">PO-1083</td>
+                  <td>Dow Chemicals</td>
+                  <td>Adhesive</td>
+                  <td>5,000</td>
+                  <td><span class="status-pill pending">Pending</span></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--mono);font-weight:600">PO-1084</td>
+                  <td>Microchip</td>
+                  <td>IC Components</td>
+                  <td>12,000</td>
+                  <td><span class="status-pill delivered">Delivered</span></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--mono);font-weight:600">PO-1085</td>
+                  <td>Foxconn</td>
+                  <td>Housing</td>
+                  <td>15,000</td>
+                  <td><span class="status-pill pending">Pending</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Right Column: Material Inventory + Top Suppliers -->
+          <div style="display:flex;flex-direction:column;gap:16px">
+            
+            <!-- Material Inventory Card with Donut -->
+            <div class="gt-card">
+              <div class="gt-card-header">
+                <span class="gt-card-title">Material Inventory</span>
+              </div>
+              <div class="batch-status-body">
+                <div class="donut-chart-wrap">
+                  <svg class="donut-svg" viewBox="0 0 36 36">
+                    <circle cx="18" cy="18" r="14" fill="transparent" stroke="#F1F5F9" stroke-width="3.6"></circle>
+                    <!-- In Stock (182 / 256 = 71%) Green -->
+                    <circle cx="18" cy="18" r="14" fill="transparent" stroke="#10B981" stroke-width="3.6"
+                            stroke-dasharray="62.5 88" stroke-dashoffset="0"></circle>
+                    <!-- Low Stock (42 / 256 = 16.4%) Amber -->
+                    <circle cx="18" cy="18" r="14" fill="transparent" stroke="#F59E0B" stroke-width="3.6"
+                            stroke-dasharray="14.4 88" stroke-dashoffset="-62.5"></circle>
+                    <!-- Out of Stock (32 / 256 = 12.5%) Red -->
+                    <circle cx="18" cy="18" r="14" fill="transparent" stroke="#EF4444" stroke-width="3.6"
+                            stroke-dasharray="11 88" stroke-dashoffset="-76.9"></circle>
+                  </svg>
+                  <div class="donut-center-info">
+                    <div class="donut-center-val">256</div>
+                    <div class="donut-center-lbl">Total Materials</div>
+                  </div>
+                </div>
+
+                <div class="batch-status-legend">
+                  <div class="legend-item">
+                    <div class="legend-left">
+                      <span class="legend-dot green"></span>
+                      <span>In Stock</span>
+                    </div>
+                    <span class="legend-val">182</span>
+                  </div>
+                  <div class="legend-item">
+                    <div class="legend-left">
+                      <span class="legend-dot amber"></span>
+                      <span>Low Stock</span>
+                    </div>
+                    <span class="legend-val">42</span>
+                  </div>
+                  <div class="legend-item">
+                    <div class="legend-left">
+                      <span class="legend-dot red"></span>
+                      <span>Out of Stock</span>
+                    </div>
+                    <span class="legend-val">32</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Top Suppliers Progress Bars -->
+            <div class="gt-card">
+              <div class="gt-card-header">
+                <span class="gt-card-title">Top Suppliers</span>
+              </div>
+              <div class="supplier-progress-list">
+                <div class="supplier-row">
+                  <div class="supplier-meta-row">
+                    <span class="supplier-name">Samsung SDI</span>
+                    <span class="supplier-pct">28%</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill" style="width:28%"></div>
+                  </div>
+                </div>
+
+                <div class="supplier-row">
+                  <div class="supplier-meta-row">
+                    <span class="supplier-name">LG Chem</span>
+                    <span class="supplier-pct">22%</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill" style="width:22%"></div>
+                  </div>
+                </div>
+
+                <div class="supplier-row">
+                  <div class="supplier-meta-row">
+                    <span class="supplier-name">Dow Chemicals</span>
+                    <span class="supplier-pct">15%</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill" style="width:15%"></div>
+                  </div>
+                </div>
+
+                <div class="supplier-row">
+                  <div class="supplier-meta-row">
+                    <span class="supplier-name">Microchip</span>
+                    <span class="supplier-pct">12%</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill" style="width:12%"></div>
+                  </div>
+                </div>
+
+                <div class="supplier-row">
+                  <div class="supplier-meta-row">
+                    <span class="supplier-name">Others</span>
+                    <span class="supplier-pct">23%</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill" style="width:23%;background:#94A3B8"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 4. MES MODULE ==================== -->
+      <section class="page hidden" id="page-mes">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1>MES</h1>
+            <p>Track production, work orders and real-time operations</p>
+          </div>
+          <div class="view-header-right">
+            <button class="btn btn-primary" onclick="toast('New Work Order Dispatched to Line 1', 'success')">+ Dispatch WO</button>
+          </div>
+        </div>
+
+        <!-- 4 KPI Cards -->
+        <div class="gt-kpi-grid">
+          <div class="gt-kpi-card">
+            <div class="kpi-icon-box cyan">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M12 7v5l3.5 3.5"></path>
+              </svg>
+            </div>
+            <div class="kpi-details">
+              <span class="kpi-title">Work Orders</span>
+              <span class="kpi-val">24</span>
+              <div class="kpi-sub-row">
+                <span class="kpi-sub-label">Active Orders</span>
+                <span class="kpi-trend up">↑ 6%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="gt-kpi-card">
+            <div class="kpi-icon-box teal">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+              </svg>
+            </div>
+            <div class="kpi-details">
+              <span class="kpi-title">In Progress</span>
+              <span class="kpi-val">16</span>
+              <div class="kpi-sub-row">
+                <span class="kpi-sub-label">Running Lines</span>
+                <span class="kpi-trend up">↑ 9%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="gt-kpi-card">
+            <div class="kpi-icon-box emerald">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
+            <div class="kpi-details">
+              <span class="kpi-title">Completed</span>
+              <span class="kpi-val">7</span>
+              <div class="kpi-sub-row">
+                <span class="kpi-sub-label">Today</span>
+                <span class="kpi-trend up">↑ 4%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="gt-kpi-card">
+            <div class="kpi-icon-box rose">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+              </svg>
+            </div>
+            <div class="kpi-details">
+              <span class="kpi-title">On Hold</span>
+              <span class="kpi-val">1</span>
+              <div class="kpi-sub-row">
+                <span class="kpi-sub-label">QC Hold</span>
+                <span class="kpi-trend warn">0%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub Tabs -->
+        <div class="gt-subtab-bar">
+          <span class="gt-subtab active" onclick="switchMESTab(this, 'wo')">Work Orders</span>
+          <span class="gt-subtab" onclick="switchMESTab(this, 'lines')">Production Line</span>
+          <span class="gt-subtab" onclick="switchMESTab(this, 'rework')">Rework</span>
+          <span class="gt-subtab" onclick="switchMESTab(this, 'quality')">Quality</span>
+        </div>
+
+        <!-- Active Work Orders Table -->
+        <div class="gt-table-card">
+          <div style="padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">
+            <h3 style="font-size:13.5px;font-weight:700;color:var(--text-heading)">Active Work Orders</h3>
+            <a href="#" class="gt-card-action" onclick="toast('Showing all 24 active work orders', 'info')">View All</a>
+          </div>
+          <table class="gt-table">
+            <thead>
+              <tr>
+                <th>WO No.</th>
+                <th>Product</th>
+                <th>Batch No.</th>
+                <th>Status</th>
+                <th>Progress</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-family:var(--mono);font-weight:600">WO-4587</td>
+                <td>Galaxy S24 Ultra</td>
+                <td style="font-family:var(--mono)">B-2504-17</td>
+                <td><span class="status-pill in-progress">In Progress</span></td>
+                <td>
+                  <div class="progress-cell-wrap">
+                    <div class="progress-track">
+                      <div class="progress-fill" style="width:68%"></div>
+                    </div>
+                    <span class="progress-val-text">68%</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-family:var(--mono);font-weight:600">WO-4588</td>
+                <td>Galaxy S24</td>
+                <td style="font-family:var(--mono)">B-2504-18</td>
+                <td><span class="status-pill in-progress">In Progress</span></td>
+                <td>
+                  <div class="progress-cell-wrap">
+                    <div class="progress-track">
+                      <div class="progress-fill" style="width:45%"></div>
+                    </div>
+                    <span class="progress-val-text">45%</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-family:var(--mono);font-weight:600">WO-4589</td>
+                <td>Galaxy Z Fold</td>
+                <td style="font-family:var(--mono)">B-2504-19</td>
+                <td><span class="status-pill pending">Pending</span></td>
+                <td>
+                  <div class="progress-cell-wrap">
+                    <div class="progress-track">
+                      <div class="progress-fill amber" style="width:0%"></div>
+                    </div>
+                    <span class="progress-val-text">0%</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-family:var(--mono);font-weight:600">WO-4590</td>
+                <td>Galaxy Buds</td>
+                <td style="font-family:var(--mono)">B-2504-20</td>
+                <td><span class="status-pill completed">Completed</span></td>
+                <td>
+                  <div class="progress-cell-wrap">
+                    <div class="progress-track">
+                      <div class="progress-fill green" style="width:100%"></div>
+                    </div>
+                    <span class="progress-val-text">100%</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-family:var(--mono);font-weight:600">WO-4591</td>
+                <td>Galaxy Watch</td>
+                <td style="font-family:var(--mono)">B-2504-21</td>
+                <td><span class="status-pill in-progress">In Progress</span></td>
+                <td>
+                  <div class="progress-cell-wrap">
+                    <div class="progress-track">
+                      <div class="progress-fill" style="width:32%"></div>
+                    </div>
+                    <span class="progress-val-text">32%</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Production Line Overview Cards -->
+        <div>
+          <div style="margin-bottom:12px">
+            <h3 style="font-size:13.5px;font-weight:700;color:var(--text-heading)">Production Line Overview</h3>
+          </div>
+          <div class="prod-lines-grid">
+            <div class="prod-line-box">
+              <div class="prod-line-header">Line 1</div>
+              <div class="prod-line-name">Assembly</div>
+              <div><span class="status-pill running">● Running</span></div>
+            </div>
+
+            <div class="prod-line-box">
+              <div class="prod-line-header">Line 2</div>
+              <div class="prod-line-name">Testing</div>
+              <div><span class="status-pill running">● Running</span></div>
+            </div>
+
+            <div class="prod-line-box">
+              <div class="prod-line-header">Line 3</div>
+              <div class="prod-line-name">Packaging</div>
+              <div><span class="status-pill running">● Running</span></div>
+            </div>
+
+            <div class="prod-line-box">
+              <div class="prod-line-header">Line 4</div>
+              <div class="prod-line-name">Rework</div>
+              <div><span class="status-pill standby">● Standby</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 5. SCADA MODULE ==================== -->
+      <section class="page hidden" id="page-scada">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1>SCADA</h1>
+            <p>Monitor machines, sensors and real-time data</p>
+          </div>
+          <div class="view-header-right">
+            <button class="btn btn-outline" style="border-color:#EF4444;color:#DC2626" onclick="openBatchTracker('B-2504-17', '2025-04-12', '14:32')">⚠️ Anomaly: Locate Batch Units →</button>
+            <button class="btn btn-outline" onclick="toast('All alarms cleared', 'info')">Acknowledge All</button>
+            <span class="header-datetime" style="color:var(--brand-teal)">● Telemetry 500ms Feed</span>
+          </div>
+        </div>
+
+        <!-- 3 KPI Cards -->
+        <div class="gt-kpi-grid" style="grid-template-columns:repeat(3, 1fr)">
+          <div class="gt-kpi-card">
+            <div class="kpi-icon-box teal">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+            </div>
+            <div class="kpi-details">
+              <span class="kpi-title">Machines</span>
+              <span class="kpi-val">12</span>
+              <div class="kpi-sub-row">
+                <span class="status-pill running" style="margin-top:2px">Running</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="gt-kpi-card">
+            <div class="kpi-icon-box emerald">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+              </svg>
+            </div>
+            <div class="kpi-details">
+              <span class="kpi-title">Sensors</span>
+              <span class="kpi-val">48</span>
+              <div class="kpi-sub-row">
+                <span class="status-pill running" style="margin-top:2px">Active</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="gt-kpi-card">
+            <div class="kpi-icon-box rose">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+            </div>
+            <div class="kpi-details">
+              <span class="kpi-title">Alerts</span>
+              <span class="kpi-val">2</span>
+              <div class="kpi-sub-row">
+                <span class="status-pill warning" style="margin-top:2px">Needs Attention</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 Column Grid: Live Machine Status + Sensor Readings & Temperature Trend -->
+        <div class="scada-layout-grid">
+          
+          <!-- Left Column: Live Machine Status -->
+          <div class="gt-card">
+            <div class="gt-card-header">
+              <span class="gt-card-title">Live Machine Status</span>
+            </div>
+            <div class="machine-status-list">
+              <div class="machine-row-item" onclick="switchSCADAMachine('m1')" style="cursor:pointer">
+                <div class="machine-name-wrap">
+                  <span class="machine-dot running"></span>
+                  <span>Machine 1</span>
+                </div>
+                <span class="status-pill running">Running</span>
+              </div>
+              <div class="machine-row-item" onclick="switchSCADAMachine('m2')" style="cursor:pointer">
+                <div class="machine-name-wrap">
+                  <span class="machine-dot running"></span>
+                  <span>Machine 2</span>
+                </div>
+                <span class="status-pill running">Running</span>
+              </div>
+              <div class="machine-row-item" onclick="switchSCADAMachine('m3')" style="cursor:pointer;border-color:var(--brand-blue)">
+                <div class="machine-name-wrap">
+                  <span class="machine-dot running"></span>
+                  <span>Machine 3</span>
+                </div>
+                <span class="status-pill running">Running</span>
+              </div>
+              <div class="machine-row-item" onclick="switchSCADAMachine('m4')" style="cursor:pointer">
+                <div class="machine-name-wrap">
+                  <span class="machine-dot warning"></span>
+                  <span>Machine 4</span>
+                </div>
+                <span class="status-pill warning">Warning</span>
+              </div>
+              <div class="machine-row-item" onclick="switchSCADAMachine('m1')" style="cursor:pointer">
+                <div class="machine-name-wrap">
+                  <span class="machine-dot running"></span>
+                  <span>Machine 5</span>
+                </div>
+                <span class="status-pill running">Running</span>
+              </div>
+              <div class="machine-row-item" onclick="switchSCADAMachine('m2')" style="cursor:pointer">
+                <div class="machine-name-wrap">
+                  <span class="machine-dot running"></span>
+                  <span>Machine 6</span>
+                </div>
+                <span class="status-pill running">Running</span>
+              </div>
+              <div class="machine-row-item" onclick="switchSCADAMachine('m3')" style="cursor:pointer">
+                <div class="machine-name-wrap">
+                  <span class="machine-dot running"></span>
+                  <span>Machine 7</span>
+                </div>
+                <span class="status-pill running">Running</span>
+              </div>
+              <div class="machine-row-item" onclick="toast('Machine 8 is currently offline for scheduled maintenance', 'warn')" style="cursor:pointer">
+                <div class="machine-name-wrap">
+                  <span class="machine-dot offline"></span>
+                  <span>Machine 8</span>
+                </div>
+                <span class="status-pill offline">Offline</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Sensor Readings & Trend Chart -->
+          <div style="display:flex;flex-direction:column;gap:16px">
+            
+            <!-- Sensor Readings Card -->
+            <div class="gt-card">
+              <div class="gt-card-header">
+                <span class="gt-card-title">Sensor Readings</span>
+                <select id="scada-machine-select" style="padding:4px 10px;border-radius:6px;border:1px solid var(--border);font-size:12px;font-weight:600;background:#FFFFFF;outline:none" onchange="switchSCADAMachine(this.value)">
+                  <option value="m3" selected>Machine 3 ˅</option>
+                  <option value="m1">Machine 1</option>
+                  <option value="m2">Machine 2</option>
+                  <option value="m4">Machine 4 (Thermal Drift)</option>
+                </select>
+              </div>
+
+              <!-- 4 Sensor Metric Tiles with Sparkline Waves -->
+              <div class="sensor-tiles-grid">
+                <div class="sensor-tile-card">
+                  <span class="sensor-tile-label">Temperature</span>
+                  <span class="sensor-tile-value" id="scada-val-temp">28.4 °C</span>
+                  <svg class="sensor-spark-svg" viewBox="0 0 100 24" preserveAspectRatio="none">
+                    <path d="M0,16 Q15,4 30,12 T60,8 T100,14" fill="none" stroke="#00C9A7" stroke-width="2"></path>
+                  </svg>
+                </div>
+
+                <div class="sensor-tile-card">
+                  <span class="sensor-tile-label">Vibration</span>
+                  <span class="sensor-tile-value" id="scada-val-vib">0.32 mm/s</span>
+                  <svg class="sensor-spark-svg" viewBox="0 0 100 24" preserveAspectRatio="none">
+                    <path d="M0,12 Q20,18 40,8 T80,16 T100,10" fill="none" stroke="#0284C7" stroke-width="2"></path>
+                  </svg>
+                </div>
+
+                <div class="sensor-tile-card">
+                  <span class="sensor-tile-label">Pressure</span>
+                  <span class="sensor-tile-value" id="scada-val-press">4.8 bar</span>
+                  <svg class="sensor-spark-svg" viewBox="0 0 100 24" preserveAspectRatio="none">
+                    <path d="M0,14 Q25,10 50,16 T75,6 T100,12" fill="none" stroke="#6366F1" stroke-width="2"></path>
+                  </svg>
+                </div>
+
+                <div class="sensor-tile-card">
+                  <span class="sensor-tile-label">Humidity</span>
+                  <span class="sensor-tile-value" id="scada-val-hum">45.2 %</span>
+                  <svg class="sensor-spark-svg" viewBox="0 0 100 24" preserveAspectRatio="none">
+                    <path d="M0,10 Q20,6 40,14 T80,10 T100,8" fill="none" stroke="#10B981" stroke-width="2"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Temperature Trend (Last 1 Hour) Chart -->
+            <div class="gt-card">
+              <div class="gt-card-header">
+                <span class="gt-card-title">Temperature Trend (Last 1 Hour)</span>
+              </div>
+              <div style="position:relative;height:160px;width:100%">
+                <svg viewBox="0 0 500 140" style="width:100%;height:100%;overflow:visible">
+                  <!-- Grid Lines -->
+                  <line x1="40" y1="20" x2="490" y2="20" stroke="#F1F5F9" stroke-dasharray="3 3"></line>
+                  <line x1="40" y1="60" x2="490" y2="60" stroke="#F1F5F9" stroke-dasharray="3 3"></line>
+                  <line x1="40" y1="100" x2="490" y2="100" stroke="#F1F5F9" stroke-dasharray="3 3"></line>
+                  
+                  <!-- Y Axis Labels -->
+                  <text x="30" y="24" fill="#94A3B8" font-size="9" text-anchor="end">35°</text>
+                  <text x="30" y="64" fill="#94A3B8" font-size="9" text-anchor="end">30°</text>
+                  <text x="30" y="104" fill="#94A3B8" font-size="9" text-anchor="end">25°</text>
+
+                  <!-- Smooth Area Fill -->
+                  <path d="M40,75 C90,80 130,65 190,70 C250,75 300,50 360,55 C420,60 460,45 490,50 L490,115 L40,115 Z" fill="rgba(2, 132, 199, 0.08)"></path>
+                  
+                  <!-- Smooth Line Curve -->
+                  <path d="M40,75 C90,80 130,65 190,70 C250,75 300,50 360,55 C420,60 460,45 490,50" fill="none" stroke="#0284C7" stroke-width="2.5"></path>
+                  
+                  <!-- Pulse Dots -->
+                  <circle cx="360" cy="55" r="4" fill="#0284C7" stroke="#FFFFFF" stroke-width="2"></circle>
+                  <circle cx="490" cy="50" r="4.5" fill="#00C9A7" stroke="#FFFFFF" stroke-width="2"></circle>
+
+                  <!-- X Axis Labels -->
+                  <text x="40" y="132" fill="#94A3B8" font-size="10">10:00</text>
+                  <text x="150" y="132" fill="#94A3B8" font-size="10">10:15</text>
+                  <text x="260" y="132" fill="#94A3B8" font-size="10">10:30</text>
+                  <text x="375" y="132" fill="#94A3B8" font-size="10">10:45</text>
+                  <text x="480" y="132" fill="#94A3B8" font-size="10">11:00</text>
+                </svg>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 6. TRACEABILITY (MERKLE DAG LINEAGE) ==================== -->
+      <section class="page hidden" id="page-lineage">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1>Cryptographic Merkle-DAG Lineage</h1>
+            <p>Sub-second topological traversal across ERP (Batches) ➔ MES (Work Orders) ➔ SCADA (Process) ➔ DPP (Passport)</p>
+          </div>
+          <div class="view-header-right">
+            <button class="btn btn-outline" onclick="verifyAllHashes()">Verify Hashes (Ed25519)</button>
+            <button class="btn btn-primary" onclick="runTrace()">Recompute DAG</button>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:300px 1fr 280px;gap:16px">
+          <!-- Left Controls -->
+          <div class="gt-card">
+            <div class="gt-card-header"><span class="gt-card-title">Target Entity Resolver</span></div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div>
+                <label style="font-size:11px;font-weight:600;color:var(--text-muted)">Entity ID / Batch / Serial</label>
+                <input type="text" id="lineage-search-id" value="S24U123456789" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border);font-family:var(--mono);font-size:12px;margin-top:4px" />
+              </div>
+              <div>
+                <label style="font-size:11px;font-weight:600;color:var(--text-muted)">Traversal Direction</label>
+                <div style="display:flex;gap:12px;margin-top:6px;font-size:12px">
+                  <label><input type="radio" name="trace-dir" value="forward" checked /> Downstream</label>
+                  <label><input type="radio" name="trace-dir" value="backward" /> Upstream</label>
+                </div>
+              </div>
+              <button class="btn btn-primary" style="margin-top:4px" onclick="runTrace()">Execute Traversal</button>
+
+              <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:10px">
+                <span style="font-size:11px;font-weight:600;color:var(--text-muted)">Quick Pathways:</span>
+                <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
+                  <button class="btn btn-sm btn-outline" onclick="setLineageTarget('S24U123456789')">Galaxy S24 Ultra DPP</button>
+                  <button class="btn btn-sm btn-outline" onclick="setLineageTarget('BAT-2024-X49')">Battery Cell Lot</button>
+                  <button class="btn btn-sm btn-outline" onclick="setLineageTarget('WO-4587')">SMT Line Work Order</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Center Canvas -->
+          <div class="gt-card" style="padding:12px;position:relative;min-height:480px">
+            <div style="position:absolute;top:16px;left:18px;display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;background:#FFFFFF;padding:4px 10px;border-radius:var(--radius-pill);border:1px solid var(--border);box-shadow:var(--shadow-sm);z-index:5">
+              <span style="width:7px;height:7px;border-radius:50%;background:#10B981"></span>
+              <span>Merkle Tree Synchronized · 56,193 Root Hashes</span>
+            </div>
+            <canvas id="lineage-canvas" style="width:100%;height:460px;border-radius:8px;background:#F8FAFC"></canvas>
+          </div>
+
+          <!-- Right Node Inspector -->
+          <div class="gt-card">
+            <div class="gt-card-header"><span class="gt-card-title">Node Certificate</span></div>
+            <div id="lineage-detail-body" style="font-size:12px;line-height:1.5;color:var(--text-muted)">
+              Click any node in the Merkle-DAG graph to inspect its cryptographic Ed25519 hash seal, parent linkages, and real-time sensor tolerances.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 7. REPORTS & TARGETED RECALL ENGINE ==================== -->
+      <section class="page hidden" id="page-recall">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1>Reports &amp; Defect Recall Engine</h1>
+            <p>Post-dispatch SCADA anomaly correlation, warehouse/store inventory locator, and targeted recall directives</p>
+          </div>
+          <div class="view-header-right">
+            <button class="btn btn-outline" onclick="downloadTransitManifest()">Export Manifest (.txt)</button>
+            <span class="status-pill running">● SCADA Connected</span>
+          </div>
+        </div>
+
+        <!-- Sub-Navigation Tabs -->
+        <div class="recall-subnav">
+          <button class="recall-subnav-btn active" id="btn-recall-subtab-tracker" onclick="switchRecallSubtab('tracker')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>SCADA Anomaly &amp; Batch Transit Tracker</span>
+          </button>
+          <button class="recall-subnav-btn" id="btn-recall-subtab-finance" onclick="switchRecallSubtab('finance')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+            <span>Blast-Radius Financial Analysis (Blanket vs Precision)</span>
+          </button>
+        </div>
+
+        <!-- SUBTAB 1: SCADA ANOMALY & BATCH TRANSIT TRACKER -->
+        <div id="recall-view-tracker">
+          <!-- Technician Query Panel -->
+          <div class="tracker-query-panel">
+            <div class="tracker-query-header">
+              <div>
+                <div class="tracker-query-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--brand-blue)" stroke-width="2">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                    <polyline points="2 17 12 22 22 17"></polyline>
+                    <polyline points="2 12 12 17 22 12"></polyline>
+                  </svg>
+                  <span>Technician Post-Dispatch Defect Correlator &amp; Inventory Locator</span>
+                </div>
+                <div class="tracker-query-sub">
+                  Enter production batch number, manufacturing date, and shift time to correlate SCADA sensor drifts and pinpoint current storage/dispatch locations across warehouses and retail shops.
+                </div>
+              </div>
+              <span class="status-pill warning" style="font-size:11px">Post-Manufacturing Audit Mode</span>
+            </div>
+
+            <div class="tracker-form-grid">
+              <div class="tracker-field">
+                <label for="tracker-batch-no">Batch Number</label>
+                <input type="text" id="tracker-batch-no" value="B-2504-17" list="batch-suggestions" placeholder="e.g. B-2504-17" />
+                <datalist id="batch-suggestions">
+                  <option value="B-2504-17">Galaxy S24 Ultra (1,000 Units)</option>
+                  <option value="B-2305-11">Galaxy S24+ (800 Units)</option>
+                  <option value="B-2305-14">Galaxy Z Fold 5 (500 Units)</option>
+                  <option value="B-2305-15">Galaxy Buds Pro (400 Units)</option>
+                </datalist>
+              </div>
+
+              <div class="tracker-field">
+                <label for="tracker-batch-date">Inspection / Shift Date</label>
+                <input type="date" id="tracker-batch-date" value="2025-04-12" />
+              </div>
+
+              <div class="tracker-field">
+                <label for="tracker-batch-time">Inspection / Anomaly Time</label>
+                <input type="time" id="tracker-batch-time" value="14:32" step="1" />
+              </div>
+
+              <div class="tracker-field">
+                <label for="tracker-sensor-station">SCADA Station &amp; Sensor</label>
+                <select id="tracker-sensor-station">
+                  <option value="sen-t-010" selected>Station #3 · SEN-T-010 (Thermal Chamber)</option>
+                  <option value="sen-p-004">Station #1 · SEN-P-004 (Ultrasonic Weld Pressure)</option>
+                  <option value="sen-v-008">Station #2 · SEN-V-008 (SMT Vibration Axis)</option>
+                  <option value="sen-h-002">Station #4 · SEN-H-002 (Cleanroom Humidity)</option>
+                </select>
+              </div>
+
+              <div>
+                <button class="btn btn-primary" style="height:38px;white-space:nowrap" onclick="locateBatchUnits()">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  Locate Batch Units Across Supply Chain
+                </button>
+              </div>
+            </div>
+
+            <!-- Quick Incident Presets -->
+            <div class="tracker-presets">
+              <span class="tracker-preset-label">Quick Incidents:</span>
+              <button class="preset-pill-btn" onclick="loadIncidentPreset('B-2504-17', '2025-04-12', '14:32', 'sen-t-010')">
+                🔥 Thermal Chamber Spike (B-2504-17 · 12 Apr 2025, 14:32)
+              </button>
+              <button class="preset-pill-btn" onclick="loadIncidentPreset('B-2305-11', '2025-04-15', '09:15', 'sen-p-004')">
+                ⚠️ Ultrasonic Pressure Drop (B-2305-11 · 15 Apr 2025, 09:15)
+              </button>
+              <button class="preset-pill-btn" onclick="loadIncidentPreset('B-2305-14', '2025-04-18', '11:20', 'sen-h-002')">
+                💧 Humidity Anomaly (B-2305-14 · 18 Apr 2025, 11:20)
+              </button>
+            </div>
+          </div>
+
+          <!-- Dynamic Results Container -->
+          <div id="batch-locator-results">
+            
+            <!-- SCADA Sensor Diagnostic Summary -->
+            <div class="scada-anomaly-hero">
+              <div class="scada-hero-left">
+                <div class="scada-pulse-icon">⚠️</div>
+                <div class="scada-hero-details">
+                  <h4 id="diag-title">SCADA SENSOR ANOMALY CORRELATED — 94.2% DEFECT PROBABILITY</h4>
+                  <p id="diag-subtitle">
+                    Batch <strong id="diag-batch">B-2504-17</strong> (Samsung Galaxy S24 Ultra) produced during Shift #2 on <strong id="diag-date">12 Apr 2025</strong> at <strong id="diag-time">14:32:15 IST</strong> on Station #3.
+                  </p>
+                </div>
+              </div>
+
+              <div class="scada-hero-badges">
+                <div class="scada-hero-metric">
+                  <div class="scada-hero-metric-val" id="diag-sensor-val">64.8 °C</div>
+                  <div class="scada-hero-metric-lbl">SEN-T-010 (Limit: 55°C)</div>
+                </div>
+                <div class="scada-hero-metric">
+                  <div class="scada-hero-metric-val" style="color:#B91C1C" id="diag-defect-risk">94.2%</div>
+                  <div class="scada-hero-metric-lbl">Defect Probability</div>
+                </div>
+                <div class="scada-hero-metric">
+                  <div class="scada-hero-metric-val" style="color:var(--brand-blue)" id="diag-total-units">1,000</div>
+                  <div class="scada-hero-metric-lbl">Total Units in Batch</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3-Way Location Status Grid: Warehouse vs Main City DC vs Retail Shops -->
+            <div class="location-distribution-grid">
+              
+              <!-- Location 1: Factory Warehouse -->
+              <div class="loc-card warehouse">
+                <div>
+                  <div class="loc-card-top">
+                    <div class="loc-card-icon-wrap amber">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 21h18"></path>
+                        <path d="M5 21V7l7-4 7 4v14"></path>
+                        <path d="M9 10h6"></path>
+                        <path d="M9 14h6"></path>
+                      </svg>
+                    </div>
+                    <span class="loc-card-badge amber">Central Warehouse</span>
+                  </div>
+
+                  <div class="loc-count" id="loc-wh-count">150 <span style="font-size:14px;font-weight:500;color:var(--text-muted)">Units (15%)</span></div>
+                  <div class="loc-name">Sriperumbudur Factory Central Hub</div>
+                  <div class="loc-desc">Stored in Factory Warehouse · Bay W-04, Pallet Racks 12-14. Not yet dispatched to regional logistics.</div>
+
+                  <div class="loc-progress-bar">
+                    <div class="loc-progress-fill amber" id="loc-wh-bar" style="width:15%"></div>
+                  </div>
+                </div>
+
+                <div class="loc-action-box">
+                  <span style="font-weight:600;color:#B45309">🔒 Quarantine Directive:</span>
+                  <span style="color:#B45309;font-weight:700">Outbound Gate Blocked</span>
+                </div>
+              </div>
+
+              <!-- Location 2: Main City Logistics Warehouse -->
+              <div class="loc-card transit">
+                <div>
+                  <div class="loc-card-top">
+                    <div class="loc-card-icon-wrap blue">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="1" y="3" width="15" height="13"></rect>
+                        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                        <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                        <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                      </svg>
+                    </div>
+                    <span class="loc-card-badge blue">Main City Warehouse</span>
+                  </div>
+
+                  <div class="loc-count" id="loc-hub-count">350 <span style="font-size:14px;font-weight:500;color:var(--text-muted)">Units (35%)</span></div>
+                  <div class="loc-name">Chennai Central Logistics Hub (DC-01)</div>
+                  <div class="loc-desc">Dispatched from factory · Inbound Sorting Bay, Dock 07. Halted prior to retail van departures.</div>
+
+                  <div class="loc-progress-bar">
+                    <div class="loc-progress-fill blue" id="loc-hub-bar" style="width:35%"></div>
+                  </div>
+                </div>
+
+                <div class="loc-action-box">
+                  <span style="font-weight:600;color:#0369A1">🛑 Regional Intercept:</span>
+                  <span style="color:#0369A1;font-weight:700">Transit Halted at Hub</span>
+                </div>
+              </div>
+
+              <!-- Location 3: Dispatched to Retail Stores & Shops -->
+              <div class="loc-card shops">
+                <div>
+                  <div class="loc-card-top">
+                    <div class="loc-card-icon-wrap red">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                      </svg>
+                    </div>
+                    <span class="loc-card-badge red">Retail Flagship Shops</span>
+                  </div>
+
+                  <div class="loc-count" id="loc-shops-count">500 <span style="font-size:14px;font-weight:500;color:var(--text-muted)">Units (50%)</span></div>
+                  <div class="loc-name">3 Flagship Stores (Chennai, BLR, HYD)</div>
+                  <div class="loc-desc">Delivered to retail stockrooms. 439 units secure on shelf, 61 customer purchases tracked via IMEI.</div>
+
+                  <div class="loc-progress-bar">
+                    <div class="loc-progress-fill red" id="loc-shops-bar" style="width:50%"></div>
+                  </div>
+                </div>
+
+                <div class="loc-action-box">
+                  <span style="font-weight:600;color:#B91C1C">⚠️ Store Action:</span>
+                  <span style="color:#B91C1C;font-weight:700">POS Barcode Blacklist</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Supply Chain Pipeline Stepper -->
+            <div class="sc-pipeline-card">
+              <div class="sc-pipeline-header">
+                <h3>Live Batch Supply Chain Geolocation Flow</h3>
+                <span class="card-badge" id="sc-flow-status">Total Batch: 1,000 Units · 100% Tracked</span>
+              </div>
+              
+              <div class="sc-pipeline-track">
+                <div class="sc-pipe-step">
+                  <div class="sc-pipe-step-badge">1. Cleanroom Assembly</div>
+                  <div class="sc-pipe-step-val" id="pipe-step-1">1,000</div>
+                  <div class="sc-pipe-step-loc">Line 2 SMT Station</div>
+                </div>
+
+                <div class="sc-pipe-step active">
+                  <div class="sc-pipe-step-badge" style="color:#B45309">2. Factory Warehouse</div>
+                  <div class="sc-pipe-step-val" style="color:#B45309" id="pipe-step-2">150</div>
+                  <div class="sc-pipe-step-loc">Bay W-04 (Rack 12)</div>
+                </div>
+
+                <div class="sc-pipe-step active">
+                  <div class="sc-pipe-step-badge" style="color:#0284C7">3. Main City DC Hub</div>
+                  <div class="sc-pipe-step-val" style="color:#0284C7" id="pipe-step-3">350</div>
+                  <div class="sc-pipe-step-loc">Chennai Logistics Hub</div>
+                </div>
+
+                <div class="sc-pipe-step active">
+                  <div class="sc-pipe-step-badge" style="color:#EF4444">4. Retail Stores</div>
+                  <div class="sc-pipe-step-val" style="color:#EF4444" id="pipe-step-4">500</div>
+                  <div class="sc-pipe-step-loc">3 Flagship Stores</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Specific Retail Stores Breakdown Grid -->
+            <div class="stores-breakdown-card">
+              <div class="card-header">
+                <div>
+                  <h3 style="font-size:13.5px;font-weight:700;color:var(--text-heading)">Retail Flagship Stores — Stockroom vs Customer Units</h3>
+                  <p style="font-size:11.5px;color:var(--text-muted);margin-top:2px">Detailed breakdown of the 500 units dispatched to retail outlets.</p>
+                </div>
+                <button class="btn btn-sm btn-danger" onclick="broadcastStorePOSLock()">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                  Broadcast POS Lock to All Stores
+                </button>
+              </div>
+
+              <div class="store-cards-row">
+                <!-- Store 1: Chennai -->
+                <div class="store-mini-card">
+                  <div class="store-mini-card-top">
+                    <div>
+                      <span class="store-code">STORE #ELC001</span>
+                      <div class="store-name">Chennai Store — Express Avenue</div>
+                    </div>
+                    <span class="status-pill warning" style="font-size:10px">Active Alert</span>
+                  </div>
+                  <div style="font-size:11.5px;color:var(--text-muted);margin-top:6px">Location: Shelf Aisle 4, Cabinet B-02</div>
+                  <div class="store-stats-row">
+                    <span>Shipped: <strong class="store-stat-val">200</strong></span>
+                    <span>In Stock: <strong class="store-stat-val" style="color:#10B981">172</strong></span>
+                    <span>Sold: <strong class="store-stat-val" style="color:#EF4444">28</strong></span>
+                  </div>
+                  <div class="store-directive-pill">
+                    <span>🔒 Barcode Blacklisted on Retail POS</span>
+                  </div>
+                </div>
+
+                <!-- Store 2: Bengaluru -->
+                <div class="store-mini-card">
+                  <div class="store-mini-card-top">
+                    <div>
+                      <span class="store-code">STORE #BLR004</span>
+                      <div class="store-name">Bengaluru Store — Indiranagar</div>
+                    </div>
+                    <span class="status-pill warning" style="font-size:10px">Active Alert</span>
+                  </div>
+                  <div style="font-size:11.5px;color:var(--text-muted);margin-top:6px">Location: Backroom Secure Vault 2</div>
+                  <div class="store-stats-row">
+                    <span>Shipped: <strong class="store-stat-val">180</strong></span>
+                    <span>In Stock: <strong class="store-stat-val" style="color:#10B981">158</strong></span>
+                    <span>Sold: <strong class="store-stat-val" style="color:#EF4444">22</strong></span>
+                  </div>
+                  <div class="store-directive-pill">
+                    <span>🔒 Barcode Blacklisted on Retail POS</span>
+                  </div>
+                </div>
+
+                <!-- Store 3: Hyderabad -->
+                <div class="store-mini-card">
+                  <div class="store-mini-card-top">
+                    <div>
+                      <span class="store-code">STORE #HYD002</span>
+                      <div class="store-name">Hyderabad Store — Hitech City</div>
+                    </div>
+                    <span class="status-pill warning" style="font-size:10px">Active Alert</span>
+                  </div>
+                  <div style="font-size:11.5px;color:var(--text-muted);margin-top:6px">Location: Display Stock &amp; Storage 1</div>
+                  <div class="store-stats-row">
+                    <span>Shipped: <strong class="store-stat-val">120</strong></span>
+                    <span>In Stock: <strong class="store-stat-val" style="color:#10B981">109</strong></span>
+                    <span>Sold: <strong class="store-stat-val" style="color:#EF4444">11</strong></span>
+                  </div>
+                  <div class="store-directive-pill">
+                    <span>🔒 Barcode Blacklisted on Retail POS</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Individual Unit Serial Manifest Table -->
+            <div class="manifest-card">
+              <div class="manifest-card-header">
+                <div>
+                  <h3 style="font-size:13.5px;font-weight:700;color:var(--text-heading)">Individual Unit Serial Manifest &amp; Digital Passport Direct Access</h3>
+                  <p style="font-size:11.5px;color:var(--text-muted);margin-top:2px">Click "Inspect DPP Passport" to view cryptographic Merkle root and complete chain of custody for any specific device.</p>
+                </div>
+                <div style="display:flex;gap:10px;align-items:center">
+                  <input type="text" id="manifest-filter-input" placeholder="Filter by Serial / Location..." oninput="filterManifestTable(this.value)" style="padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;width:220px" />
+                </div>
+              </div>
+
+              <div style="overflow-x:auto">
+                <table class="manifest-table" id="unit-manifest-table">
+                  <thead>
+                    <tr>
+                      <th>Serial / IMEI</th>
+                      <th>Model</th>
+                      <th>Batch No</th>
+                      <th>Current Physical Location</th>
+                      <th>Supply Chain Status</th>
+                      <th>Quarantine Directive</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="unit-manifest-tbody">
+                    <tr>
+                      <td class="mono" style="color:var(--brand-blue);font-weight:700">S24U123456789</td>
+                      <td>Galaxy S24 Ultra (512GB)</td>
+                      <td class="mono">B-2504-17</td>
+                      <td style="font-weight:600">Chennai Store — ELC001</td>
+                      <td><span class="status-pill warning">Retail Stockroom</span></td>
+                      <td><span class="status-pill danger">POS Barcode Blacklisted</span></td>
+                      <td><button class="btn btn-sm btn-outline" onclick="loadPassportFromId('S24U123456789')">Inspect DPP Passport →</button></td>
+                    </tr>
+                    <tr>
+                      <td class="mono" style="color:var(--brand-blue);font-weight:700">S24U123456790</td>
+                      <td>Galaxy S24 Ultra (512GB)</td>
+                      <td class="mono">B-2504-17</td>
+                      <td style="font-weight:600">Chennai Store — ELC001</td>
+                      <td><span class="status-pill danger">Sold to Customer (IMEI Active)</span></td>
+                      <td><span class="status-pill danger">Direct SMS Recall Sent</span></td>
+                      <td><button class="btn btn-sm btn-outline" onclick="loadPassportFromId('S24U123456789')">Inspect DPP Passport →</button></td>
+                    </tr>
+                    <tr>
+                      <td class="mono" style="color:var(--brand-blue);font-weight:700">S24U123456812</td>
+                      <td>Galaxy S24 Ultra (512GB)</td>
+                      <td class="mono">B-2504-17</td>
+                      <td style="font-weight:600">Bengaluru Store — BLR004</td>
+                      <td><span class="status-pill warning">Retail Vault 2</span></td>
+                      <td><span class="status-pill danger">POS Barcode Blacklisted</span></td>
+                      <td><button class="btn btn-sm btn-outline" onclick="loadPassportFromId('S24U123456789')">Inspect DPP Passport →</button></td>
+                    </tr>
+                    <tr>
+                      <td class="mono" style="color:var(--brand-blue);font-weight:700">S24U123456945</td>
+                      <td>Galaxy S24 Ultra (512GB)</td>
+                      <td class="mono">B-2504-17</td>
+                      <td style="font-weight:600">Chennai Central Logistics Hub (DC-01)</td>
+                      <td><span class="status-pill info">Inbound Dock 07</span></td>
+                      <td><span class="status-pill warning">Transit Intercepted</span></td>
+                      <td><button class="btn btn-sm btn-outline" onclick="loadPassportFromId('S24U123456789')">Inspect DPP Passport →</button></td>
+                    </tr>
+                    <tr>
+                      <td class="mono" style="color:var(--brand-blue);font-weight:700">S24U123457102</td>
+                      <td>Galaxy S24 Ultra (512GB)</td>
+                      <td class="mono">B-2504-17</td>
+                      <td style="font-weight:600">Sriperumbudur Factory Central Hub</td>
+                      <td><span class="status-pill warning">Warehouse Bay W-04</span></td>
+                      <td><span class="status-pill danger">Outbound Gate Blocked</span></td>
+                      <td><button class="btn btn-sm btn-outline" onclick="loadPassportFromId('S24U123456789')">Inspect DPP Passport →</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SUBTAB 2: BLAST-RADIUS FINANCIAL ANALYSIS -->
+        <div id="recall-view-finance" class="hidden">
+          <div style="display:grid;grid-template-columns:320px 1fr;gap:18px">
+            
+            <!-- Defect Injection Panel -->
+            <div class="gt-card">
+              <div class="gt-card-header"><span class="gt-card-title">Hardware Defect Injection</span></div>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <div>
+                  <label style="font-size:11px;font-weight:600;color:var(--text-muted)">Defective Component Lot ID</label>
+                  <input type="text" id="recall-batch-id" value="BAT-2024-X49" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border);font-family:var(--mono);font-size:12px;margin-top:4px" />
+                </div>
+                <div>
+                  <label style="font-size:11px;font-weight:600;color:var(--text-muted)">Smartphone Unit Replacement (INR)</label>
+                  <input type="number" id="recall-scrap-value" value="55000" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border);font-size:12px;margin-top:4px" />
+                </div>
+                <button class="btn btn-danger" id="run-recall-btn" style="margin-top:6px" onclick="runRecall()">Simulate Blast-Radius Analysis</button>
+              </div>
+            </div>
+
+            <!-- Recall Results & Financial Savings -->
+            <div id="recall-results">
+              <div class="gt-card" style="padding:28px;text-align:center">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="1.5" style="margin:0 auto 12px">
+                  <polygon points="12 2 22 19 2 19 12 2"></polygon>
+                  <line x1="12" y1="9" x2="12" y2="13"></line>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                <h3 style="font-size:14px;font-weight:700;color:var(--text-heading)">Simulate Defect Isolation</h3>
+                <p style="font-size:12px;color:var(--text-muted);margin-top:4px">Click "Simulate Blast-Radius Analysis" to compare blanket vs precision store recalls.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+
+    </main>
+
+    <!-- Mobile Bottom Navigation (Visible on Mobile View) -->
+    <nav class="mobile-bottom-nav">
+      <a href="#" class="mobile-nav-item active" onclick="showPage('dashboard')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+        <span>Home</span>
+      </a>
+      <a href="#" class="mobile-nav-item" onclick="showPage('passport')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+          <line x1="8" y1="6" x2="16" y2="6"></line>
+        </svg>
+        <span>Trace</span>
+      </a>
+      <a href="#" class="mobile-nav-item" onclick="showPage('erp')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="7" width="20" height="14" rx="2"></rect>
+        </svg>
+        <span>ERP</span>
+      </a>
+      <a href="#" class="mobile-nav-item" onclick="showPage('mes')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="9"></circle>
+        </svg>
+        <span>MES</span>
+      </a>
+      <a href="#" class="mobile-nav-item" onclick="showPage('scada')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+        </svg>
+        <span>SCADA</span>
+      </a>
+    </nav>
+
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+  <script src="geneatrace.js?v=25&t=cycle_revamp_v2"></script>
+</body>
+</html>
