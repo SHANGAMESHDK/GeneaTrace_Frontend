@@ -16,11 +16,20 @@ import { SettingsPage } from './pages/SettingsPage';
 import { ShopkeeperPortalPage } from './pages/ShopkeeperPortalPage';
 import { CompanyDefectHubPage } from './pages/CompanyDefectHubPage';
 import { LoginPage } from './pages/LoginPage';
+import { MobileScannerPage } from './pages/MobileScannerPage';
 
 export const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage />,
+  },
+  {
+    path: '/scanner',
+    element: <MobileScannerPage />,
+  },
+  {
+    path: '/mobile',
+    element: <MobileScannerPage />,
   },
   {
     path: '/',

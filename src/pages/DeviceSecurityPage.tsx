@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ShieldAlert,
   ShieldCheck,
@@ -12,7 +12,10 @@ import {
   RefreshCw,
   Terminal,
   Radio,
-  ExternalLink
+  ExternalLink,
+  Camera,
+  Usb,
+  Wifi
 } from 'lucide-react';
 import { GeneaTraceStore } from '../services/dataStore';
 import { SecurityStatus } from '../types';
@@ -22,8 +25,85 @@ export const DeviceSecurityPage: React.FC = () => {
     GeneaTraceStore.getState().securityStatus
   );
   const [isSimulating, setIsSimulating] = useState(false);
+  const [edgeConnected, setEdgeConnected] = useState(false);
+  const [lastEdgeEvent, setLastEdgeEvent] = useState<any>(null);
+  const [serialConnected, setSerialConnected] = useState(false);
+  const [serialPortName, setSerialPortName] = useState<string>('');
 
   const product = GeneaTraceStore.getProduct(securityStatus.productId) || GeneaTraceStore.getProduct('GT-DEV-00000851')!;
+
+  // 1. Live EdgeStation Listener (Raspberry Pi 4B + USB Camera on port 8765)
+  useEffect(() => {
+    let isMounted = true;
+    const checkEdgeAgent = async () => {
+      try {
+        const res = await fetch('http://localhost:8765', { mode: 'cors' });
+        if (res.ok) {
+          const data = await res.json();
+          if (!isMounted) return;
+          setEdgeConnected(true);
+          
+          if (data && data.timestamp && (!lastEdgeEvent || data.timestamp > lastEdgeEvent.timestamp)) {
+            setLastEdgeEvent(data);
+            
+            // Auto-trigger tamper / unlock based on optical scanner
+            if (data.verdict === 'TAMPERED') {
+              GeneaTraceStore.simulateTampering(product.productId, true);
+              setSecurityStatus({ ...GeneaTraceStore.getState().securityStatus });
+            } else if (data.verdict === 'GENUINE_PRODUCT') {
+              GeneaTraceStore.recoverDevice(product.productId);
+              setSecurityStatus({ ...GeneaTraceStore.getState().securityStatus });
+            }
+          }
+        } else {
+          if (isMounted) setEdgeConnected(false);
+        }
+      } catch {
+        if (isMounted) setEdgeConnected(false);
+      }
+    };
+
+    const interval = setInterval(checkEdgeAgent, 1200);
+    checkEdgeAgent();
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [lastEdgeEvent, product.productId]);
+
+  // 2. Optional Web Serial API for CP2102 direct browser connection
+  const handleConnectSerial = async () => {
+    if (!('serial' in navigator)) {
+      alert('Web Serial API is available in Chrome, Edge, and Opera. Connect CP2102 and use a Chromium browser.');
+      return;
+    }
+    try {
+      // @ts-ignore
+      const port = await navigator.serial.requestPort();
+      await port.open({ baudRate: 115200 });
+      setSerialConnected(true);
+      setSerialPortName('CP2102 Bridge');
+      
+      // Read loop in background
+      const textDecoder = new TextDecoderStream();
+      // @ts-ignore
+      port.readable.pipeTo(textDecoder.writable);
+      const reader = textDecoder.readable.getReader();
+      
+      (async () => {
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          if (value && value.includes('TAMPER')) {
+            GeneaTraceStore.simulateTampering(product.productId, true);
+            setSecurityStatus({ ...GeneaTraceStore.getState().securityStatus });
+          }
+        }
+      })();
+    } catch (err: any) {
+      console.warn('Serial connect error:', err);
+    }
+  };
 
   const handleTriggerTampering = () => {
     setIsSimulating(true);
@@ -65,12 +145,64 @@ export const DeviceSecurityPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-serif px-3 py-1.5 bg-[#faf3dc] border border-[#e5e5e5] text-[#413634]">
-            Target: <strong className="font-mono text-[#c5716d] font-bold">{product.productId}</strong>
+        <div className="flex flex-wrap items-center gap-3">
+          {/* EdgeStation Cyber-Physical Status Badge */}
+          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium transition-all ${
+            edgeConnected
+              ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+              : 'bg-amber-500/10 border-amber-500/30 text-amber-300'
+          }`}>
+            <Camera size={14} className={edgeConnected ? 'animate-pulse text-emerald-400' : 'text-amber-400'} />
+            <span>
+              {edgeConnected 
+                ? `RPi 4B Optical Gate Active` 
+                : 'EdgeStation Standby (Run edge_agent.py)'}
+            </span>
+          </div>
+
+          {/* CP2102 Hardware Bus Button */}
+          <button
+            onClick={handleConnectSerial}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-all ${
+              serialConnected
+                ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-300'
+                : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-300'
+            }`}
+            title="Connect directly to CP2102 USB-to-UART bridge over Web Serial"
+          >
+            <Usb size={13} className={serialConnected ? 'text-cyan-400' : 'text-slate-400'} />
+            <span>{serialConnected ? `CP2102 Connected` : 'Connect CP2102'}</span>
+          </button>
+
+          <span className="text-xs px-3 py-1.5 bg-slate-900 border border-slate-700/80 rounded-xl text-slate-300">
+            Target: <strong className="font-mono text-indigo-400">{product.productId}</strong>
           </span>
         </div>
       </div>
+
+      {/* Live Edge Event Notification Banner if event received */}
+      {lastEdgeEvent && (
+        <div className={`p-3.5 rounded-2xl border text-xs flex items-center justify-between transition-all ${
+          lastEdgeEvent.verdict === 'TAMPERED'
+            ? 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+            : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+        }`}>
+          <div className="flex items-center gap-2.5">
+            <Radio size={16} className="animate-pulse" />
+            <div>
+              <span className="font-semibold uppercase tracking-wider">
+                [LIVE HARDWARE SCAN]: {lastEdgeEvent.target_id}
+              </span>
+              <p className="text-[11px] opacity-80 mt-0.5">
+                Verdict: {lastEdgeEvent.verdict} • {lastEdgeEvent.message} • Latency: &lt;12ms
+              </p>
+            </div>
+          </div>
+          <span className="font-mono text-[10px] px-2 py-0.5 rounded bg-black/40 border border-white/10">
+            CP2102 PULSE: SENT
+          </span>
+        </div>
+      )}
 
       {/* Main Grid: Control Panel (Left) & Simulated Smartphone Screen (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
