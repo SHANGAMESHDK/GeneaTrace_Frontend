@@ -28,11 +28,24 @@ import {
   Clock,
   ChevronRight,
   RotateCcw,
-  Download
+  Download,
+  Terminal,
+  RefreshCw,
+  Zap,
+  PackageCheck
 } from 'lucide-react';
 import { GeneaTraceStore } from '../services/dataStore';
 import { ProductRecord, ShopkeeperDefectReport } from '../types';
 import { api } from '../services/apiClient';
+
+type WorkflowTab =
+  | 'genesis'
+  | 'assembly'
+  | 'logistics'
+  | 'retail_sale'
+  | 'rma_backtrace'
+  | 'recall_redelivery'
+  | 'antitamper_lock';
 
 export const PassportPage: React.FC = () => {
   const { productId: paramProductId } = useParams();
@@ -47,8 +60,8 @@ export const PassportPage: React.FC = () => {
   const [defectReport, setDefectReport] = useState<ShopkeeperDefectReport | null>(null);
   const [hasSearched, setHasSearched] = useState(true);
 
-  // Active Workflow Tab
-  const [activeTab, setActiveTab] = useState<'customer' | 'stages' | 'logistics' | 'defect' | 'components' | 'batch'>('customer');
+  // Active Hierarchical Workflow Tab (Ordered strictly to user's 15-step narrative)
+  const [activeTab, setActiveTab] = useState<WorkflowTab>('genesis');
   const [copied, setCopied] = useState(false);
 
   // Query passport and any linked shopkeeper defect report upon search
@@ -109,7 +122,92 @@ export const PassportPage: React.FC = () => {
 
   const batchLocations = primaryBatchId ? GeneaTraceStore.getBatchLocations(primaryBatchId) : null;
 
-  // Download Pictorial DPP Label (PNG)
+  // 1. Download Null Container QR (PNG) - Demonstrates Step 2 & 3 before assembly!
+  const downloadNullContainerQr = () => {
+    const serial = product?.productId || activeSearchedSerial || 'AAA12345678';
+    const batch = primaryBatchId || 'AAA';
+    const qrSvg = document.getElementById('null-container-qr-svg') as SVGSVGElement | null;
+    if (!qrSvg) return;
+
+    const svgXml = new XMLSerializer().serializeToString(qrSvg);
+    const qrImg = new Image();
+    qrImg.crossOrigin = 'anonymous';
+    qrImg.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 600;
+      canvas.height = 700;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // Dark Industrial Background
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Card border
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(16, 16, canvas.width - 32, canvas.height - 32);
+
+      // Header Banner
+      ctx.fillStyle = '#0284c7';
+      ctx.fillRect(20, 20, canvas.width - 40, 56);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 16px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('GENEATRACE • NULL CRYPTOGRAPHIC CONTAINER', canvas.width / 2, 45);
+      ctx.font = '11px monospace';
+      ctx.fillText('STEPS 1, 2 & 3: BATCH ASSIGNED • CONTAINER INITIALIZED', canvas.width / 2, 65);
+
+      // Subtitle
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '13px monospace';
+      ctx.fillText('Samsung Galaxy A55 5G (Enterprise)', canvas.width / 2, 110);
+
+      // Badge
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(40, 130, canvas.width - 80, 50);
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(40, 130, canvas.width - 80, 50);
+
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 14px monospace';
+      ctx.fillText(`SERIAL NO: ${serial}`, canvas.width / 2, 152);
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '11px monospace';
+      ctx.fillText(`Assigned Batch: ${batch}  •  Status: NULL PAYLOAD (UNSEALED)`, canvas.width / 2, 170);
+
+      // Draw QR Code
+      const qrSize = 250;
+      const qrX = (canvas.width - qrSize) / 2;
+      const qrY = 210;
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(qrX - 10, qrY - 10, qrSize + 20, qrSize + 20);
+      ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
+
+      // Instruction
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 12px monospace';
+      ctx.fillText('SCAN AT STATION 1 TO BEGIN ASSEMBLY INGESTION', canvas.width / 2, 510);
+
+      ctx.fillStyle = '#64748b';
+      ctx.font = '10px monospace';
+      ctx.fillText('Scan with Android APK or /scanner route', canvas.width / 2, 535);
+      ctx.fillText('Station timestamp, machine ID, and operator will be pushed to this container.', canvas.width / 2, 552);
+
+      // Download
+      const link = document.createElement('a');
+      link.download = `GeneaTrace_Null_Container_${serial}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    };
+
+    qrImg.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgXml)));
+  };
+
+  // 2. Download Sealed DPP Label (PNG) - Demonstrates Step 6 & Finished Passport!
   const downloadPictorialLabel = () => {
     const serial = product?.productId || activeSearchedSerial || 'AAA12345678';
     const model = product?.productModel || 'Samsung Galaxy A55 5G (Enterprise Edition)';
@@ -128,25 +226,21 @@ export const PassportPage: React.FC = () => {
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      // 1. Vintage Parchment Industrial Background
+      // Vintage Parchment Industrial Background
       ctx.fillStyle = '#fffdf6';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Outer border
       ctx.strokeStyle = '#413634';
       ctx.lineWidth = 6;
       ctx.strokeRect(16, 16, canvas.width - 32, canvas.height - 32);
 
-      // Inner thin border
       ctx.strokeStyle = '#c5716d';
       ctx.lineWidth = 1.5;
       ctx.strokeRect(24, 24, canvas.width - 48, canvas.height - 48);
 
-      // Header Band
       ctx.fillStyle = '#413634';
       ctx.fillRect(24, 24, canvas.width - 48, 64);
 
-      // Header Text
       ctx.fillStyle = '#fffdf6';
       ctx.font = 'bold 17px serif';
       ctx.textAlign = 'center';
@@ -154,12 +248,10 @@ export const PassportPage: React.FC = () => {
       ctx.font = '11px monospace';
       ctx.fillText('EU DPP DIRECTIVE (ESPR) • IMMUTABLE MERKLE ANCHOR', canvas.width / 2, 72);
 
-      // Product Title
       ctx.fillStyle = '#413634';
       ctx.font = 'bold 19px serif';
       ctx.fillText(model, canvas.width / 2, 126);
 
-      // Batch & Container Serial Banner
       ctx.fillStyle = '#faf3dc';
       ctx.fillRect(40, 142, canvas.width - 80, 52);
       ctx.strokeStyle = '#e5e5e5';
@@ -173,12 +265,10 @@ export const PassportPage: React.FC = () => {
       ctx.font = '12px serif';
       ctx.fillText(`Assigned Batch: ${batch}  •  Facility: Samsung Mega-Hub 4, Gumi`, canvas.width / 2, 182);
 
-      // Draw QR Code
       const qrSize = 250;
       const qrX = (canvas.width - qrSize) / 2;
       const qrY = 210;
 
-      // QR Background Plate
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(qrX - 10, qrY - 10, qrSize + 20, qrSize + 20);
       ctx.strokeStyle = '#413634';
@@ -187,16 +277,14 @@ export const PassportPage: React.FC = () => {
 
       ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
 
-      // Cryptographic Lineage Details below QR
       ctx.fillStyle = '#413634';
       ctx.font = 'bold 11px monospace';
       ctx.fillText(`MERKLE DAG: ${merkle.slice(0, 32)}...`, canvas.width / 2, 502);
 
       ctx.font = '11px serif';
       ctx.fillStyle = '#2e6b4d';
-      ctx.fillText('✔ CRYPTOGRAPHIC BLOCKCHAIN CONTAINER SEALED (STEP 2 & 6)', canvas.width / 2, 526);
+      ctx.fillText('✔ CRYPTOGRAPHIC BLOCKCHAIN CONTAINER SEALED (STEP 6)', canvas.width / 2, 526);
 
-      // Simulated Barcode Lines
       const barcodeY = 550;
       const barcodeWidth = canvas.width - 120;
       const startX = 60;
@@ -211,13 +299,11 @@ export const PassportPage: React.FC = () => {
       ctx.fillStyle = '#666666';
       ctx.fillText(`*${serial}*`, canvas.width / 2, 604);
 
-      // Footer
       ctx.fillStyle = '#8b6c58';
       ctx.font = '10px serif';
       ctx.fillText('Scan with GeneaTrace Edge Station or any standard QR scanner to verify DPP.', canvas.width / 2, 642);
       ctx.fillText('https://geneatrace.vercel.app/passport/' + serial, canvas.width / 2, 658);
 
-      // Trigger file download
       const link = document.createElement('a');
       link.download = `GeneaTrace_${batch}_${serial}_Pictorial_Label.png`;
       link.href = canvas.toDataURL('image/png');
@@ -237,7 +323,7 @@ export const PassportPage: React.FC = () => {
             <span>Digital Product Passport (DPP) &amp; Lineage Engine</span>
           </h1>
           <p className="text-xs text-[#666666] mt-0.5">
-            Query cryptographic product lineage, batch assignment, stage station ingestion, logistics, and retail handovers.
+            15-Step End-to-End Traceability Workflow: From Genesis Null Container to Assembly, Logistics, Retail, Defect Backtrace, Batch Recall, and Anti-Tamper Lock.
           </p>
         </div>
 
@@ -248,7 +334,7 @@ export const PassportPage: React.FC = () => {
             title="Scan QR Code or Push Assembly Stage"
           >
             <Smartphone size={13} className="text-[#2e6b4d]" />
-            <span>Assembly Station Scanner</span>
+            <span>Station Scanner (/scanner)</span>
           </button>
           <button
             onClick={() => navigate('/shop-portal')}
@@ -331,7 +417,7 @@ export const PassportPage: React.FC = () => {
           </div>
           <h3 className="text-base text-[#413634] font-medium">No Record Found</h3>
           <p className="text-xs text-[#666666]">
-            No verified digital passport or reported defect found for serial <strong className="font-mono text-[#b84a44]">"{searchInput}"</strong>.
+            No verified digital passport found for serial <strong className="font-mono text-[#b84a44]">"{searchInput}"</strong>.
           </p>
           <div className="pt-2">
             <button
@@ -356,7 +442,7 @@ export const PassportPage: React.FC = () => {
                     Official EU DPP Directive (ESPR)
                   </span>
                   <span className="text-xs px-2 py-0.5 bg-[#edf6f0] border border-[#2e6b4d] text-[#2e6b4d] font-mono">
-                    Cryptographically Sealed
+                    Cryptographically Sealed (Step 6)
                   </span>
                 </div>
                 <h2 className="text-2xl text-[#413634] font-medium">
@@ -421,168 +507,259 @@ export const PassportPage: React.FC = () => {
               </div>
             </div>
 
-            {/* 15-Step Workflow Horizontal Tabs */}
-            <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-[#e5e5e5]">
-              <button
-                onClick={() => setActiveTab('customer')}
-                className={`px-3 py-1.5 text-xs font-medium border flex items-center gap-1.5 transition-all ${
-                  activeTab === 'customer'
-                    ? 'bg-[#413634] text-white border-[#413634]'
-                    : 'bg-[#fffdf6] text-[#413634] border-[#e5e5e5] hover:border-[#413634]'
-                }`}
-              >
-                <UserCheck size={13} />
-                <span>1. Customer Sale &amp; Retail Handover</span>
-              </button>
+            {/* STRICT HIERARCHICAL 7-STEP WORKFLOW TABS */}
+            <div className="space-y-1.5 pt-2 border-t border-[#e5e5e5]">
+              <div className="flex items-center justify-between text-[11px] text-[#8b6c58] font-mono">
+                <span>EXPLAIN THE JURY ACCORDING TO THIS HIERARCHY:</span>
+                <span>STEPS 1 ➔ 16</span>
+              </div>
 
-              <button
-                onClick={() => setActiveTab('stages')}
-                className={`px-3 py-1.5 text-xs font-medium border flex items-center gap-1.5 transition-all ${
-                  activeTab === 'stages'
-                    ? 'bg-[#413634] text-white border-[#413634]'
-                    : 'bg-[#fffdf6] text-[#413634] border-[#e5e5e5] hover:border-[#413634]'
-                }`}
-              >
-                <Smartphone size={13} />
-                <span>2. Assembly Stations Ingestion</span>
-              </button>
+              <div className="flex flex-wrap items-center gap-1.5">
+                {/* 1. Genesis & Null Container */}
+                <button
+                  onClick={() => setActiveTab('genesis')}
+                  className={`px-3 py-1.5 text-xs font-medium border flex items-center gap-1.5 transition-all ${
+                    activeTab === 'genesis'
+                      ? 'bg-[#0284c7] text-white border-[#0284c7] shadow-xs'
+                      : 'bg-[#fffdf6] text-[#413634] border-[#e5e5e5] hover:border-[#0284c7]'
+                  }`}
+                >
+                  <Layers size={13} />
+                  <span>1. Genesis &amp; Null Container (Steps 1–3)</span>
+                </button>
 
-              <button
-                onClick={() => setActiveTab('logistics')}
-                className={`px-3 py-1.5 text-xs font-medium border flex items-center gap-1.5 transition-all ${
-                  activeTab === 'logistics'
-                    ? 'bg-[#413634] text-white border-[#413634]'
-                    : 'bg-[#fffdf6] text-[#413634] border-[#e5e5e5] hover:border-[#413634]'
-                }`}
-              >
-                <Truck size={13} />
-                <span>3. Logistics &amp; Custody</span>
-              </button>
+                {/* 2. Assembly Station Ingestion */}
+                <button
+                  onClick={() => setActiveTab('assembly')}
+                  className={`px-3 py-1.5 text-xs font-medium border flex items-center gap-1.5 transition-all ${
+                    activeTab === 'assembly'
+                      ? 'bg-[#2e6b4d] text-white border-[#2e6b4d] shadow-xs'
+                      : 'bg-[#fffdf6] text-[#413634] border-[#e5e5e5] hover:border-[#2e6b4d]'
+                  }`}
+                >
+                  <Smartphone size={13} />
+                  <span>2. Assembly Stations Ingestion (Steps 4–6)</span>
+                </button>
 
-              <button
-                onClick={() => setActiveTab('defect')}
-                className={`px-3 py-1.5 text-xs font-medium border flex items-center gap-1.5 transition-all ${
-                  activeTab === 'defect'
-                    ? 'bg-[#b84a44] text-white border-[#b84a44]'
-                    : 'bg-[#fdf2f1] text-[#b84a44] border-[#b84a44] hover:bg-[#b84a44] hover:text-white'
-                }`}
-              >
-                <AlertOctagon size={13} />
-                <span>4. Defect Backtrace &amp; Recall</span>
-              </button>
+                {/* 3. Logistics & Factory Custody */}
+                <button
+                  onClick={() => setActiveTab('logistics')}
+                  className={`px-3 py-1.5 text-xs font-medium border flex items-center gap-1.5 transition-all ${
+                    activeTab === 'logistics'
+                      ? 'bg-[#b87428] text-white border-[#b87428] shadow-xs'
+                      : 'bg-[#fffdf6] text-[#413634] border-[#e5e5e5] hover:border-[#b87428]'
+                  }`}
+                >
+                  <Truck size={13} />
+                  <span>3. Logistics &amp; Custody (Step 7)</span>
+                </button>
 
-              <button
-                onClick={() => setActiveTab('components')}
-                className={`px-3 py-1.5 text-xs font-medium border flex items-center gap-1.5 transition-all ${
-                  activeTab === 'components'
-                    ? 'bg-[#413634] text-white border-[#413634]'
-                    : 'bg-[#fffdf6] text-[#413634] border-[#e5e5e5] hover:border-[#413634]'
-                }`}
-              >
-                <Cpu size={13} />
-                <span>5. Anti-Tamper &amp; Parts</span>
-              </button>
+                {/* 4. Retail Handover & Customer Sale */}
+                <button
+                  onClick={() => setActiveTab('retail_sale')}
+                  className={`px-3 py-1.5 text-xs font-medium border flex items-center gap-1.5 transition-all ${
+                    activeTab === 'retail_sale'
+                      ? 'bg-[#413634] text-white border-[#413634] shadow-xs'
+                      : 'bg-[#fffdf6] text-[#413634] border-[#e5e5e5] hover:border-[#413634]'
+                  }`}
+                >
+                  <UserCheck size={13} />
+                  <span>4. Retail Handover &amp; Customer Sale (Steps 8–9)</span>
+                </button>
 
-              <button
-                onClick={() => setActiveTab('batch')}
-                className={`px-3 py-1.5 text-xs font-medium border flex items-center gap-1.5 transition-all ${
-                  activeTab === 'batch'
-                    ? 'bg-[#413634] text-white border-[#413634]'
-                    : 'bg-[#fffdf6] text-[#413634] border-[#e5e5e5] hover:border-[#413634]'
-                }`}
-              >
-                <Layers size={13} />
-                <span>6. Batch Distribution</span>
-              </button>
+                {/* 5. Defect Backtrace */}
+                <button
+                  onClick={() => setActiveTab('rma_backtrace')}
+                  className={`px-3 py-1.5 text-xs font-medium border flex items-center gap-1.5 transition-all ${
+                    activeTab === 'rma_backtrace'
+                      ? 'bg-[#b84a44] text-white border-[#b84a44] shadow-xs'
+                      : 'bg-[#fdf2f1] text-[#b84a44] border-[#b84a44] hover:bg-[#b84a44] hover:text-white'
+                  }`}
+                >
+                  <AlertOctagon size={13} />
+                  <span>5. Customer Return &amp; Defect Backtrace (Steps 10–12)</span>
+                </button>
+
+                {/* 6. Batch Recall & Customer Re-Delivery */}
+                <button
+                  onClick={() => setActiveTab('recall_redelivery')}
+                  className={`px-3 py-1.5 text-xs font-medium border flex items-center gap-1.5 transition-all ${
+                    activeTab === 'recall_redelivery'
+                      ? 'bg-[#b84a44] text-white border-[#b84a44] shadow-xs'
+                      : 'bg-[#fffdf6] text-[#413634] border-[#e5e5e5] hover:border-[#b84a44]'
+                  }`}
+                >
+                  <RotateCcw size={13} />
+                  <span>6. Batch AAA Recall &amp; Re-Delivery (Steps 13–15)</span>
+                </button>
+
+                {/* 7. Third-Party Fake Part Lock */}
+                <button
+                  onClick={() => setActiveTab('antitamper_lock')}
+                  className={`px-3 py-1.5 text-xs font-medium border flex items-center gap-1.5 transition-all ${
+                    activeTab === 'antitamper_lock'
+                      ? 'bg-[#7c3aed] text-white border-[#7c3aed] shadow-xs'
+                      : 'bg-[#fffdf6] text-[#7c3aed] border-[#e5e5e5] hover:border-[#7c3aed]'
+                  }`}
+                >
+                  <Lock size={13} />
+                  <span>7. Third-Party Fake Part Auto-Lock (Security)</span>
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* TAB 1: Customer Sale & Retail Handover (Steps 8, 9, 15) */}
-          {activeTab === 'customer' && (
-            <div className="p-6 vintage-card bg-[#fffcf8] space-y-5 border-l-4 border-l-[#413634] animate-in fade-in duration-200">
-              <div className="flex items-center justify-between border-b border-[#e5e5e5] pb-3">
+          {/* TAB 1: Genesis & Null Container (Steps 1–3) */}
+          {activeTab === 'genesis' && (
+            <div className="p-6 vintage-card bg-[#fffcf8] space-y-6 border-l-4 border-l-[#0284c7] animate-in fade-in duration-200">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#e5e5e5] pb-3">
                 <div>
-                  <h3 className="text-base text-[#413634] font-medium flex items-center gap-2">
-                    <UserCheck size={18} className="text-[#2e6b4d]" />
-                    <span>Customer Sale &amp; Retail Handover Details (Steps 8, 9, 15)</span>
-                  </h3>
-                  <p className="text-xs text-[#666666]">
-                    Uploaded directly by the authorized retailer upon delivery &amp; consumer purchase.
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 bg-[#e0f2fe] text-[#0284c7] text-[10px] font-mono font-bold uppercase">
+                      Steps 1, 2 &amp; 3
+                    </span>
+                    <h3 className="text-lg text-[#413634] font-medium">
+                      Manufacturer Login Genesis &amp; Null Container Initialization
+                    </h3>
+                  </div>
+                  <p className="text-xs text-[#666666] mt-1">
+                    Done in Manufacturer Login: Batch AAA assigned, cryptographic serial created with a null container.
                   </p>
                 </div>
-                <span className="px-2.5 py-1 text-xs border bg-[#edf6f0] text-[#2e6b4d] border-[#2e6b4d] font-mono">
-                  {product?.customerSale?.status || 'Active Customer Ownership'}
-                </span>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 bg-[#faf3dc] border border-[#e5e5e5] space-y-2">
-                  <span className="text-[10px] text-[#666666] uppercase block font-semibold">Customer Personal Info</span>
-                  <div className="text-base text-[#413634] font-medium">
-                    {product?.customerSale?.customerName || 'Vikram Malhotra'}
-                  </div>
-                  <div className="text-xs text-[#666666] font-mono">
-                    Phone: {product?.customerSale?.phone || '+91 98765 43210'}
-                  </div>
-                  <div className="text-xs text-[#666666]">
-                    Billing Address: Indiranagar 100ft Road, Bangalore, Karnataka
-                  </div>
-                </div>
-
-                <div className="p-4 bg-[#faf3dc] border border-[#e5e5e5] space-y-2">
-                  <span className="text-[10px] text-[#666666] uppercase block font-semibold">Retail Sale Record</span>
-                  <div className="text-xs text-[#413634]">
-                    Retail Store: <strong>{product?.customerSale?.retailerShop || 'Apex Retail & Service Hub - Indiranagar'}</strong>
-                  </div>
-                  <div className="text-xs text-[#413634] font-mono">
-                    Invoice No: <strong>{product?.customerSale?.invoiceNo || 'INV-BLR-2026-8812'}</strong>
-                  </div>
-                  <div className="text-xs text-[#666666]">
-                    Sale Date: <strong className="font-mono">{product?.customerSale?.saleDate || '2026-10-15'}</strong>
-                  </div>
-                </div>
-              </div>
-
-              {/* Step 15: Re-Delivery Status if unit underwent repair */}
-              <div className="p-4 bg-[#edf6f0] border border-[#2e6b4d] flex items-center justify-between text-xs">
-                <div className="space-y-0.5">
-                  <div className="font-medium text-[#2e6b4d] flex items-center gap-1.5">
-                    <CheckCircle2 size={15} />
-                    <span>Step 15: Customer Handover Re-Delivery Protocol Active</span>
-                  </div>
-                  <p className="text-[#666666]">
-                    If a repaired unit is received from manufacturer, retailer contacts customer Vikram Malhotra for verified return handover.
-                  </p>
-                </div>
                 <button
-                  onClick={() => navigate('/shop-portal')}
-                  className="btn-vintage-outline text-xs flex items-center gap-1"
+                  onClick={downloadNullContainerQr}
+                  className="btn-vintage-accent text-xs flex items-center gap-1.5 shadow-sm"
+                  title="Download Null Container QR code as PNG for scanning demonstration"
                 >
-                  <span>Open Retailer Hub</span>
-                  <ArrowRight size={12} />
+                  <Download size={13} />
+                  <span>Download Null Container QR (PNG)</span>
                 </button>
+              </div>
+
+              {/* The 3 Steps Explanatory Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                {/* Step 1 */}
+                <div className="p-4 bg-[#faf3dc] border border-[#e5e5e5] space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full bg-[#0284c7] text-white flex items-center justify-center font-bold text-[10px]">
+                      1
+                    </span>
+                    <strong className="text-sm text-[#413634]">Step 1: Batch Assigned</strong>
+                  </div>
+                  <div className="text-base text-[#0284c7] font-mono font-bold">
+                    Batch: AAA
+                  </div>
+                  <p className="text-[#666666] leading-relaxed">
+                    Manufacturer registers the production batch (Samsung Display Corp, Cleanroom Complex Alpha Line 3).
+                  </p>
+                </div>
+
+                {/* Step 2 */}
+                <div className="p-4 bg-[#faf3dc] border border-[#e5e5e5] space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full bg-[#0284c7] text-white flex items-center justify-center font-bold text-[10px]">
+                      2
+                    </span>
+                    <strong className="text-sm text-[#413634]">Step 2: Cryptographic Serial</strong>
+                  </div>
+                  <div className="text-base text-[#c5716d] font-mono font-bold">
+                    AAA12345678
+                  </div>
+                  <p className="text-[#666666] leading-relaxed">
+                    A unique Blockchain Cryptographic serial number is generated to act as the unit's digital identity container.
+                  </p>
+                </div>
+
+                {/* Step 3 */}
+                <div className="p-4 bg-[#e0f2fe] border border-[#0284c7] space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full bg-[#0284c7] text-white flex items-center justify-center font-bold text-[10px]">
+                      3
+                    </span>
+                    <strong className="text-sm text-[#0284c7]">Step 3: Container is NULL</strong>
+                  </div>
+                  <div className="text-xs px-2 py-0.5 bg-white text-[#0284c7] border border-[#0284c7] font-mono font-bold inline-block">
+                    PAYLOAD: NULL (UNSEALED)
+                  </div>
+                  <p className="text-[#413634] leading-relaxed">
+                    At this stage before assembly, the container holds no process events. It is primed to receive station scans.
+                  </p>
+                </div>
+              </div>
+
+              {/* High-Resolution Null Container QR Code Plate for Demonstration */}
+              <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl text-white flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="space-y-3 max-w-md">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 font-mono text-[10px] font-bold uppercase border border-sky-500/30">
+                      Demonstration Token
+                    </span>
+                    <span className="text-xs text-slate-400 font-mono">Step 3 Pictorial Asset</span>
+                  </div>
+                  <h4 className="text-lg font-bold text-white">
+                    Null Container QR Token ({product?.productId || 'AAA12345678'})
+                  </h4>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    This QR represents the empty cryptographic container created at manufacturer login. Hold this up to the <strong>Android APK</strong> or <strong>/scanner</strong> station camera to begin pushing manufacturing stages!
+                  </p>
+                  <div className="flex items-center gap-3 pt-1">
+                    <button
+                      onClick={downloadNullContainerQr}
+                      className="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-sky-500/20 transition-all"
+                    >
+                      <Download size={14} />
+                      <span>Download Null QR (PNG)</span>
+                    </button>
+                    <button
+                      onClick={() => navigate('/scanner')}
+                      className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs flex items-center gap-1.5 border border-slate-700 transition-all"
+                    >
+                      <Smartphone size={13} className="text-emerald-400" />
+                      <span>Open Station Scanner ➔</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Rendered Null QR Image Box */}
+                <div className="bg-white p-4 rounded-xl shadow-2xl flex flex-col items-center gap-2 text-slate-950">
+                  <QRCodeSVG
+                    id="null-container-qr-svg"
+                    value={`https://geneatrace.vercel.app/scanner?target=${product?.productId || 'AAA12345678'}`}
+                    size={160}
+                    level="H"
+                  />
+                  <div className="font-mono text-[11px] font-bold tracking-wider">
+                    {product?.productId || 'AAA12345678'} (NULL)
+                  </div>
+                </div>
               </div>
             </div>
           )}
 
-          {/* TAB 2: Assembly Stations Ingestion (Steps 4, 5, 6) */}
-          {activeTab === 'stages' && (
+          {/* TAB 2: Assembly Station Ingestion (Steps 4–6) */}
+          {activeTab === 'assembly' && (
             <div className="p-6 vintage-card bg-[#fffcf8] space-y-5 border-l-4 border-l-[#2e6b4d] animate-in fade-in duration-200">
-              <div className="flex items-center justify-between border-b border-[#e5e5e5] pb-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#e5e5e5] pb-3">
                 <div>
-                  <h3 className="text-base text-[#413634] font-medium flex items-center gap-2">
-                    <Smartphone size={18} className="text-[#2e6b4d]" />
-                    <span>Assembly Station Ingestion (Steps 4, 5, 6)</span>
-                  </h3>
-                  <p className="text-xs text-[#666666]">
-                    Null container initialized at manufacturer login; timestamp, machine ID, and process pushed upon scanning each station.
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 bg-[#edf6f0] text-[#2e6b4d] text-[10px] font-mono font-bold uppercase">
+                      Steps 4, 5 &amp; 6
+                    </span>
+                    <h3 className="text-lg text-[#413634] font-medium">
+                      Assembly Stations Ingestion &amp; Sealing (/scanner)
+                    </h3>
+                  </div>
+                  <p className="text-xs text-[#666666] mt-1">
+                    On every stage after scanning, timestamp, machine ID, operator, and process are pushed to the container. Finally sealed under serial AAA12345678.
                   </p>
                 </div>
                 <button
                   onClick={() => navigate('/scanner')}
                   className="btn-vintage-accent text-xs flex items-center gap-1.5"
                 >
-                  <span>Simulate Next Station Ingestion</span>
+                  <Smartphone size={13} />
+                  <span>Scan Next Station at /scanner</span>
                   <ArrowRight size={13} />
                 </button>
               </div>
@@ -647,7 +824,7 @@ export const PassportPage: React.FC = () => {
                           <strong className="text-sm text-[#413634]">{stage.name}</strong>
                           {isFlagged && (
                             <span className="px-1.5 py-0.2 bg-[#b84a44] text-white text-[9px] font-mono">
-                              ROOT CAUSE STAGE
+                              ROOT CAUSE STAGE (MACHINE DISP-04)
                             </span>
                           )}
                         </div>
@@ -678,20 +855,43 @@ export const PassportPage: React.FC = () => {
                   );
                 })}
               </div>
+
+              {/* Step 6 Callout */}
+              <div className="p-3.5 bg-[#edf6f0] border border-[#2e6b4d] text-xs flex items-center justify-between">
+                <div>
+                  <strong className="text-[#2e6b4d] block font-mono">
+                    Step 6 Sealed Container: AAA12345678
+                  </strong>
+                  <span className="text-[#666666]">
+                    Merkle DAG Root Hash: <strong>{product?.merkleRoot || '0x9f3b8a1c4e72d05f88b14a2c91e3f706'}</strong>
+                  </span>
+                </div>
+                <button
+                  onClick={downloadPictorialLabel}
+                  className="btn-vintage-accent text-xs flex items-center gap-1"
+                >
+                  <Download size={12} />
+                  <span>Download Sealed Label (PNG)</span>
+                </button>
+              </div>
             </div>
           )}
 
-          {/* TAB 3: Logistics Custody Chain (Step 7) */}
+          {/* TAB 3: Logistics & Factory Custody (Step 7) */}
           {activeTab === 'logistics' && (
             <div className="p-6 vintage-card bg-[#fffcf8] space-y-5 border-l-4 border-l-[#b87428] animate-in fade-in duration-200">
-              <div className="flex items-center justify-between border-b border-[#e5e5e5] pb-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#e5e5e5] pb-3">
                 <div>
-                  <h3 className="text-base text-[#413634] font-medium flex items-center gap-2">
-                    <Truck size={18} className="text-[#b87428]" />
-                    <span>Logistics Custody Chain (Step 7: Packing ➔ Warehouse ➔ Dispatched ➔ Retail)</span>
-                  </h3>
-                  <p className="text-xs text-[#666666]">
-                    Step 7 logistics custody checkpoints anchored immutably to the blockchain shipment manifest.
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 bg-[#fef7ec] text-[#b87428] text-[10px] font-mono font-bold uppercase">
+                      Step 7
+                    </span>
+                    <h3 className="text-lg text-[#413634] font-medium">
+                      Manufacturer Logistics Chain of Custody
+                    </h3>
+                  </div>
+                  <p className="text-xs text-[#666666] mt-1">
+                    Done in Manufacturer Login: Packing ➔ Warehouse Clearance ➔ Dispatched Air Corridor ➔ Delivered to Retail.
                   </p>
                 </div>
                 <button
@@ -725,9 +925,9 @@ export const PassportPage: React.FC = () => {
                 <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5] space-y-1">
                   <div className="text-[10px] text-[#666666] uppercase font-semibold">3. Dispatched</div>
                   <strong className="text-[#413634] block">Air Freight Corridor</strong>
-                  <div className="text-[10px] text-[#8b6c58]">DHL Express Supply Chain</div>
+                  <div className="text-[10px] text-[#8b6c58]">Incheon ➔ Bangalore Airport</div>
                   <span className="inline-block mt-1 px-1.5 py-0.2 bg-[#edf6f0] text-[#2e6b4d] font-mono text-[9px]">
-                    ARRIVED BLR
+                    DISPATCHED
                   </span>
                 </div>
 
@@ -743,18 +943,88 @@ export const PassportPage: React.FC = () => {
             </div>
           )}
 
-          {/* TAB 4: Defect Backtrace & Recall (Steps 10, 11, 12, 13, 14) */}
-          {activeTab === 'defect' && (
+          {/* TAB 4: Retail Handover & Customer Sale (Steps 8 & 9) */}
+          {activeTab === 'retail_sale' && (
+            <div className="p-6 vintage-card bg-[#fffcf8] space-y-5 border-l-4 border-l-[#413634] animate-in fade-in duration-200">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#e5e5e5] pb-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 bg-[#faf3dc] text-[#413634] text-[10px] font-mono font-bold uppercase">
+                      Steps 8 &amp; 9
+                    </span>
+                    <h3 className="text-lg text-[#413634] font-medium">
+                      Retail Delivery &amp; Customer Selling Details
+                    </h3>
+                  </div>
+                  <p className="text-xs text-[#666666] mt-1">
+                    Once delivered to retail, retail login takes over. Selling details uploaded in retail login page.
+                  </p>
+                </div>
+                <span className="px-2.5 py-1 text-xs border bg-[#edf6f0] text-[#2e6b4d] border-[#2e6b4d] font-mono">
+                  {product?.customerSale?.status || 'Active Customer Ownership'}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 bg-[#faf3dc] border border-[#e5e5e5] space-y-2">
+                  <span className="text-[10px] text-[#666666] uppercase block font-semibold">Step 9: Customer Information</span>
+                  <div className="text-base text-[#413634] font-medium">
+                    {product?.customerSale?.customerName || 'Vikram Malhotra'}
+                  </div>
+                  <div className="text-xs text-[#666666] font-mono">
+                    Phone: {product?.customerSale?.phone || '+91 98765 43210'}
+                  </div>
+                  <div className="text-xs text-[#666666]">
+                    Delivery: 100ft Road, Indiranagar, Bangalore, Karnataka
+                  </div>
+                </div>
+
+                <div className="p-4 bg-[#faf3dc] border border-[#e5e5e5] space-y-2">
+                  <span className="text-[10px] text-[#666666] uppercase block font-semibold">Retail Sale Record (Retailer Login)</span>
+                  <div className="text-xs text-[#413634]">
+                    Retail Store: <strong>{product?.customerSale?.retailerShop || 'Apex Retail & Service Hub - Indiranagar'}</strong>
+                  </div>
+                  <div className="text-xs text-[#413634] font-mono">
+                    Invoice No: <strong>{product?.customerSale?.invoiceNo || 'INV-BLR-2026-8812'}</strong>
+                  </div>
+                  <div className="text-xs text-[#666666]">
+                    Sale Date: <strong className="font-mono">{product?.customerSale?.saleDate || '2026-10-15'}</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-2 flex items-center justify-between text-xs">
+                <span className="text-[#666666]">
+                  Retailers can update customer invoice and sales data via the Retail Portal:
+                </span>
+                <button
+                  onClick={() => navigate('/shop-portal')}
+                  className="btn-vintage-outline text-xs flex items-center gap-1"
+                >
+                  <span>Open Retail Portal (/shop-portal)</span>
+                  <ArrowRight size={12} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5: Customer Return & Defect Backtrace (Steps 10–12) */}
+          {activeTab === 'rma_backtrace' && (
             <div className="p-6 vintage-card bg-[#fffcf8] space-y-5 border-l-4 border-l-[#b84a44] animate-in fade-in duration-200">
-              <div className="flex items-center justify-between border-b border-[#e5e5e5] pb-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#e5e5e5] pb-3">
                 <div className="flex items-center gap-2">
                   <AlertOctagon className="text-[#b84a44]" size={20} />
                   <div>
-                    <h3 className="text-base text-[#413634] font-medium">
-                      Customer Defect Backtrace &amp; Batch Recall (Steps 10-14)
-                    </h3>
-                    <p className="text-xs text-[#666666]">
-                      End-to-end backtracing from customer symptom to assembly machine root cause.
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 bg-[#fdf2f1] text-[#b84a44] text-[10px] font-mono font-bold uppercase">
+                        Steps 10, 11 &amp; 12
+                      </span>
+                      <h3 className="text-lg text-[#413634] font-medium">
+                        Customer Return, Retailer RMA &amp; Root Cause Backtrace
+                      </h3>
+                    </div>
+                    <p className="text-xs text-[#666666] mt-0.5">
+                      Customer returns device with issue; retailer files report and sends to manufacturer; manufacturer backtraces to Stage 2 Machine DISP-04.
                     </p>
                   </div>
                 </div>
@@ -771,226 +1041,166 @@ export const PassportPage: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <span className="text-xs uppercase tracking-wider text-[#b84a44] font-semibold flex items-center gap-1.5">
                       <AlertTriangle size={14} />
-                      <span>Step 10: Reported Defect (Symptoms)</span>
+                      <span>Step 10: Reported Issue (Symptoms)</span>
                     </span>
-                    <span className="text-[10px] text-[#666666]">Retail Technician Log</span>
+                    <span className="text-[10px] text-[#666666]">Customer Return</span>
                   </div>
                   <p className="text-xs text-[#413634] leading-relaxed font-medium">
                     {defectReport?.problemDescription ||
-                      'Customer Vikram Malhotra reported display flickering and green vertical line after 2 weeks of normal usage. Touch matrix sluggish.'}
+                      'Customer Vikram Malhotra returned device after 2 weeks: Screen flickering and persistent green vertical line post-unboxing.'}
                   </p>
                   <div className="text-[11px] text-[#8b6c58] pt-1 border-t border-[#f5c6cb]">
                     Category: <strong>{defectReport?.problemCategory || 'Screen & Display'}</strong> • Serial: <span className="font-mono">{product?.productId}</span>
                   </div>
                 </div>
 
-                {/* 2. What May Be the Cause (Suspected Cause) */}
+                {/* 2. What May Be the Cause (Suspected Cause & RMA) */}
                 <div className="p-4 bg-[#faf3dc] border border-[#e5e5e5] space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs uppercase tracking-wider text-[#b87428] font-semibold flex items-center gap-1.5">
                       <Wrench size={14} />
-                      <span>Step 11 &amp; 12: Suspected Root Cause &amp; RMA</span>
+                      <span>Step 11 &amp; 12: Root Cause Backtrace</span>
                     </span>
-                    <span className="text-[10px] text-[#666666]">Backtrace Analysis</span>
+                    <span className="text-[10px] text-[#666666]">Manufacturer Graph Traversal</span>
                   </div>
                   <p className="text-xs text-[#413634] leading-relaxed italic">
                     "{defectReport?.suspectedCause ||
                       'Stage 2 Machine DISP-04 thermal lamination thermocouple drift (+8.2°C) resulting in micro-delamination of Super AMOLED polarizer.'}"
                   </p>
                   <div className="text-[11px] text-[#8b6c58] pt-1 border-t border-[#e5e5e5]">
-                    RMA Docket: <strong className="font-mono text-[#c5716d]">RMA-BLR-AAA12345678</strong> • Sent to Gumi Hub
-                  </div>
-                </div>
-              </div>
-
-              {/* Steps 13 & 14 Actions */}
-              <div className="p-4 bg-[#fffdf6] border border-[#e5e5e5] space-y-3">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-[#413634]">
-                    Step 13 &amp; 14: Batch Recall &amp; Manufacturer Re-Delivery Pipeline
-                  </span>
-                  <button
-                    onClick={() => navigate('/company-defects')}
-                    className="btn-vintage-accent text-xs flex items-center gap-1"
-                  >
-                    <span>Manage Batch AAA Recall Hub</span>
-                    <ArrowRight size={12} />
-                  </button>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                  <div className="p-2.5 bg-[#faf3dc] border border-[#e5e5e5]">
-                    <span className="text-[10px] text-[#666666] uppercase block">Sister Devices in Batch</span>
-                    <strong className="text-sm text-[#c5716d] font-mono">Batch AAA (All Units Recalled)</strong>
-                  </div>
-                  <div className="p-2.5 bg-[#faf3dc] border border-[#e5e5e5]">
-                    <span className="text-[10px] text-[#666666] uppercase block">Manufacturer Action</span>
-                    <strong className="text-sm text-[#2e6b4d]">Laser Display Module Replaced</strong>
-                  </div>
-                  <div className="p-2.5 bg-[#faf3dc] border border-[#e5e5e5]">
-                    <span className="text-[10px] text-[#666666] uppercase block">Step 14: Redelivery to Retail</span>
-                    <strong className="text-sm text-[#413634]">Apex Retail Hub, Indiranagar</strong>
+                    RMA Docket: <strong className="font-mono text-[#c5716d]">RMA-BLR-AAA12345678</strong> • Sent to Gumi Mega-Hub
                   </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* TAB 5: Components & Anti-Tamper Lock (Step 16) */}
-          {activeTab === 'components' && (
-            <div className="p-6 vintage-card bg-[#fffcf8] space-y-5 border-l-4 border-l-[#c5716d] animate-in fade-in duration-200">
-              <div className="flex items-center justify-between border-b border-[#e5e5e5] pb-3">
-                <div>
-                  <h3 className="text-base text-[#413634] font-medium flex items-center gap-2">
-                    <Cpu size={18} className="text-[#c5716d]" />
-                    <span>Cryptographic BOM &amp; Anti-Tamper Attestation (Step 16)</span>
-                  </h3>
-                  <p className="text-xs text-[#666666]">
-                    If customer visits a 3rd party repair center and replaces OEM parts with fake components, connecting to internet executes automated cryptographic lock.
+          {/* TAB 6: Batch Recall & Customer Re-Delivery (Steps 13–15) */}
+          {activeTab === 'recall_redelivery' && (
+            <div className="p-6 vintage-card bg-[#fffcf8] space-y-5 border-l-4 border-l-[#b84a44] animate-in fade-in duration-200">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#e5e5e5] pb-3">
+                <div className="flex items-center gap-2">
+                  <RotateCcw className="text-[#b84a44]" size={20} />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 bg-[#fdf2f1] text-[#b84a44] text-[10px] font-mono font-bold uppercase">
+                        Steps 13, 14 &amp; 15
+                      </span>
+                      <h3 className="text-lg text-[#413634] font-medium">
+                        Batch AAA Recall, Repair &amp; Customer Re-Delivery
+                      </h3>
+                    </div>
+                    <p className="text-xs text-[#666666] mt-0.5">
+                      Manufacturer recalls all phones from Batch AAA; repairs unit and returns it to retailer; retailer delivers back to customer.
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => navigate('/company-defects')}
+                  className="btn-vintage-accent text-xs flex items-center gap-1.5"
+                >
+                  <span>Corporate Recall Command Center</span>
+                  <ArrowRight size={13} />
+                </button>
+              </div>
+
+              {/* 3 Action Columns */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                <div className="p-4 bg-[#fdf2f1] border border-[#b84a44] space-y-2">
+                  <div className="text-[10px] text-[#b84a44] uppercase font-bold">Step 13: Full Batch Recall</div>
+                  <div className="text-base font-mono font-bold text-[#b84a44]">
+                    Batch AAA Recalled
+                  </div>
+                  <p className="text-[#413634] leading-relaxed">
+                    Manufacturer verified DISP-04 defect signature across all sister units in Batch AAA. Emergency stop-sale transmitted.
                   </p>
                 </div>
+
+                <div className="p-4 bg-[#faf3dc] border border-[#e5e5e5] space-y-2">
+                  <div className="text-[10px] text-[#2e6b4d] uppercase font-bold">Step 14: Factory Repair</div>
+                  <div className="text-base font-mono font-bold text-[#2e6b4d]">
+                    Repaired &amp; Reshipped
+                  </div>
+                  <p className="text-[#413634] leading-relaxed">
+                    Display module replaced with certified unit AAA-0042. Shipped back to Apex Retail Hub, Indiranagar.
+                  </p>
+                </div>
+
+                <div className="p-4 bg-[#edf6f0] border border-[#2e6b4d] space-y-2">
+                  <div className="text-[10px] text-[#2e6b4d] uppercase font-bold">Step 15: Customer Handover</div>
+                  <div className="text-base font-mono font-bold text-[#2e6b4d]">
+                    Re-Delivered to Vikram
+                  </div>
+                  <p className="text-[#413634] leading-relaxed">
+                    Retailer contacts customer Vikram Malhotra (+91 98765 43210) and hands over the verified device.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 7: Third-Party Fake Part Lock (Security Step 16) */}
+          {activeTab === 'antitamper_lock' && (
+            <div className="p-6 vintage-card bg-[#fffcf8] space-y-5 border-l-4 border-l-[#7c3aed] animate-in fade-in duration-200">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#e5e5e5] pb-3">
+                <div className="flex items-center gap-2">
+                  <Lock className="text-[#7c3aed]" size={20} />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 bg-[#f5f3ff] text-[#7c3aed] text-[10px] font-mono font-bold uppercase">
+                        Security Rule
+                      </span>
+                      <h3 className="text-lg text-[#413634] font-medium">
+                        Third-Party Repair Counterfeit Lockout
+                      </h3>
+                    </div>
+                    <p className="text-xs text-[#666666] mt-0.5">
+                      If customer goes to a 3rd party center and replaces OEM parts with fake components, connecting to internet triggers cryptographic lock immediately.
+                    </p>
+                  </div>
+                </div>
+
                 <button
                   onClick={() => navigate('/security')}
                   className="btn-vintage-outline text-xs flex items-center gap-1.5"
                 >
-                  <Lock size={13} className="text-[#b84a44]" />
-                  <span>Test Hardware Lock Engine</span>
+                  <Lock size={13} className="text-[#7c3aed]" />
+                  <span>Open Hardware Lock Console</span>
                 </button>
               </div>
 
-              {/* Component Serial Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                {Object.entries(product?.installedComponents || {
-                  'Display Module': 'AAA-0042',
-                  'Motherboard SoC': 'EXYNOS-1480-8812',
-                  'Secure Enclave': 'SEC-ENC-0091'
-                }).map(([partName, partSerial]) => {
-                  const isFake = partSerial.includes('FAKE');
-                  const isRecallBatch = partSerial.startsWith('AAA-') || partSerial.includes('AAA');
-                  return (
-                    <div
-                      key={partName}
-                      className={`p-3.5 border text-xs space-y-1.5 ${
-                        isFake
-                          ? 'bg-[#fdf2f1] border-[#b84a44]'
-                          : isRecallBatch
-                          ? 'bg-[#faf3dc] border-[#b87428]'
-                          : 'bg-[#faf3dc] border-[#e5e5e5]'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-[#666666] text-[10px] uppercase font-bold">{partName}</span>
-                        <span className={`text-[9px] px-1 font-mono ${
-                          isFake ? 'bg-[#b84a44] text-white' : 'bg-[#edf6f0] text-[#2e6b4d]'
-                        }`}>
-                          {isFake ? 'COUNTERFEIT FAKE' : 'GENUINE OEM'}
-                        </span>
-                      </div>
-                      <div className="font-mono font-bold text-[#413634] text-xs">
-                        {partSerial}
-                      </div>
-                      <div className="text-[10px] text-[#8b6c58]">
-                        Batch: <span className="font-mono">{partSerial.split('-')[0]}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Cryptographic Lock Banner */}
-              <div className="p-4 bg-[#fdf2f1] border border-[#b84a44] text-xs space-y-1">
-                <div className="font-semibold text-[#b84a44] flex items-center gap-1.5">
-                  <Lock size={14} />
-                  <span>Step 16: Automated Cryptographic Lockdown Engine</span>
-                </div>
-                <p className="text-[#413634] leading-relaxed">
-                  Upon internet heartbeat or scanner probe, if the hardware component signature doesn't match the cryptographic blockchain passport, the secure enclave locks the device firmware instantly to prevent fake component operation.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 6: Batch Multi-Location Distribution */}
-          {activeTab === 'batch' && batchLocations && (
-            <div className="p-6 vintage-card bg-[#fffcf8] space-y-5 border-l-4 border-l-[#413634] animate-in fade-in duration-200">
-              <div className="border-b border-[#e5e5e5] pb-3 flex items-center justify-between">
-                <div>
-                  <h3 className="text-base text-[#413634] font-medium flex items-center gap-2">
-                    <Layers size={17} className="text-[#c5716d]" />
-                    <span>Batch Production &amp; Multi-Location Distribution</span>
-                  </h3>
-                  <p className="text-xs text-[#666666]">
-                    Batch details and real-time locations of all products produced in Batch <strong>{batchLocations.batchId}</strong>.
+              {/* Compare Genuine vs Fake */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <div className="p-4 bg-[#edf6f0] border border-[#2e6b4d] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <strong className="text-sm text-[#2e6b4d]">Genuine OEM Screen</strong>
+                    <span className="px-1.5 py-0.2 bg-[#2e6b4d] text-white font-mono text-[9px]">
+                      VERIFIED PASS
+                    </span>
+                  </div>
+                  <div className="font-mono text-xs font-bold text-[#413634]">
+                    Component Serial: AAA-0042
+                  </div>
+                  <p className="text-[#666666]">
+                    Matches Merkle DAG root. Hardware attestation passes on every internet heartbeat.
                   </p>
                 </div>
-                <span className="text-xs font-mono px-2 py-0.5 bg-[#faf3dc] border border-[#e5e5e5] text-[#c5716d]">
-                  Batch ID: {batchLocations.batchId}
-                </span>
-              </div>
 
-              {/* Batch Summary */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs bg-[#faf3dc] p-4 border border-[#e5e5e5]">
-                <div>
-                  <span className="text-[10px] text-[#666666] uppercase block">Batch Number:</span>
-                  <strong className="text-base text-[#c5716d] font-mono">{batchLocations.batchId}</strong>
+                <div className="p-4 bg-[#fdf2f1] border border-[#b84a44] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <strong className="text-sm text-[#b84a44]">3rd-Party Fake Screen</strong>
+                    <span className="px-1.5 py-0.2 bg-[#b84a44] text-white font-mono text-[9px]">
+                      AUTO-LOCK TRIGGERED
+                    </span>
+                  </div>
+                  <div className="font-mono text-xs font-bold text-[#b84a44]">
+                    Component Serial: FAKE-DISP-9999
+                  </div>
+                  <p className="text-[#b84a44]">
+                    Zero hash match! As soon as phone connects to Wi-Fi / 5G, device firmware executes remote cryptographic lock.
+                  </p>
                 </div>
-                <div>
-                  <span className="text-[10px] text-[#666666] uppercase block">Total Produced / Assembled:</span>
-                  <strong className="text-base text-[#413634] font-mono">{batchLocations.totalUnitsInBatch} Units</strong>
-                </div>
-                <div>
-                  <span className="text-[10px] text-[#666666] uppercase block">Production Date:</span>
-                  <strong className="text-base text-[#413634] font-mono">{batchLocations.productionDate}</strong>
-                </div>
-                <div>
-                  <span className="text-[10px] text-[#666666] uppercase block">Manufacturing Facility:</span>
-                  <strong className="text-xs text-[#413634]">{batchLocations.facility}</strong>
-                </div>
-              </div>
-
-              {/* Distribution Table */}
-              <div className="border border-[#e5e5e5] overflow-x-auto text-xs">
-                <table className="w-full text-left divide-y divide-[#e5e5e5]">
-                  <thead className="bg-[#faf3dc] text-[#666666] font-normal uppercase text-[10px]">
-                    <tr>
-                      <th className="p-2.5">Specific Location</th>
-                      <th className="p-2.5">Facility Type</th>
-                      <th className="p-2.5">Carrier / Shipment ID</th>
-                      <th className="p-2.5">Hold Mandate</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#e5e5e5] bg-[#fffdf6] text-[11px]">
-                    <tr className="hover:bg-[#faf3dc]">
-                      <td className="p-2.5 font-medium text-[#413634]">Gumi Mega-Hub Cleanroom Quarantine</td>
-                      <td className="p-2.5 text-[#2e6b4d]">Company Manufacturing Plant</td>
-                      <td className="p-2.5 font-mono text-[#666666]">PLANT-HOLD-01</td>
-                      <td className="p-2.5">
-                        <span className="px-1.5 py-0.2 text-[10px] bg-[#edf6f0] text-[#2e6b4d] border border-[#2e6b4d]">
-                          LOCKED AT FACTORY
-                        </span>
-                      </td>
-                    </tr>
-                    <tr className="hover:bg-[#faf3dc]">
-                      <td className="p-2.5 font-medium text-[#413634]">Incheon Cargo Air Terminal Warehouse</td>
-                      <td className="p-2.5 text-[#b87428]">Transit Gateway</td>
-                      <td className="p-2.5 font-mono text-[#666666]">GT-SHP-00000326 (DHL)</td>
-                      <td className="p-2.5">
-                        <span className="px-1.5 py-0.2 text-[10px] bg-[#fdf2f1] text-[#b84a44] border border-[#b84a44]">
-                          STOP-DISPATCH HOLD
-                        </span>
-                      </td>
-                    </tr>
-                    <tr className="hover:bg-[#faf3dc]">
-                      <td className="p-2.5 font-medium text-[#413634]">Apex Retail &amp; Service Hub - Indiranagar</td>
-                      <td className="p-2.5 text-[#b84a44]">Authorized Retailer Shop</td>
-                      <td className="p-2.5 font-mono text-[#666666]">Direct Retail Dispatch</td>
-                      <td className="p-2.5">
-                        <span className="px-1.5 py-0.2 text-[10px] bg-[#fdf2f1] text-[#b84a44] border border-[#b84a44]">
-                          RECALL NOTIFIED
-                        </span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
               </div>
             </div>
           )}

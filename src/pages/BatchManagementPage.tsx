@@ -25,6 +25,7 @@ import {
 import { GeneaTraceStore } from '../services/dataStore';
 import { BatchRecord, ComponentCategory, IndustrySector } from '../types';
 import { api } from '../services/apiClient';
+import { QRCodeSVG } from 'qrcode.react';
 
 export const BatchManagementPage: React.FC = () => {
   const navigate = useNavigate();
@@ -161,6 +162,91 @@ export const BatchManagementPage: React.FC = () => {
       setBatches(GeneaTraceStore.getBatches('All'));
       navigate('/recalls');
     }
+  };
+
+  // Download Null Container QR (PNG) - Demonstrates Steps 1, 2 & 3 in Manufacturer Login
+  const downloadBatchNullQr = () => {
+    const serial = activeBatch?.batchId === 'AAA' ? 'AAA12345678' : `${activeBatch?.batchId || 'BATCH'}12345678`;
+    const batch = activeBatch?.batchId || 'AAA';
+    const qrSvg = document.getElementById('batch-null-container-qr-svg') as SVGSVGElement | null;
+    if (!qrSvg) return;
+
+    const svgXml = new XMLSerializer().serializeToString(qrSvg);
+    const qrImg = new Image();
+    qrImg.crossOrigin = 'anonymous';
+    qrImg.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 600;
+      canvas.height = 700;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // Dark Industrial Background
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Card border
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(16, 16, canvas.width - 32, canvas.height - 32);
+
+      // Header Banner
+      ctx.fillStyle = '#0284c7';
+      ctx.fillRect(20, 20, canvas.width - 40, 56);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 16px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('GENEATRACE • NULL CRYPTOGRAPHIC CONTAINER', canvas.width / 2, 45);
+      ctx.font = '11px monospace';
+      ctx.fillText('STEPS 1, 2 & 3: BATCH ASSIGNED • CONTAINER INITIALIZED', canvas.width / 2, 65);
+
+      // Subtitle
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '13px monospace';
+      ctx.fillText('Samsung Galaxy A55 5G (Enterprise)', canvas.width / 2, 110);
+
+      // Badge
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(40, 130, canvas.width - 80, 50);
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(40, 130, canvas.width - 80, 50);
+
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 14px monospace';
+      ctx.fillText(`SERIAL NO: ${serial}`, canvas.width / 2, 152);
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '11px monospace';
+      ctx.fillText(`Assigned Batch: ${batch}  •  Status: NULL PAYLOAD (UNSEALED)`, canvas.width / 2, 170);
+
+      // Draw QR Code
+      const qrSize = 250;
+      const qrX = (canvas.width - qrSize) / 2;
+      const qrY = 210;
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(qrX - 10, qrY - 10, qrSize + 20, qrSize + 20);
+      ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
+
+      // Instruction
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 12px monospace';
+      ctx.fillText('SCAN AT STATION 1 TO BEGIN ASSEMBLY INGESTION', canvas.width / 2, 510);
+
+      ctx.fillStyle = '#64748b';
+      ctx.font = '10px monospace';
+      ctx.fillText('Scan with Android APK or /scanner route', canvas.width / 2, 535);
+      ctx.fillText('Station timestamp, machine ID, and operator will be pushed to this container.', canvas.width / 2, 552);
+
+      // Download
+      const link = document.createElement('a');
+      link.download = `GeneaTrace_Null_Container_${serial}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    };
+
+    qrImg.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgXml)));
   };
 
   return (
@@ -361,6 +447,115 @@ export const BatchManagementPage: React.FC = () => {
                   <div>
                     <span className="text-[#666666]">Demo TX Hash:</span>
                     <p className="text-[#8b6c58] text-xs mt-0.5 truncate">{activeBatch.blockchainCheckpointTx}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* WORKFLOW STEPS 1, 2 & 3: BATCH ASSIGNED & NULL CONTAINER GENERATOR (MANUFACTURER LOGIN) */}
+              <div className="p-5 vintage-card bg-[#fffcf8] border-l-4 border-l-[#0284c7] space-y-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-[#e5e5e5]">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 bg-[#e0f2fe] text-[#0284c7] text-[10px] font-mono font-bold uppercase">
+                        Workflow Steps 1, 2 &amp; 3
+                      </span>
+                      <h3 className="text-base text-[#413634] font-medium">
+                        Manufacturer Login: Batch Assigned &amp; Cryptographic Serial Container Genesis
+                      </h3>
+                    </div>
+                    <p className="text-xs text-[#666666] mt-0.5">
+                      1. Batch assigned ({activeBatch.batchId}) ➔ 2. Cryptographic Blockchain serial created ({activeBatch.batchId === 'AAA' ? 'AAA12345678' : `${activeBatch.batchId}12345678`}) ➔ 3. Serial container is NULL.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={downloadBatchNullQr}
+                    className="btn-vintage-accent text-xs flex items-center gap-1.5 shadow-sm whitespace-nowrap"
+                    title="Download high-resolution Null Container QR PNG token"
+                  >
+                    <Download size={13} />
+                    <span>Download Null Container QR (PNG)</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                  <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5] space-y-1">
+                    <span className="text-[10px] text-[#0284c7] font-bold uppercase block">Step 1: Batch Assigned</span>
+                    <strong className="text-sm font-mono text-[#413634] block">Batch {activeBatch.batchId}</strong>
+                    <p className="text-[11px] text-[#666666]">
+                      Created under cleanroom manufacturing specifications for {activeBatch.componentType}.
+                    </p>
+                  </div>
+
+                  <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5] space-y-1">
+                    <span className="text-[10px] text-[#0284c7] font-bold uppercase block">Step 2: Cryptographic Serial</span>
+                    <strong className="text-sm font-mono text-[#c5716d] block">
+                      {activeBatch.batchId === 'AAA' ? 'AAA12345678' : `${activeBatch.batchId}12345678`}
+                    </strong>
+                    <p className="text-[11px] text-[#666666]">
+                      Unique blockchain cryptographic serial mapped into distributed product registry.
+                    </p>
+                  </div>
+
+                  <div className="p-3 bg-[#e0f2fe] border border-[#0284c7] space-y-1">
+                    <span className="text-[10px] text-[#0284c7] font-bold uppercase block">Step 3: Initial Null State</span>
+                    <strong className="text-sm font-mono text-[#0284c7] block">PAYLOAD: NULL (UNSEALED)</strong>
+                    <p className="text-[11px] text-[#413634]">
+                      Primed for progressive ingestion of station timestamps, machine IDs, and processes at /scanner.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Demonstration Token Preview */}
+                <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl text-white flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="space-y-1.5 max-w-md">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 font-mono text-[9px] font-bold uppercase border border-sky-500/30">
+                        Jury Scan Token
+                      </span>
+                      <span className="text-[11px] text-slate-400 font-mono">Steps 1–3 Pictorial Asset</span>
+                    </div>
+                    <div className="text-sm font-bold text-white">
+                      Null Container QR Token ({activeBatch.batchId === 'AAA' ? 'AAA12345678' : `${activeBatch.batchId}12345678`})
+                    </div>
+                    <p className="text-[11px] text-slate-300">
+                      Scan this empty container QR code with the <strong>Android APK</strong> or at <strong>/scanner</strong> route to demonstrate pushing assembly stages!
+                    </p>
+                    <div className="flex flex-wrap items-center gap-2 pt-1">
+                      <button
+                        onClick={downloadBatchNullQr}
+                        className="px-3 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-sm"
+                      >
+                        <Download size={13} />
+                        <span>Download Null QR (PNG)</span>
+                      </button>
+                      <button
+                        onClick={() => navigate('/scanner')}
+                        className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs flex items-center gap-1 border border-slate-700"
+                      >
+                        <Smartphone size={13} className="text-emerald-400" />
+                        <span>Open Station Scanner ➔</span>
+                      </button>
+                      <button
+                        onClick={() => navigate(`/passport/${activeBatch.batchId === 'AAA' ? 'AAA12345678' : `${activeBatch.batchId}12345678`}`)}
+                        className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs flex items-center gap-1 border border-slate-700"
+                      >
+                        <ExternalLink size={13} className="text-sky-400" />
+                        <span>Inspect Passport</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="bg-white p-3 rounded-lg shadow-lg flex flex-col items-center gap-1.5 text-slate-950">
+                    <QRCodeSVG
+                      id="batch-null-container-qr-svg"
+                      value={`https://geneatrace.vercel.app/scanner?target=${activeBatch.batchId === 'AAA' ? 'AAA12345678' : `${activeBatch.batchId}12345678`}`}
+                      size={130}
+                      level="H"
+                    />
+                    <div className="font-mono text-[10px] font-bold tracking-wider">
+                      {activeBatch.batchId === 'AAA' ? 'AAA12345678' : `${activeBatch.batchId}12345678`} (NULL)
+                    </div>
                   </div>
                 </div>
               </div>
