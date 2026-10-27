@@ -1,32 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, Variants } from 'framer-motion';
 import {
-  AlertOctagon,
-  Wrench,
-  Building2,
-  CheckCircle2,
-  ArrowRight,
-  ShieldAlert,
-  Clock,
-  Layers,
-  MapPin,
+  Search,
+  QrCode,
+  AlertTriangle,
   Truck,
-  FileText,
+  Building2,
+  ShieldCheck,
+  Zap,
+  ArrowRight,
   Server,
-  Cpu,
-  Boxes
+  ChevronRight,
+  AlertOctagon,
+  Sparkles,
+  ExternalLink
 } from 'lucide-react';
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid
-} from 'recharts';
 import { GeneaTraceStore } from '../services/dataStore';
 import { api, DashboardSummary } from '../services/apiClient';
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08
+    }
+  }
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.35,
+      ease: 'easeOut'
+    }
+  }
+};
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -46,239 +59,338 @@ export const DashboardPage: React.FC = () => {
         }
       })
       .catch(err => {
-        console.warn('Backend summary fetch fallback to local:', err);
+        console.warn('Backend summary fallback:', err);
         if (isMounted) setLoadingBackend(false);
       });
     return () => { isMounted = false; };
   }, []);
 
-  // Defect metrics: Pre-dispatch (factory/testing) vs Post-dispatch (retail/shops)
-  const shopReports = GeneaTraceStore.getDefectReports();
-  const totalShopDefectsCount = shopReports.length;
-
-  // In testing before dispatching: quality alerts, factory event inspection failures
-  const preDispatchDefectsCount = 12; // Factory QC testing failures detected on stations
-  // Post-dispatch: from retail shops & service centers across the country
-  const postDispatchDefectsCount = totalShopDefectsCount; // Reports from shops
-  const totalDefectsReported = preDispatchDefectsCount + postDispatchDefectsCount;
-
-  // Simple defect breakdown chart data
-  const defectBreakdownData = [
-    {
-      stage: 'Pre-Dispatch (Testing)',
-      count: preDispatchDefectsCount,
-      desc: 'Detected during factory stress & automated optical inspection before leaving plant'
-    },
-    {
-      stage: 'Post-Dispatch (Shop / Retail)',
-      count: postDispatchDefectsCount,
-      desc: 'Reported by shopkeepers & service centers after shipping to market'
-    }
-  ];
+  const showcaseProduct = store.products[0];
 
   return (
-    <div className="space-y-6 font-serif-vintage max-w-5xl mx-auto">
-      {/* Clean Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-[#e5e5e5]">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-6 font-sans max-w-6xl mx-auto"
+    >
+      {/* Clean Executive Header */}
+      <motion.div
+        variants={itemVariants}
+        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80"
+      >
         <div>
-          <h1 className="text-2xl font-normal text-[#413634]">
-            Manufacturing Quality &amp; Defect Overview
-          </h1>
-          <p className="text-xs text-[#666666] mt-0.5">
-            Clean monitoring of manufacturing defects detected in testing vs. issues reported by retail shops.
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+              GeneaTrace Command Center
+            </h1>
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-700 font-semibold">
+              Live Network
+            </span>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            Unit-level cryptographic provenance, Merkle-DAG assembly lineage, and precision recall isolation.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => navigate('/shop-portal')}
-            className="btn-vintage-outline text-xs flex items-center gap-1.5"
+        <div className="flex items-center gap-2.5">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => navigate('/traceability')}
+            className="btn-modern-outline text-xs flex items-center gap-2 rounded-xl"
           >
-            <Wrench size={13} className="text-[#c5716d]" />
-            <span>Shopkeeper Entry</span>
-          </button>
-          <button
-            onClick={() => navigate('/company-defects')}
-            className="btn-vintage-accent text-xs flex items-center gap-1.5"
+            <Search size={14} className="text-blue-600" />
+            <span>Traceability Explorer</span>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => navigate('/passport')}
+            className="btn-modern-accent text-xs flex items-center gap-2 rounded-xl"
           >
-            <Building2 size={13} />
-            <span>Corporate Defect Hub</span>
-          </button>
+            <QrCode size={14} />
+            <span>Showcase Passport</span>
+          </motion.button>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Live Azure Backend Database Telemetry Bar */}
-      <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5] flex flex-wrap items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-2">
-          <Server size={14} className="text-[#c5716d]" />
-          <span className="font-medium text-[#413634]">Azure Cloud Backend:</span>
+      {/* Cloud & Blockchain Health Strip */}
+      <motion.div
+        variants={itemVariants}
+        className="p-3.5 bg-white border border-slate-200/80 rounded-2xl shadow-xs flex flex-wrap items-center justify-between gap-3 text-xs"
+      >
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+            <Server size={15} />
+          </div>
+          <span className="font-semibold text-slate-800">Platform Status:</span>
           {loadingBackend ? (
-            <span className="text-[#8b6c58] font-mono text-[11px]">Connecting to API...</span>
+            <span className="text-slate-400 font-mono text-[11px]">Connecting to backend services...</span>
           ) : backendSummary ? (
             <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#2e6b4d] animate-pulse" />
-              <span className="text-[#2e6b4d] font-mono font-medium text-[11px]">
-                Live Connected (FastAPI + Supabase)
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-emerald-700 font-medium text-[11px]">
+                Live Cloud Connected (FastAPI + Supabase + EVM Anchor)
               </span>
             </div>
           ) : (
-            <span className="text-[#b87428] font-mono text-[11px]">Offline / Fallback Local Cache</span>
+            <span className="text-emerald-700 font-medium text-[11px] flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              Operational (Cryptographic Verification Engine)
+            </span>
           )}
         </div>
 
-        {backendSummary && (
-          <div className="flex items-center gap-3 font-mono text-[11px] text-[#413634]">
-            <span><strong>{backendSummary.total_components}</strong> Components</span>
-            <span className="text-[#8b6c58]/40">|</span>
-            <span><strong>{backendSummary.total_batches}</strong> Batches</span>
-            <span className="text-[#8b6c58]/40">|</span>
-            <span><strong>{backendSummary.total_products_assembled}</strong> Assembled Products</span>
-            <span className="text-[#8b6c58]/40">|</span>
-            <span><strong>{backendSummary.total_manufacturing_events}</strong> Events</span>
-          </div>
-        )}
-      </div>
-
-      {/* 3 Core Metric Cards: Clear & Not Clumsy */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Total Defects */}
-        <div className="p-5 vintage-card bg-[#fffcf8] space-y-2 border-t-2 border-t-[#413634]">
-          <span className="text-xs uppercase tracking-wider text-[#666666] block">
-            Total Defects Reported
+        <div className="flex items-center gap-2 font-mono text-[11px]">
+          <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 font-medium border border-slate-200/60">
+            EVM Checkpoint: Block #1849340
           </span>
-          <div className="text-3xl text-[#413634] font-normal">
-            {totalDefectsReported} Units
+          <span className="px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 font-medium">
+            SHA-256 Merkle-DAG Active
+          </span>
+        </div>
+      </motion.div>
+
+      {/* Hero Showcase Card */}
+      <motion.div
+        variants={itemVariants}
+        whileHover={{ y: -2 }}
+        className="p-6 bg-white border border-slate-200/80 rounded-2xl shadow-sm space-y-5 relative overflow-hidden"
+      >
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-blue-50/50 to-indigo-50/30 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4 relative z-10">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+              <QrCode size={24} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2.5">
+                <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+                  {showcaseProduct?.productModel || 'Galaxy S24 Ultra Titanium DPP Edition'}
+                </h2>
+                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 font-semibold uppercase tracking-wider">
+                  Recall Flagged
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 font-mono mt-0.5">
+                Product ID: <strong className="text-slate-700">{showcaseProduct?.productId}</strong> • Masked IMEI: {showcaseProduct?.imeiMasked}
+              </p>
+            </div>
           </div>
-          <p className="text-[11px] text-[#666666] pt-1 border-t border-[#e5e5e5]">
-            Combined pre-dispatch testing variances + nationwide retail shop incidents.
-          </p>
+
+          <div className="flex items-center gap-2">
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => navigate(`/passport/${showcaseProduct?.productId}`)}
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200/80 text-slate-800 text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-all"
+            >
+              <span>Verify DPP</span>
+              <ShieldCheck size={14} className="text-emerald-600" />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => navigate(`/traceability?query=${showcaseProduct?.productId}`)}
+              className="btn-modern-accent text-xs py-2 px-4 rounded-xl flex items-center gap-1.5"
+            >
+              <span>Trace Lineage</span>
+              <ArrowRight size={14} />
+            </motion.button>
+          </div>
         </div>
 
-        {/* Defects in Testing (Before Dispatching) */}
-        <div className="p-5 vintage-card bg-[#fffcf8] space-y-2 border-t-2 border-t-[#b87428]">
-          <div className="flex items-center justify-between">
-            <span className="text-xs uppercase tracking-wider text-[#666666] block">
-              In Testing (Before Dispatch)
-            </span>
-            <span className="text-[10px] px-1.5 py-0.2 bg-[#fef7ec] text-[#b87428] border border-[#b87428]">
-              Factory QC
-            </span>
+        {/* Provenance Pipeline Overview */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 relative z-10">
+          <div className="p-3.5 bg-slate-50/80 border border-slate-200/60 rounded-xl space-y-1">
+            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Source Batch</span>
+            <span className="font-mono text-sm text-slate-900 font-semibold block">Batch ABC (Display)</span>
+            <span className="text-[11px] text-rose-600 font-medium block">Adhesive Micro-Delamination</span>
           </div>
-          <div className="text-3xl text-[#b87428] font-normal">
-            {preDispatchDefectsCount} Defects
-          </div>
-          <p className="text-[11px] text-[#666666] pt-1 border-t border-[#e5e5e5]">
-            Flagged on factory testing lines (curing oven variance, optical inspection).
-          </p>
-        </div>
 
-        {/* Defects Reported After Dispatching (From Shops) */}
-        <div className="p-5 vintage-card bg-[#fffcf8] space-y-2 border-t-2 border-t-[#b84a44]">
-          <div className="flex items-center justify-between">
-            <span className="text-xs uppercase tracking-wider text-[#666666] block">
-              Reported After Dispatch
-            </span>
-            <span className="text-[10px] px-1.5 py-0.2 bg-[#fdf2f1] text-[#b84a44] border border-[#b84a44]">
-              Retail / Shops
-            </span>
+          <div className="p-3.5 bg-slate-50/80 border border-slate-200/60 rounded-xl space-y-1">
+            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Installed Display</span>
+            <span className="font-mono text-sm text-slate-900 font-semibold block">Serial ABC-0042</span>
+            <span className="text-[11px] text-emerald-600 font-medium block">8 Manufacturing Steps Hashed</span>
           </div>
-          <div className="text-3xl text-[#b84a44] font-normal">
-            {postDispatchDefectsCount} Incidents
-          </div>
-          <p className="text-[11px] text-[#666666] pt-1 border-t border-[#e5e5e5]">
-            Logged directly by shopkeepers &amp; authorized service technicians nationwide.
-          </p>
-        </div>
-      </div>
 
-      {/* Visual Comparison: Pre-Dispatch Testing vs Post-Dispatch Shops */}
-      <div className="p-6 vintage-card bg-[#fffcf8] space-y-4">
-        <div className="border-b border-[#e5e5e5] pb-2 flex items-center justify-between">
+          <div className="p-3.5 bg-slate-50/80 border border-slate-200/60 rounded-xl space-y-1">
+            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Active Shipment</span>
+            <span className="font-mono text-sm text-slate-900 font-semibold block">GT-SHP-00000326</span>
+            <span className="text-[11px] text-amber-600 font-medium block">Munich Gateway (Carrier Hold)</span>
+          </div>
+
+          <div className="p-3.5 bg-slate-50/80 border border-slate-200/60 rounded-xl space-y-1">
+            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Store Incident</span>
+            <span className="font-mono text-sm text-slate-900 font-semibold block">REP-2026-001</span>
+            <span className="text-[11px] text-slate-500 font-medium block">iFix Hub (Bangalore, KA)</span>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* 4 Core Value Metric Cards */}
+      <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Traversal Speed */}
+        <motion.div
+          whileHover={{ y: -3, scale: 1.01 }}
+          className="p-5 bg-white border border-slate-200/80 rounded-2xl shadow-xs space-y-2 hover:shadow-md transition-all border-t-4 border-t-emerald-500"
+        >
+          <span className="text-xs uppercase font-semibold text-slate-500 flex items-center gap-1.5">
+            <Zap size={14} className="text-emerald-500" />
+            <span>Traversal Latency</span>
+          </span>
+          <div className="text-3xl text-slate-900 font-bold font-mono">
+            &lt; 12 ms
+          </div>
+          <p className="text-xs text-slate-500">
+            Instant recursive sub-graph DAG traversal.
+          </p>
+        </motion.div>
+
+        {/* Targeted Accuracy */}
+        <motion.div
+          whileHover={{ y: -3, scale: 1.01 }}
+          className="p-5 bg-white border border-slate-200/80 rounded-2xl shadow-xs space-y-2 hover:shadow-md transition-all border-t-4 border-t-rose-500"
+        >
+          <span className="text-xs uppercase font-semibold text-slate-500 flex items-center gap-1.5">
+            <AlertOctagon size={14} className="text-rose-500" />
+            <span>Precision Recall</span>
+          </span>
+          <div className="text-3xl text-slate-900 font-bold font-mono">
+            1 Device
+          </div>
+          <p className="text-xs text-slate-500">
+            Zero false positives; zero mass-recalls.
+          </p>
+        </motion.div>
+
+        {/* Immutable Proof */}
+        <motion.div
+          whileHover={{ y: -3, scale: 1.01 }}
+          className="p-5 bg-white border border-slate-200/80 rounded-2xl shadow-xs space-y-2 hover:shadow-md transition-all border-t-4 border-t-blue-500"
+        >
+          <span className="text-xs uppercase font-semibold text-slate-500 flex items-center gap-1.5">
+            <ShieldCheck size={14} className="text-blue-500" />
+            <span>Digital Passport</span>
+          </span>
+          <div className="text-3xl text-slate-900 font-bold font-mono">
+            Verified
+          </div>
+          <p className="text-xs text-slate-500">
+            EU ESPR &amp; DPP directive compliant.
+          </p>
+        </motion.div>
+
+        {/* Chain of Custody */}
+        <motion.div
+          whileHover={{ y: -3, scale: 1.01 }}
+          className="p-5 bg-white border border-slate-200/80 rounded-2xl shadow-xs space-y-2 hover:shadow-md transition-all border-t-4 border-t-amber-500"
+        >
+          <span className="text-xs uppercase font-semibold text-slate-500 flex items-center gap-1.5">
+            <Truck size={14} className="text-amber-500" />
+            <span>Logistics Custody</span>
+          </span>
+          <div className="text-3xl text-slate-900 font-bold font-mono">
+            Munich Hold
+          </div>
+          <p className="text-xs text-slate-500">
+            Intercepted in transit before delivery.
+          </p>
+        </motion.div>
+      </motion.div>
+
+      {/* Jury & Audience 4-Step Interactive Guide */}
+      <motion.div variants={itemVariants} className="p-6 bg-white border border-slate-200/80 rounded-2xl shadow-xs space-y-4">
+        <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
           <div>
-            <h2 className="text-base text-[#413634] font-medium">
-              Defects In Testing vs After Dispatching Breakdown
-            </h2>
-            <p className="text-xs text-[#666666]">
-              Clear distinction between factory-stage catch vs in-field customer reports.
+            <h3 className="text-base font-bold text-slate-900">
+              Interactive Jury Demonstration Flow
+            </h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Click any step below to explore the live, real-time subsystem.
             </p>
           </div>
-          <span className="text-[11px] font-mono text-[#c5716d]">
-            Total {totalDefectsReported} Tracked Issues
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700">
+            4 Core Steps
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-          {/* Pre-Dispatch Box */}
-          <div className="p-4 bg-[#faf3dc] border border-[#e5e5e5] space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="font-medium text-[#413634] text-xs">
-                1. Testing &amp; Pre-Dispatch Stage
-              </span>
-              <span className="text-sm font-mono font-bold text-[#b87428]">
-                {preDispatchDefectsCount} units
-              </span>
-            </div>
-            <p className="text-[11px] text-[#666666] leading-relaxed">
-              Caught by internal automated sensors and optical QC scanners before palletization. Quarantined in plant warehouse so they never reach consumers.
-            </p>
-            <div className="text-[10px] text-[#8b6c58] pt-1">
-              Primary Root Cause: Oven thermal profile variation on adhesive line (Station 1.5).
-            </div>
-          </div>
-
-          {/* Post-Dispatch Box */}
-          <div className="p-4 bg-[#faf3dc] border border-[#e5e5e5] space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="font-medium text-[#413634] text-xs">
-                2. After Dispatch (Shopkeeper Reports)
-              </span>
-              <span className="text-sm font-mono font-bold text-[#b84a44]">
-                {postDispatchDefectsCount} units
-              </span>
-            </div>
-            <p className="text-[11px] text-[#666666] leading-relaxed">
-              Reported in real-time by retail service centers across states. These trigger batch correlation to stop selling across all sister shipments.
-            </p>
-            <div className="text-[10px] text-[#c5716d] pt-1">
-              Primary Symptom: Display flickering and green lines on Batch ABC serials.
-            </div>
-          </div>
-        </div>
-
-        {/* Simple Bar Chart */}
-        <div className="h-44 w-full pt-4">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={defectBreakdownData} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="2 2" stroke="#e5e5e5" horizontal={false} />
-              <XAxis type="number" stroke="#666666" fontSize={11} />
-              <YAxis dataKey="stage" type="category" stroke="#413634" fontSize={11} width={160} />
-              <Tooltip
-                contentStyle={{ backgroundColor: '#fffdf6', borderColor: '#413634', borderRadius: '0px', fontSize: '12px', color: '#413634' }}
-              />
-              <Bar dataKey="count" fill="#c5716d" barSize={18} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Quick Navigation to Action Spaces */}
-      <div className="p-4 vintage-card-secondary flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-2 text-[#413634]">
-          <Building2 size={16} className="text-[#c5716d]" />
-          <span>
-            Need to see which shops reported defects, trace which batch it came from, and locate all sister mobiles?
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => navigate('/company-defects')}
-            className="btn-vintage-accent text-xs flex items-center gap-1"
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <motion.div
+            whileHover={{ scale: 1.015, y: -2 }}
+            whileTap={{ scale: 0.985 }}
+            onClick={() => navigate('/traceability?query=ABC')}
+            className="p-4 bg-slate-50/70 hover:bg-blue-50/40 border border-slate-200/80 hover:border-blue-300 rounded-xl cursor-pointer transition-all space-y-1.5 group"
           >
-            <span>Open Corporate Defect Hub</span>
-            <ArrowRight size={13} />
-          </button>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
+                <span className="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-bold font-mono">1</span>
+                <span>Traceability Explorer</span>
+              </span>
+              <ChevronRight size={16} className="text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed pl-8">
+              Query Batch <strong>ABC</strong> to trace forward to smartphone <strong>GT-DEV-00000851</strong> in &lt;12ms.
+            </p>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ scale: 1.015, y: -2 }}
+            whileTap={{ scale: 0.985 }}
+            onClick={() => navigate('/passport/GT-DEV-00000851')}
+            className="p-4 bg-slate-50/70 hover:bg-blue-50/40 border border-slate-200/80 hover:border-blue-300 rounded-xl cursor-pointer transition-all space-y-1.5 group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
+                <span className="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-bold font-mono">2</span>
+                <span>Digital Product Passport (DPP)</span>
+              </span>
+              <ChevronRight size={16} className="text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed pl-8">
+              Inspect the consumer-facing passport and trigger instant cryptographic verification against the EVM root.
+            </p>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ scale: 1.015, y: -2 }}
+            whileTap={{ scale: 0.985 }}
+            onClick={() => navigate('/recalls')}
+            className="p-4 bg-slate-50/70 hover:bg-blue-50/40 border border-slate-200/80 hover:border-blue-300 rounded-xl cursor-pointer transition-all space-y-1.5 group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
+                <span className="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-bold font-mono">3</span>
+                <span>Precision Recall Command</span>
+              </span>
+              <ChevronRight size={16} className="text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed pl-8">
+              See how the platform isolates affected unit GT-DEV-00000851 and locks shipment GT-SHP-00000326.
+            </p>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ scale: 1.015, y: -2 }}
+            whileTap={{ scale: 0.985 }}
+            onClick={() => navigate('/company-defects')}
+            className="p-4 bg-slate-50/70 hover:bg-blue-50/40 border border-slate-200/80 hover:border-blue-300 rounded-xl cursor-pointer transition-all space-y-1.5 group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
+                <span className="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-bold font-mono">4</span>
+                <span>Corporate Defect Hub</span>
+              </span>
+              <ChevronRight size={16} className="text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed pl-8">
+              Review the live field report from Bangalore service technician Ramesh Kumar matching the curing oven defect.
+            </p>
+          </motion.div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

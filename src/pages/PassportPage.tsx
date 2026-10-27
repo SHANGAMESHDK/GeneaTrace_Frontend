@@ -32,12 +32,14 @@ export const PassportPage: React.FC = () => {
   const { productId: paramProductId } = useParams();
   const navigate = useNavigate();
 
-  // Search input state
-  const [searchInput, setSearchInput] = useState(paramProductId || '');
-  const [activeSearchedSerial, setActiveSearchedSerial] = useState<string | null>(paramProductId || null);
+  // Search input state (defaults to showcase unit GT-DEV-00000851)
+  const defaultShowcaseId = 'GT-DEV-00000851';
+  const initialSerial = paramProductId || defaultShowcaseId;
+  const [searchInput, setSearchInput] = useState(initialSerial);
+  const [activeSearchedSerial, setActiveSearchedSerial] = useState<string | null>(initialSerial);
   const [product, setProduct] = useState<ProductRecord | null>(null);
   const [defectReport, setDefectReport] = useState<ShopkeeperDefectReport | null>(null);
-  const [hasSearched, setHasSearched] = useState(false);
+  const [hasSearched, setHasSearched] = useState(true);
 
   // Progressive Disclosure states
   const [showPartDetails, setShowPartDetails] = useState(false);

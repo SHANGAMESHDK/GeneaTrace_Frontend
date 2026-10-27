@@ -27,7 +27,7 @@ import {
 } from '../data/mockData';
 import { pseudoHash } from '../utils/hashing';
 
-const STORAGE_KEY = 'geneatrace_state_v3_shopkeeper';
+const STORAGE_KEY = 'geneatrace_state_v5_single_showcase';
 
 export const initialDefectReports: ShopkeeperDefectReport[] = [
   {
@@ -41,50 +41,12 @@ export const initialDefectReports: ShopkeeperDefectReport[] = [
     state: 'Karnataka',
     problemCategory: 'Screen & Display',
     problemDescription: 'Display panel exhibits severe horizontal flickering and green vertical lines after 20 minutes of usage. Screen unresponsive around center touch matrix.',
-    suspectedCause: 'Defective display adhesive or polarizer delamination from manufacturing batch.',
+    suspectedCause: 'Defective display adhesive or polarizer delamination from manufacturing batch ABC.',
     severity: 'Critical Failure',
     batchId: 'ABC',
     mfgDate: '2026-10-01',
     status: 'Batch Hold Issued',
-    companyNotes: 'Match confirmed with Batch ABC display adhesive curing sensor variance. 14 sister shipments flagged for hold.',
-    isImmutable: true
-  },
-  {
-    id: 'REP-2026-002',
-    serialNumber: 'GT-DEV-00000853',
-    productModel: 'Galaxy S24 Ultra (Titanium Black 256GB)',
-    reportedAt: '2026-10-26 11:15:00',
-    shopkeeperId: 'TECH-MUM-04',
-    shopName: 'Apex Electronics Care - Bandra West',
-    location: 'Mumbai, Maharashtra',
-    state: 'Maharashtra',
-    problemCategory: 'Screen & Display',
-    problemDescription: 'Intermittent display blackout under direct sunlight. OLED panel does not wake up upon power button toggle.',
-    suspectedCause: 'Display assembly bonding layer fault under thermal expansion.',
-    severity: 'Critical Failure',
-    batchId: 'ABC',
-    mfgDate: '2026-10-01',
-    status: 'Investigating',
-    companyNotes: 'Matched against Batch ABC display defect pattern. Investigating shipment allocation.',
-    isImmutable: true
-  },
-  {
-    id: 'REP-2026-003',
-    serialNumber: 'GT-DEV-00000856',
-    productModel: 'Galaxy S24 Ultra (Titanium Violet 512GB)',
-    reportedAt: '2026-10-26 16:45:00',
-    shopkeeperId: 'TECH-DEL-02',
-    shopName: 'Metro Telecom & Service Center - Connaught Place',
-    location: 'New Delhi, Delhi NCR',
-    state: 'Delhi',
-    problemCategory: 'Screen & Display',
-    problemDescription: 'Touch digitizer ghost-clicking continuously on upper right quadrant after fresh unboxing in retail store.',
-    suspectedCause: 'Micro-delamination in display flex cable bonding layer.',
-    severity: 'Critical Failure',
-    batchId: 'ABC',
-    mfgDate: '2026-10-01',
-    status: 'Pending Review',
-    companyNotes: 'Logged into company defect monitoring stream.',
+    companyNotes: 'Match confirmed with Batch ABC display adhesive curing sensor variance. Shipment GT-SHP-00000326 flagged for carrier hold.',
     isImmutable: true
   }
 ];
