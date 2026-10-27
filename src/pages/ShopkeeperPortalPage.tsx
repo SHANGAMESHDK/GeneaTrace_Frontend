@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Wrench,
   ShieldCheck,
@@ -17,7 +18,13 @@ import {
   FileText,
   Clock,
   Send,
-  HelpCircle
+  HelpCircle,
+  ShoppingBag,
+  RotateCcw,
+  CheckCircle,
+  Truck,
+  UserCheck,
+  ExternalLink
 } from 'lucide-react';
 import { GeneaTraceStore } from '../services/dataStore';
 import { ShopkeeperDefectReport } from '../types';
@@ -27,440 +34,424 @@ export const ShopkeeperPortalPage: React.FC = () => {
   const currentUser = GeneaTraceStore.getCurrentUser();
   const isShopkeeper = currentUser.role === 'shopkeeper';
 
-  const [serialInput, setSerialInput] = useState('');
+  const [activeTab, setActiveTab] = useState<'sales' | 'defect' | 'redelivery'>('sales');
+
+  // Customer Sale State (Step 9)
+  const [saleSerial, setSaleSerial] = useState('AAA12345678');
+  const [customerName, setCustomerName] = useState('Vikram Malhotra');
+  const [customerPhone, setCustomerPhone] = useState('+91 98765 43210');
+  const [invoiceNo, setInvoiceNo] = useState('INV-BLR-2026-8812');
+  const [saleSuccessMessage, setSaleSuccessMessage] = useState('');
+
+  // Defect Report State (Steps 10 & 11)
+  const [serialInput, setSerialInput] = useState('AAA12345678');
   const [problemCategory, setProblemCategory] = useState<ShopkeeperDefectReport['problemCategory']>('Screen & Display');
-  const [problemDescription, setProblemDescription] = useState('');
-  const [suspectedCause, setSuspectedCause] = useState('');
+  const [problemDescription, setProblemDescription] = useState('Customer returned device: Screen flickering and persistent vertical green line post-unboxing.');
+  const [suspectedCause, setSuspectedCause] = useState('Batch AAA display adhesive curing thermal variance during Machine DISP-04 stage.');
   const [severity, setSeverity] = useState<ShopkeeperDefectReport['severity']>('Critical Failure');
-  const [shopName, setShopName] = useState(currentUser.shopName || 'iFix Retail & Service Hub - Indiranagar');
+  const [shopName, setShopName] = useState(currentUser.shopName || 'Apex Retail & Service Hub - Indiranagar');
   const [location, setLocation] = useState(currentUser.city || 'Bangalore, Karnataka');
   const [state, setState] = useState(currentUser.state || 'Karnataka');
 
   const [submittedReport, setSubmittedReport] = useState<ShopkeeperDefectReport | null>(null);
-  const [autofillNotice, setAutofillNotice] = useState<string>('');
-  const [matchedBatchInfo, setMatchedBatchInfo] = useState<{ batchId?: string; mfgDate?: string; model?: string } | null>(null);
+  const [redeliverySuccess, setRedeliverySuccess] = useState(false);
 
-  // Existing reports from this technician/shop
+  const product = GeneaTraceStore.getProduct(saleSerial) || GeneaTraceStore.getProduct('AAA12345678')!;
   const reports = GeneaTraceStore.getDefectReports();
 
-  // Quick serial suggestions for easy testing
-  const demoSerials = [
-    { serial: 'GT-DEV-00000851', label: 'Galaxy S24 Ultra (Display Batch ABC defect)' },
-    { serial: 'GT-DEV-00000853', label: 'Galaxy S24 Ultra (Sister unit from Batch ABC)' },
-    { serial: 'GT-DEV-00000856', label: 'Galaxy S24 Ultra (Batch ABC unboxed in Delhi)' },
-    { serial: 'GT-DEV-00000860', label: 'Galaxy S24 Ultra (Retail In Transit Unit)' },
-  ];
-
-  const handleSelectSerial = (s: string) => {
-    setSerialInput(s);
-    // Auto-probe DPP database
-    const product = GeneaTraceStore.getProduct(s);
-    if (product) {
-      const displaySerial = product.installedComponents['Display Module'] || Object.values(product.installedComponents)[0];
-      const comp = displaySerial ? GeneaTraceStore.getComponentBySerial(displaySerial) : undefined;
-      const bId = comp?.batchId || displaySerial?.split('-')[0] || 'ABC';
-      setMatchedBatchInfo({
-        batchId: bId,
-        mfgDate: comp?.mfgDate || product.assemblyDate,
-        model: product.productModel
+  // 1. Submit Customer Sale (Step 9)
+  const handleRegisterSale = (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      GeneaTraceStore.registerCustomerSale(saleSerial, {
+        customerName,
+        phone: customerPhone,
+        invoiceNo,
+        retailerShop: shopName
       });
-      setAutofillNotice(`Verified unit in Digital Product Passport: ${product.productModel}. Linked to Batch ${bId}.`);
-    } else {
-      setMatchedBatchInfo(null);
-      setAutofillNotice('');
+      setSaleSuccessMessage(`Customer sale successfully registered for ${customerName} (${saleSerial}). Digital Product Passport updated to 'Sold to Customer'.`);
+      setTimeout(() => setSaleSuccessMessage(''), 6000);
+    } catch (err: any) {
+      alert(err.message || 'Error registering sale');
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // 2. Submit Defect & RMA Return to Factory (Steps 10 & 11)
+  const handleDefectSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!serialInput.trim() || !problemDescription.trim() || !suspectedCause.trim()) {
       alert('Please fill in Serial/IMEI, Problem Description, and Suspected Cause.');
       return;
     }
 
-    const res = GeneaTraceStore.submitShopkeeperDefectReport({
-      serialNumber: serialInput.trim(),
-      productModel: matchedBatchInfo?.model,
-      shopName,
-      location,
-      state,
-      problemCategory,
-      problemDescription,
-      suspectedCause,
+    const res = GeneaTraceStore.recordCustomerIssueAndRma(serialInput.trim(), {
+      description: problemDescription,
+      category: problemCategory,
       severity
     });
 
     setSubmittedReport(res.report);
-    // Clear form inputs
-    setSerialInput('');
-    setProblemDescription('');
-    setSuspectedCause('');
-    setMatchedBatchInfo(null);
-    setAutofillNotice('');
+  };
 
-    // Trigger update event
-    window.dispatchEvent(new Event('defectReportSubmitted'));
+  // 3. Complete Customer Re-Delivery (Step 15)
+  const handleCompleteRedelivery = () => {
+    GeneaTraceStore.completeRecallAndRedelivery('AAA12345678');
+    setRedeliverySuccess(true);
+    setTimeout(() => setRedeliverySuccess(false), 6000);
   };
 
   return (
-    <div className="space-y-6 font-serif-vintage">
+    <div className="space-y-6 font-sans">
       {/* Top Header & Role Indicator */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-[#e5e5e5]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
         <div>
           <div className="flex items-center gap-2">
-            <Wrench className="text-[#c5716d]" size={22} />
-            <h1 className="text-2xl font-normal text-[#413634]">
-              Authorized Service &amp; Retail Shop Incident Portal
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
+              <ShoppingBag className="text-blue-600" size={24} />
+              <span>Retailer Operations &amp; Customer Incident Hub</span>
             </h1>
-            <span className="px-2 py-0.5 text-[11px] bg-[#faf3dc] border border-[#e5e5e5] text-[#c5716d]">
-              Write-Only Access
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200 font-mono">
+              Retail Terminal Active
             </span>
           </div>
-          <p className="text-xs text-[#666666] mt-1">
-            Strict Service Technician entry: log manufacturing defects, hardware failures, and suspected root causes directly to corporate QA.
+          <p className="text-xs text-slate-500 mt-1">
+            Indiranagar Authorized Hub • Customer Sales Registration, Defect RMA Logging &amp; Recall Replacement Handover.
           </p>
         </div>
 
-        {/* Security / Write-Only Badge */}
-        <div className="flex items-center gap-2 p-2 bg-[#fffcf8] border border-[#e5e5e5] text-xs">
-          <div className="w-2 h-2 rounded-full bg-[#2e6b4d] animate-pulse" />
-          <div>
-            <div className="text-[11px] text-[#413634] font-medium flex items-center gap-1">
-              <Lock size={12} className="text-[#2e6b4d]" />
-              <span>Immutable Ledger Mode</span>
-            </div>
-            <div className="text-[10px] text-[#666666]">
-              Reports cannot be overwritten or deleted once submitted.
-            </div>
-          </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate('/passport/AAA12345678')}
+            className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors border border-slate-200"
+          >
+            <ExternalLink size={13} />
+            <span>Inspect Passport (AAA12345678)</span>
+          </button>
         </div>
       </div>
 
-      {/* Role Notice Banner */}
-      {!isShopkeeper && (
-        <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5] flex items-center justify-between gap-4 text-xs">
-          <div className="flex items-center gap-2 text-[#413634]">
-            <HelpCircle size={16} className="text-[#c5716d] shrink-0" />
-            <span>
-              You are currently viewing this page with role <strong>Lead QA Architect</strong>. Switch to <strong>Authorized Service Technician</strong> to experience the locked, write-only service technician interface.
-            </span>
-          </div>
-          <button
-            onClick={() => {
-              GeneaTraceStore.switchUserRole('shopkeeper');
-              window.location.reload();
-            }}
-            className="btn-vintage-primary shrink-0 text-xs"
-          >
-            Switch to Service Technician Role
-          </button>
-        </div>
-      )}
+      {/* 3-Step Retail Lifecycle Tabs */}
+      <div className="flex flex-wrap gap-2 p-1.5 bg-slate-100/80 rounded-2xl border border-slate-200/80 max-w-2xl">
+        <button
+          onClick={() => setActiveTab('sales')}
+          className={`flex-1 min-w-[160px] py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
+            activeTab === 'sales'
+              ? 'bg-white text-blue-700 shadow-sm'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <ShoppingBag size={15} />
+          <span>1. Customer Sale (Step 9)</span>
+        </button>
 
-      {/* Main Layout: Left Entry Form, Right Instructions & Recent Submissions */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Defect Submission Form */}
-        <div className="lg:col-span-7 space-y-4">
-          <div className="p-6 vintage-card bg-[#fffcf8] space-y-5">
-            <div className="border-b border-[#e5e5e5] pb-3 flex items-center justify-between">
-              <div>
-                <h2 className="text-lg text-[#413634] flex items-center gap-2">
-                  <Smartphone size={18} className="text-[#c5716d]" />
-                  <span>Log Defective Piece Incident</span>
-                </h2>
-                <p className="text-xs text-[#666666]">
-                  Enter device identity, customer issue, and your technical inspection hypothesis.
-                </p>
-              </div>
-              <span className="text-[10px] font-mono px-2 py-0.5 bg-[#faf3dc] text-[#666666] border border-[#e5e5e5]">
-                STRICT APPEND-ONLY
-              </span>
+        <button
+          onClick={() => setActiveTab('defect')}
+          className={`flex-1 min-w-[160px] py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
+            activeTab === 'defect'
+              ? 'bg-white text-blue-700 shadow-sm'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <RotateCcw size={15} />
+          <span>2. Defect RMA (Steps 10-11)</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('redelivery')}
+          className={`flex-1 min-w-[160px] py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
+            activeTab === 'redelivery'
+              ? 'bg-white text-blue-700 shadow-sm'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <UserCheck size={15} />
+          <span>3. Customer Handover (Step 15)</span>
+        </button>
+      </div>
+
+      {/* TAB 1: CUSTOMER SALE REGISTRATION */}
+      {activeTab === 'sales' && (
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-8"
+        >
+          <div className="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
+            <div>
+              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <ShoppingBag className="text-blue-600" size={18} />
+                <span>Customer Selling Details Registration (Retail Login)</span>
+              </h2>
+              <p className="text-xs text-slate-500 mt-1">
+                Record end-consumer ownership upon delivery at the retail store. Binds the customer to the blockchain serial container.
+              </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4 text-xs">
-              {/* Quick Select Presets */}
-              <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5] space-y-2">
-                <span className="text-[11px] text-[#666666] uppercase tracking-wider block">
-                  Quick-Fill Verified Device Serials:
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {demoSerials.map(s => (
-                    <button
-                      key={s.serial}
-                      type="button"
-                      onClick={() => handleSelectSerial(s.serial)}
-                      className={`px-2 py-1 text-[11px] border transition-all ${
-                        serialInput === s.serial
-                          ? 'bg-[#c5716d] text-[#fffdf6] border-[#c5716d]'
-                          : 'bg-[#fffdf6] text-[#413634] border-[#e5e5e5] hover:border-[#413634]'
-                      }`}
-                      title={s.label}
-                    >
-                      {s.serial}
-                    </button>
-                  ))}
-                </div>
+            {saleSuccessMessage && (
+              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-3">
+                <CheckCircle2 size={18} className="text-emerald-600 shrink-0" />
+                <span>{saleSuccessMessage}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleRegisterSale} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Device Cryptographic Serial Number</label>
+                <input
+                  type="text"
+                  value={saleSerial}
+                  onChange={e => setSaleSerial(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                />
               </div>
 
-              {/* 1. Device Serial / IMEI */}
-              <div>
-                <label className="block text-[#413634] font-medium mb-1">
-                  1. Device Serial Number / IMEI / Passport ID <span className="text-[#c5716d]">*</span>
-                </label>
-                <div className="relative">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Customer Full Name</label>
                   <input
                     type="text"
-                    required
-                    value={serialInput}
-                    onChange={e => handleSelectSerial(e.target.value)}
-                    placeholder="e.g. GT-DEV-00000851 or IMEI / UDI"
-                    className="w-full px-3 py-2 bg-[#fffdf6] border border-[#e5e5e5] text-xs text-[#413634] font-mono placeholder-[#8b6c58]/60 focus:outline-none focus:border-[#413634]"
+                    value={customerName}
+                    onChange={e => setCustomerName(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                   />
                 </div>
-                {autofillNotice && (
-                  <div className="mt-1.5 text-[11px] text-[#2e6b4d] flex items-center gap-1.5">
-                    <CheckCircle2 size={13} />
-                    <span>{autofillNotice}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Matched Batch Card if found */}
-              {matchedBatchInfo && (
-                <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5] grid grid-cols-3 gap-2 text-[11px]">
-                  <div>
-                    <span className="text-[#666666] block">Model Detected:</span>
-                    <strong className="text-[#413634]">{matchedBatchInfo.model}</strong>
-                  </div>
-                  <div>
-                    <span className="text-[#666666] block">Batch ID:</span>
-                    <strong className="text-[#c5716d] font-mono">{matchedBatchInfo.batchId}</strong>
-                  </div>
-                  <div>
-                    <span className="text-[#666666] block">Production Date:</span>
-                    <strong className="text-[#413634] font-mono">{matchedBatchInfo.mfgDate}</strong>
-                  </div>
-                </div>
-              )}
-
-              {/* 2. Shop Details */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#413634] font-medium mb-1">
-                    Shop / Service Center Name
-                  </label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Customer Phone Number</label>
                   <input
                     type="text"
+                    value={customerPhone}
+                    onChange={e => setCustomerPhone(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Retail Invoice Number</label>
+                  <input
+                    type="text"
+                    value={invoiceNo}
+                    onChange={e => setInvoiceNo(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Retail Center</label>
+                  <input
+                    type="text"
+                    disabled
                     value={shopName}
-                    onChange={e => setShopName(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-[#fffdf6] border border-[#e5e5e5] text-xs text-[#413634] focus:outline-none focus:border-[#413634]"
+                    className="w-full px-3.5 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-xs text-slate-600"
                   />
                 </div>
-                <div>
-                  <label className="block text-[#413634] font-medium mb-1">
-                    Location &amp; State
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="text"
-                      value={location}
-                      onChange={e => setLocation(e.target.value)}
-                      placeholder="City"
-                      className="px-2 py-1.5 bg-[#fffdf6] border border-[#e5e5e5] text-xs text-[#413634] focus:outline-none focus:border-[#413634]"
-                    />
-                    <input
-                      type="text"
-                      value={state}
-                      onChange={e => setState(e.target.value)}
-                      placeholder="State"
-                      className="px-2 py-1.5 bg-[#fffdf6] border border-[#e5e5e5] text-xs text-[#413634] focus:outline-none focus:border-[#413634]"
-                    />
-                  </div>
-                </div>
               </div>
 
-              {/* 3. Problem Category & Severity */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[#413634] font-medium mb-1">
-                    Defect Subsystem / Category <span className="text-[#c5716d]">*</span>
-                  </label>
-                  <select
-                    value={problemCategory}
-                    onChange={e => setProblemCategory(e.target.value as any)}
-                    className="w-full px-3 py-1.5 bg-[#fffdf6] border border-[#e5e5e5] text-xs text-[#413634] focus:outline-none focus:border-[#413634]"
-                  >
-                    <option value="Screen & Display">Screen &amp; Display (Flicker, Lines, Delamination)</option>
-                    <option value="Battery & Charging">Battery &amp; Charging (Swelling, Thermal Variance)</option>
-                    <option value="Camera & Sensor">Camera &amp; Sensor (OIS Calibration, Lens Blur)</option>
-                    <option value="Logic Board / Power">Logic Board / Power (Short Circuit, SMT Fault)</option>
-                    <option value="Housing / Assembly">Housing / Assembly (Gap Variance, Adhesive)</option>
-                    <option value="Other">Other Manufacturing Issue</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-[#413634] font-medium mb-1">
-                    Observed Severity
-                  </label>
-                  <select
-                    value={severity}
-                    onChange={e => setSeverity(e.target.value as any)}
-                    className="w-full px-3 py-1.5 bg-[#fffdf6] border border-[#e5e5e5] text-xs text-[#413634] focus:outline-none focus:border-[#413634]"
-                  >
-                    <option value="Critical Failure">Critical Failure (Device Inoperable / Safety Risk)</option>
-                    <option value="Moderate">Moderate (Component Functional Anomaly)</option>
-                    <option value="Minor">Minor (Cosmetic / Low Impact)</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* 4. What Problem It Has */}
-              <div>
-                <label className="block text-[#413634] font-medium mb-1">
-                  2. What Problem It Has (Customer &amp; Visual Symptoms) <span className="text-[#c5716d]">*</span>
-                </label>
-                <textarea
-                  rows={3}
-                  required
-                  value={problemDescription}
-                  onChange={e => setProblemDescription(e.target.value)}
-                  placeholder="Describe in detail what the user experienced, e.g. 'Display panel exhibits green lines, horizontal flicker, touch digitizer unresponsive around center...'"
-                  className="w-full p-2.5 bg-[#fffdf6] border border-[#e5e5e5] text-xs text-[#413634] placeholder-[#8b6c58]/60 focus:outline-none focus:border-[#413634]"
-                />
-              </div>
-
-              {/* 5. Suspected Cause for the Defect */}
-              <div>
-                <label className="block text-[#413634] font-medium mb-1">
-                  3. Suspected Cause for the Defect (Technician Hypothesis) <span className="text-[#c5716d]">*</span>
-                </label>
-                <textarea
-                  rows={2}
-                  required
-                  value={suspectedCause}
-                  onChange={e => setSuspectedCause(e.target.value)}
-                  placeholder="e.g. 'Suspected adhesive layer micro-delamination during factory curing process or defective polarizer bonding from manufacturing batch.'"
-                  className="w-full p-2.5 bg-[#fffdf6] border border-[#e5e5e5] text-xs text-[#413634] placeholder-[#8b6c58]/60 focus:outline-none focus:border-[#413634]"
-                />
-              </div>
-
-              {/* Submission Button */}
-              <div className="pt-2 flex items-center justify-between">
-                <span className="text-[11px] text-[#666666] flex items-center gap-1">
-                  <ShieldCheck size={14} className="text-[#2e6b4d]" />
-                  <span>Anchored as Immutable Record upon submission</span>
-                </span>
-                <button
-                  type="submit"
-                  className="btn-vintage-accent flex items-center gap-2 px-5 py-2"
-                >
-                  <Send size={13} />
-                  <span>Submit Defect Incident to Company HQ</span>
-                </button>
-              </div>
+              <button
+                type="submit"
+                className="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-md shadow-blue-500/20 transition-all"
+              >
+                <CheckCircle size={15} />
+                <span>Upload Selling Details to Passport (Mark as Sold)</span>
+              </button>
             </form>
           </div>
 
-          {/* Success Banner if recently submitted */}
-          {submittedReport && (
-            <div className="p-4 bg-[#edf6f0] border border-[#2e6b4d] space-y-2">
-              <div className="flex items-center gap-2 text-[#2e6b4d] font-medium text-sm">
-                <CheckCircle2 size={16} />
-                <span>Incident #{submittedReport.id} Successfully Dispatched to Company HQ!</span>
+          <div className="lg:col-span-5 space-y-4">
+            <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Current Passport Status</span>
+              <div className="p-4 bg-white rounded-xl border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between text-xs font-semibold">
+                  <span>{product.productModel}</span>
+                  <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-mono text-[10px]">
+                    {product.customerSale?.status || 'In Stock'}
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-500 font-mono">Serial: {product.productId}</p>
+                {product.customerSale && (
+                  <div className="pt-2 border-t border-slate-100 text-xs space-y-1 text-slate-600">
+                    <p><strong>Customer:</strong> {product.customerSale.customerName}</p>
+                    <p><strong>Phone:</strong> {product.customerSale.phone}</p>
+                    <p><strong>Invoice:</strong> {product.customerSale.invoiceNo}</p>
+                    <p><strong>Date:</strong> {product.customerSale.saleDate}</p>
+                  </div>
+                )}
               </div>
-              <p className="text-xs text-[#413634]">
-                Serial <strong className="font-mono">{submittedReport.serialNumber}</strong> has been logged to the company defect command center. Corporate QA will now correlate this against manufacturing batch history and sister shipments.
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* TAB 2: CUSTOMER RETURN & DEFECT RMA DISPATCH */}
+      {activeTab === 'defect' && (
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-8"
+        >
+          <div className="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
+            <div>
+              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <RotateCcw className="text-rose-600" size={18} />
+                <span>Customer Return &amp; Manufacturer RMA Dispatch (Steps 10 &amp; 11)</span>
+              </h2>
+              <p className="text-xs text-slate-500 mt-1">
+                Customer returned device with failure. Submit incident with serial number and dispatch physical product to factory.
               </p>
-              <div className="pt-2 flex items-center gap-3">
-                <button
-                  onClick={() => navigate('/company-defects')}
-                  className="btn-vintage-primary text-xs"
-                >
-                  View Corporate Defect Hub
-                </button>
-                <button
-                  onClick={() => setSubmittedReport(null)}
-                  className="btn-vintage-outline text-xs"
-                >
-                  Log Another Defect
-                </button>
+            </div>
+
+            {submittedReport && (
+              <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-1">
+                <div className="flex items-center gap-2 font-bold text-amber-800">
+                  <CheckCircle2 size={16} />
+                  <span>RMA Dispatch Docket Created: {submittedReport.id}</span>
+                </div>
+                <p className="text-[11px]">
+                  Product {submittedReport.serialNumber} flagged for Manufacturer Root Cause Analysis. Transmitted to Enterprise QA Hub.
+                </p>
               </div>
+            )}
+
+            <form onSubmit={handleDefectSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Defective Product Serial Number</label>
+                <input
+                  type="text"
+                  value={serialInput}
+                  onChange={e => setSerialInput(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Failure Category</label>
+                  <select
+                    value={problemCategory}
+                    onChange={e => setProblemCategory(e.target.value as any)}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  >
+                    <option value="Screen & Display">Screen &amp; Display</option>
+                    <option value="Battery & Charging">Battery &amp; Charging</option>
+                    <option value="Camera & Sensor">Camera &amp; Sensor</option>
+                    <option value="Motherboard & Wireless">Motherboard &amp; Wireless</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Severity</label>
+                  <select
+                    value={severity}
+                    onChange={e => setSeverity(e.target.value as any)}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 font-semibold text-rose-600"
+                  >
+                    <option value="Critical Failure">Critical Failure (Unusable)</option>
+                    <option value="Major Degradation">Major Degradation</option>
+                    <option value="Minor Cosmetic">Minor Cosmetic</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Customer Problem Description</label>
+                <textarea
+                  rows={3}
+                  value={problemDescription}
+                  onChange={e => setProblemDescription(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Suspected Cause (Technician Assessment)</label>
+                <input
+                  type="text"
+                  value={suspectedCause}
+                  onChange={e => setSuspectedCause(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-md shadow-rose-500/20 transition-all"
+              >
+                <Send size={15} />
+                <span>Submit Issue &amp; Dispatch RMA to Manufacturer</span>
+              </button>
+            </form>
+          </div>
+
+          <div className="lg:col-span-5 space-y-4">
+            <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">RMA Returns Sent to Manufacturer</span>
+              <div className="space-y-2">
+                {reports.map((r, i) => (
+                  <div key={i} className="p-3.5 bg-white rounded-xl border border-slate-200 text-xs space-y-1">
+                    <div className="flex items-center justify-between font-mono">
+                      <span className="font-bold text-slate-900">{r.id}</span>
+                      <span className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 text-[10px] font-semibold">{r.status}</span>
+                    </div>
+                    <p className="text-slate-600 text-[11px] line-clamp-2">{r.problemDescription}</p>
+                    <div className="pt-1 text-[10px] text-slate-400 flex justify-between font-mono">
+                      <span>Serial: {r.serialNumber}</span>
+                      <span>Batch: {r.batchId}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* TAB 3: CUSTOMER RE-DELIVERY HANDOVER */}
+      {activeTab === 'redelivery' && (
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5 max-w-2xl"
+        >
+          <div>
+            <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <UserCheck className="text-emerald-600" size={18} />
+              <span>Customer Re-Delivery Handover (Step 15)</span>
+            </h2>
+            <p className="text-xs text-slate-500 mt-1">
+              The manufacturer completed precision recall, replaced the defective Batch AAA display module, and returned the verified phone to this retail center.
+            </p>
+          </div>
+
+          {redeliverySuccess && (
+            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-3">
+              <CheckCircle2 size={18} className="text-emerald-600 shrink-0" />
+              <span>Handover Completed! Customer Vikram Malhotra notified and device delivered. Passport status updated to 'Repaired & Delivered'.</span>
             </div>
           )}
-        </div>
 
-        {/* Right Column: Service Technician Guidelines & Submitted Stream */}
-        <div className="lg:col-span-5 space-y-4">
-          {/* Rules & Permissions Card */}
-          <div className="p-4 vintage-card-secondary space-y-3">
-            <h3 className="text-sm text-[#413634] font-medium flex items-center gap-2">
-              <Lock size={14} className="text-[#c5716d]" />
-              <span>Service Technician Role Privileges</span>
-            </h3>
-            <ul className="text-xs text-[#666666] space-y-2 leading-relaxed">
-              <li className="flex items-start gap-2">
-                <span className="text-[#2e6b4d] font-bold">✓</span>
-                <span><strong>Write-Only Permissions:</strong> You can enter new defect incident reports for any mobile phone or device serial.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-[#b84a44] font-bold">✕</span>
-                <span><strong>No Overwrite or Deletion:</strong> Technicians cannot edit, alter, or delete previous incident submissions.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-[#2e6b4d] font-bold">✓</span>
-                <span><strong>Automated HQ Notification:</strong> Once entered, the central company dashboard immediately correlates the batch and alerts quality engineers.</span>
-              </li>
-            </ul>
+          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-2">
+            <div className="flex items-center justify-between font-semibold">
+              <span className="text-slate-900">Samsung Galaxy A55 5G (AAA12345678)</span>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-mono text-[10px]">
+                Ready for Customer Pickup
+              </span>
+            </div>
+            <p className="text-slate-600">
+              Customer: <strong>Vikram Malhotra</strong> • Phone: <strong>+91 98765 43210</strong>
+            </p>
+            <p className="text-[11px] text-slate-500">
+              Remanufactured with certified Batch AAB module. 100% Quality Passed at Factory AOI Gate.
+            </p>
           </div>
 
-          {/* History of Reports Submitted from this Shop */}
-          <div className="p-4 vintage-card space-y-3">
-            <div className="flex items-center justify-between border-b border-[#e5e5e5] pb-2">
-              <h3 className="text-sm text-[#413634] flex items-center gap-2">
-                <FileText size={15} className="text-[#c5716d]" />
-                <span>Shop Submissions Log ({reports.length})</span>
-              </h3>
-              <span className="text-[10px] text-[#666666]">Read-Only Historical Stream</span>
-            </div>
-
-            <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
-              {reports.map(rep => (
-                <div
-                  key={rep.id}
-                  className="p-3 bg-[#faf3dc] border border-[#e5e5e5] text-xs space-y-1.5"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-[#c5716d] font-medium">{rep.id}</span>
-                    <span className={`text-[10px] px-1.5 py-0.2 border ${
-                      rep.status === 'Batch Hold Issued'
-                        ? 'bg-[#fdf2f1] text-[#b84a44] border-[#b84a44]'
-                        : rep.status === 'Investigating'
-                        ? 'bg-[#fef7ec] text-[#b87428] border-[#b87428]'
-                        : 'bg-[#edf6f0] text-[#2e6b4d] border-[#2e6b4d]'
-                    }`}>
-                      {rep.status}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between text-[11px]">
-                    <span className="font-mono text-[#413634]">{rep.serialNumber}</span>
-                    <span className="text-[#666666]">{rep.problemCategory}</span>
-                  </div>
-
-                  <p className="text-[11px] text-[#666666] line-clamp-2">
-                    {rep.problemDescription}
-                  </p>
-
-                  <div className="pt-1 flex items-center justify-between text-[10px] text-[#8b6c58] border-t border-[#e5e5e5]">
-                    <span>{rep.shopName}</span>
-                    <span className="font-mono">{rep.reportedAt}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+          <button
+            onClick={handleCompleteRedelivery}
+            className="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20 transition-all"
+          >
+            <UserCheck size={16} />
+            <span>Confirm Delivery to Customer (Step 15 Complete)</span>
+          </button>
+        </motion.div>
+      )}
     </div>
   );
 };

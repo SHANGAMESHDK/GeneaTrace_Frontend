@@ -301,92 +301,135 @@ export const DashboardPage: React.FC = () => {
         </motion.div>
       </motion.div>
 
-      {/* Jury & Audience 4-Step Interactive Guide */}
+      {/* Jury & Audience 6-Stage Interactive Workflow Guide */}
       <motion.div variants={itemVariants} className="p-6 bg-white border border-slate-200/80 rounded-2xl shadow-xs space-y-4">
         <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
           <div>
-            <h3 className="text-base font-bold text-slate-900">
-              Interactive Jury Demonstration Flow
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <Sparkles size={18} className="text-blue-600" />
+              <span>Full Project Lifecycle Walkthrough (Samsung A55 Demo)</span>
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Click any step below to explore the live, real-time subsystem.
+              Click any stage below to demonstrate the end-to-end workflow live to the jury.
             </p>
           </div>
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700">
-            4 Core Steps
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 font-mono">
+            6 Sequential Stages
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+          {/* Step 1: Manufacturer Batch Creation */}
           <motion.div
             whileHover={{ scale: 1.015, y: -2 }}
             whileTap={{ scale: 0.985 }}
-            onClick={() => navigate('/traceability?query=ABC')}
+            onClick={() => navigate('/batches')}
             className="p-4 bg-slate-50/70 hover:bg-blue-50/40 border border-slate-200/80 hover:border-blue-300 rounded-xl cursor-pointer transition-all space-y-1.5 group"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
                 <span className="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-bold font-mono">1</span>
-                <span>Traceability Explorer</span>
+                <span>Batch AAA &amp; Serial Init</span>
               </span>
               <ChevronRight size={16} className="text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
             </div>
             <p className="text-xs text-slate-600 leading-relaxed pl-8">
-              Query Batch <strong>ABC</strong> to trace forward to smartphone <strong>GT-DEV-00000851</strong> in &lt;12ms.
+              Manufacturer assigns Batch <strong>AAA</strong>. Cryptographic Blockchain serial <strong>AAA12345678</strong> is created (null container ready).
             </p>
           </motion.div>
 
+          {/* Step 2: Scanner Stage Ingestion */}
           <motion.div
             whileHover={{ scale: 1.015, y: -2 }}
             whileTap={{ scale: 0.985 }}
-            onClick={() => navigate('/passport/GT-DEV-00000851')}
-            className="p-4 bg-slate-50/70 hover:bg-blue-50/40 border border-slate-200/80 hover:border-blue-300 rounded-xl cursor-pointer transition-all space-y-1.5 group"
+            onClick={() => navigate('/scanner')}
+            className="p-4 bg-slate-50/70 hover:bg-emerald-50/40 border border-slate-200/80 hover:border-emerald-300 rounded-xl cursor-pointer transition-all space-y-1.5 group"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-bold font-mono">2</span>
-                <span>Digital Product Passport (DPP)</span>
+                <span className="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs font-bold font-mono">2</span>
+                <span>Mobile /scanner Stages</span>
               </span>
-              <ChevronRight size={16} className="text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
+              <ChevronRight size={16} className="text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all" />
             </div>
             <p className="text-xs text-slate-600 leading-relaxed pl-8">
-              Inspect the consumer-facing passport and trigger instant cryptographic verification against the EVM root.
+              Every stage (SMT-01, DISP-04, SEC-02, AOI-01) pushes timestamp &amp; machine ID to the container upon scanning.
             </p>
           </motion.div>
 
+          {/* Step 3: Logistics Network */}
+          <motion.div
+            whileHover={{ scale: 1.015, y: -2 }}
+            whileTap={{ scale: 0.985 }}
+            onClick={() => navigate('/logistics')}
+            className="p-4 bg-slate-50/70 hover:bg-amber-50/40 border border-slate-200/80 hover:border-amber-300 rounded-xl cursor-pointer transition-all space-y-1.5 group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
+                <span className="w-6 h-6 rounded-lg bg-amber-600 text-white flex items-center justify-center text-xs font-bold font-mono">3</span>
+                <span>Logistics &amp; Delivery</span>
+              </span>
+              <ChevronRight size={16} className="text-slate-400 group-hover:text-amber-600 group-hover:translate-x-0.5 transition-all" />
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed pl-8">
+              Full chain of custody: Factory Packing ➔ Outbound Warehouse ➔ Dispatched Air Corridor ➔ Delivered to Indiranagar Retail.
+            </p>
+          </motion.div>
+
+          {/* Step 4: Retail Sales Registration */}
+          <motion.div
+            whileHover={{ scale: 1.015, y: -2 }}
+            whileTap={{ scale: 0.985 }}
+            onClick={() => navigate('/shopkeeper-portal')}
+            className="p-4 bg-slate-50/70 hover:bg-indigo-50/40 border border-slate-200/80 hover:border-indigo-300 rounded-xl cursor-pointer transition-all space-y-1.5 group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
+                <span className="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-bold font-mono">4</span>
+                <span>Retail Customer Sale</span>
+              </span>
+              <ChevronRight size={16} className="text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-0.5 transition-all" />
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed pl-8">
+              Retailer uploads customer selling details (<strong>Vikram Malhotra</strong>, invoice INV-8812) into the DPP.
+            </p>
+          </motion.div>
+
+          {/* Step 5: Defect RMA, Backtrace & Recall */}
           <motion.div
             whileHover={{ scale: 1.015, y: -2 }}
             whileTap={{ scale: 0.985 }}
             onClick={() => navigate('/recalls')}
-            className="p-4 bg-slate-50/70 hover:bg-blue-50/40 border border-slate-200/80 hover:border-blue-300 rounded-xl cursor-pointer transition-all space-y-1.5 group"
+            className="p-4 bg-slate-50/70 hover:bg-rose-50/40 border border-slate-200/80 hover:border-rose-300 rounded-xl cursor-pointer transition-all space-y-1.5 group"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-bold font-mono">3</span>
-                <span>Precision Recall Command</span>
+                <span className="w-6 h-6 rounded-lg bg-rose-600 text-white flex items-center justify-center text-xs font-bold font-mono">5</span>
+                <span>Backtrace &amp; Batch Recall</span>
               </span>
-              <ChevronRight size={16} className="text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
+              <ChevronRight size={16} className="text-slate-400 group-hover:text-rose-600 group-hover:translate-x-0.5 transition-all" />
             </div>
             <p className="text-xs text-slate-600 leading-relaxed pl-8">
-              See how the platform isolates affected unit GT-DEV-00000851 and locks shipment GT-SHP-00000326.
+              Customer issue returned ➔ Manufacturer backtraces to Machine <strong>DISP-04</strong> ➔ Recalls Batch AAA ➔ Sends repaired unit to retail.
             </p>
           </motion.div>
 
+          {/* Step 6: 3rd Party Tamper Lockout */}
           <motion.div
             whileHover={{ scale: 1.015, y: -2 }}
             whileTap={{ scale: 0.985 }}
-            onClick={() => navigate('/company-defects')}
-            className="p-4 bg-slate-50/70 hover:bg-blue-50/40 border border-slate-200/80 hover:border-blue-300 rounded-xl cursor-pointer transition-all space-y-1.5 group"
+            onClick={() => navigate('/security')}
+            className="p-4 bg-slate-50/70 hover:bg-purple-50/40 border border-slate-200/80 hover:border-purple-300 rounded-xl cursor-pointer transition-all space-y-1.5 group"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-bold font-mono">4</span>
-                <span>Corporate Defect Hub</span>
+                <span className="w-6 h-6 rounded-lg bg-purple-600 text-white flex items-center justify-center text-xs font-bold font-mono">6</span>
+                <span>Anti-Tamper Lockout</span>
               </span>
-              <ChevronRight size={16} className="text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
+              <ChevronRight size={16} className="text-slate-400 group-hover:text-purple-600 group-hover:translate-x-0.5 transition-all" />
             </div>
             <p className="text-xs text-slate-600 leading-relaxed pl-8">
-              Review the live field report from Bangalore service technician Ramesh Kumar matching the curing oven defect.
+              3rd-party shop swaps in counterfeit screen (FAKE-DISP-9999). When connected to internet, attestation engine triggers remote lock!
             </p>
           </motion.div>
         </div>

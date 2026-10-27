@@ -14,19 +14,19 @@ import { pseudoHash } from '../utils/hashing';
 // Certified Production Batches (Smartphone Manufacturing)
 export const initialBatches: BatchRecord[] = [
   {
-    batchId: 'ABC',
+    batchId: 'AAA',
     sector: 'Consumer Electronics',
     componentType: 'Display',
     batchSize: 1,
-    serialPrefix: 'ABC',
+    serialPrefix: 'AAA',
     supplier: 'Samsung Display Corp',
     facility: 'Cleanroom Complex Alpha (Line 3)',
     productionDate: '2026-10-01',
     status: 'Defective',
-    defectReason: 'Micro-delamination in polarizer adhesive layer detected post-curing',
-    inspectionResult: 'Failed Electrical Curing Tolerances (EL-08)',
-    completedOperationsCount: 9,
-    totalOperationsCount: 9,
+    defectReason: 'Micro-thermal flux variance during Machine DISP-04 lamination stage',
+    inspectionResult: 'Optical Lamination Tolerance Drift (EL-08)',
+    completedOperationsCount: 4,
+    totalOperationsCount: 4,
     blockchainCheckpointTx: '0xa45b98cf120194bc87123985',
     checkpointStatus: 'Anchored'
   }
@@ -37,8 +37,8 @@ export function generateInitialComponents(): ComponentRecord[] {
   return [
     {
       componentId: 'CMP-DIS-000042',
-      serialNumber: 'ABC-0042',
-      batchId: 'ABC',
+      serialNumber: 'AAA-0042',
+      batchId: 'AAA',
       type: 'Display',
       sector: 'Consumer Electronics',
       manufacturer: 'Samsung Display Corp',
@@ -47,43 +47,93 @@ export function generateInitialComponents(): ComponentRecord[] {
       mfgDate: '2026-10-01',
       status: 'Recalled',
       qualityStatus: 'Failed',
-      passportRef: '/passport/GT-DEV-00000851',
+      passportRef: '/passport/AAA12345678',
       verificationStatus: 'Flagged',
-      cryptographicHash: pseudoHash('COMPONENT-ABC-0042-CMP-DIS-000042'),
-      installedInProductId: 'GT-DEV-00000851'
+      cryptographicHash: pseudoHash('COMPONENT-AAA-0042-CMP-DIS-000042'),
+      installedInProductId: 'AAA12345678'
     }
   ];
 }
 
-// Generate Manufactured Finished Products (Single Showcase Device)
+// Generate Manufactured Finished Products (Single Showcase Device - Samsung Galaxy A55 5G)
 export function generateInitialProducts(): ProductRecord[] {
   return [
     {
-      productId: 'GT-DEV-00000851',
-      productModel: 'Galaxy S24 Ultra Titanium DPP Edition',
+      productId: 'AAA12345678',
+      productModel: 'Samsung Galaxy A55 5G (Enterprise Traceable)',
       sector: 'Consumer Electronics',
-      productTypeDisplay: 'Smartphone (5G LTPO)',
+      productTypeDisplay: 'Smartphone (5G Super AMOLED)',
       imeiMasked: '356789123456780',
       installedComponents: {
-        'Display Module': 'ABC-0042',
-        displaySerial: 'ABC-0042'
+        'Display Module': 'AAA-0042',
+        displaySerial: 'AAA-0042'
       },
       installedBatches: {
-        displayBatch: 'ABC'
+        displayBatch: 'AAA'
       },
       assemblyDate: '2026-10-02',
-      assemblyFacility: 'Smart Manufacturing Mega-Hub 4, Gumi',
+      assemblyFacility: 'Samsung Smart Mega-Hub 4, Gumi',
       status: 'Recall Flagged',
       passportStatus: 'Active',
       shipmentId: 'GT-SHP-00000326',
-      blockchainTx: pseudoHash('PASSPORT-TX-GT-DEV-00000851'),
-      merkleRoot: pseudoHash('MERKLE-ROOT-GT-DEV-00000851'),
+      blockchainTx: pseudoHash('PASSPORT-TX-AAA12345678'),
+      merkleRoot: '0x9f3b8a1c4e72d05f88b14a2c91e3f706',
       isTampered: false,
       isLocked: false,
       complianceStandards: ['EU DPP Directive (ESPR)', 'RoHS-3 Compliant', 'WEEE Traceable'],
-      carbonFootprintKg: 58.4,
-      recycledContentPct: 24.5,
-      esgScore: 'A+ (94/100)'
+      carbonFootprintKg: 42.8,
+      recycledContentPct: 28.5,
+      esgScore: 'A+ (95/100)',
+
+      // Customer Sale Recorded at Retailer
+      customerSale: {
+        customerName: 'Vikram Malhotra',
+        phone: '+91 98765 43210',
+        saleDate: '2026-10-15',
+        invoiceNo: 'INV-BLR-2026-8812',
+        retailerShop: 'Apex Retail & Service Hub - Indiranagar',
+        status: 'Returned For Repair'
+      },
+
+      // Chronological Manufacturing Stages (Pushed via /scanner)
+      assemblyStages: [
+        {
+          stageIndex: 1,
+          name: 'SMT PCB Solder & Flux Printing',
+          machineId: 'SMT-01',
+          timestamp: '2026-10-02 08:30:14 UTC',
+          operator: 'Rajesh V.',
+          status: 'Completed',
+          hash: '0x1a8f9c4b220194bc'
+        },
+        {
+          stageIndex: 2,
+          name: 'Super AMOLED Display Module Lamination',
+          machineId: 'DISP-04',
+          timestamp: '2026-10-02 09:12:45 UTC',
+          operator: 'Elena Rostova',
+          status: 'Flagged (Thermal Variance Detected)',
+          hash: '0x2b7e6d5a88194c71'
+        },
+        {
+          stageIndex: 3,
+          name: 'Motherboard & Secure Enclave Cryptographic Binding',
+          machineId: 'SEC-02',
+          timestamp: '2026-10-02 10:05:22 UTC',
+          operator: 'Kenji Sato',
+          status: 'Completed',
+          hash: '0x3c6d5e4f440285a2'
+        },
+        {
+          stageIndex: 4,
+          name: 'Automated Optical Inspection (AOI) Quality Gate',
+          machineId: 'AOI-01',
+          timestamp: '2026-10-02 10:45:00 UTC',
+          operator: 'Automated Gate',
+          status: 'Sealed & Merkle Root Anchored',
+          hash: '0x4d5c6b7a993184ef'
+        }
+      ]
     }
   ];
 }
@@ -94,23 +144,21 @@ export function generateInitialShipments(products: ProductRecord[]): ShipmentRec
     {
       shipmentId: 'GT-SHP-00000326',
       packageIds: ['PKG-88210-A'],
-      productIds: ['GT-DEV-00000851'],
-      origin: 'Gumi Mega-Hub 4, South Korea',
-      destination: 'Frankfurt Central Distribution, Germany',
+      productIds: ['AAA12345678', 'GT-DEV-00000851'],
+      origin: 'Samsung Mega-Hub 4, Gumi',
+      destination: 'Apex Retail Hub, Indiranagar, Bangalore',
       carrier: 'DHL Express Supply Chain Intercontinental',
       dispatchTime: '2026-10-03 08:30:00',
       expectedDelivery: '2026-10-07 14:00:00',
-      currentStatus: 'In Transit',
-      currentLocation: 'Transit Checkpoint 4 (Munich Gateway)',
+      currentStatus: 'Delivered',
+      currentLocation: 'Apex Retail & Service Hub, Indiranagar',
       temperature: '21.4 °C (Nominal)',
       humidity: '44% RH',
       checkpoints: [
         { id: 'CP-1', name: 'Packaging & Seal Authentication', location: 'Gumi Mega-Hub 4', timestamp: '2026-10-03 08:30:00', status: 'Completed', scanHash: pseudoHash('CP-1-326') },
-        { id: 'CP-2', name: 'Incheon Int Airport Customs Clear', location: 'Incheon Cargo Terminal', timestamp: '2026-10-03 21:15:00', status: 'Completed', scanHash: pseudoHash('CP-2-326') },
-        { id: 'CP-3', name: 'Leipzig European Air Hub Arrival', location: 'Leipzig/Halle Airport', timestamp: '2026-10-04 11:40:00', status: 'Completed', scanHash: pseudoHash('CP-3-326') },
-        { id: 'CP-4', name: 'Munich Gateway Intermodal Scan', location: 'Munich Rail Freight Gateway', timestamp: '2026-10-05 06:15:00', status: 'Current', scanHash: pseudoHash('CP-4-326') },
-        { id: 'CP-5', name: 'Frankfurt Regional Distribution Arrival', location: 'Frankfurt Cargo City South', timestamp: 'Pending', status: 'Pending', scanHash: '' },
-        { id: 'CP-6', name: 'Authorized Retail Handover', location: 'Saturn / MediaMarkt Flagship', timestamp: 'Pending', status: 'Pending', scanHash: '' }
+        { id: 'CP-2', name: 'Factory Outbound Warehouse Clearance', location: 'Gumi Logistics Bay 2', timestamp: '2026-10-03 14:20:00', status: 'Completed', scanHash: pseudoHash('CP-2-326') },
+        { id: 'CP-3', name: 'Carrier Air Freight Dispatched', location: 'Incheon Cargo Air Terminal', timestamp: '2026-10-04 02:15:00', status: 'Completed', scanHash: pseudoHash('CP-3-326') },
+        { id: 'CP-4', name: 'Delivered to Retail Hub', location: 'Apex Retail & Service Hub, Indiranagar', timestamp: '2026-10-06 11:30:00', status: 'Completed', scanHash: pseudoHash('CP-4-326') }
       ]
     }
   ];
@@ -208,37 +256,37 @@ export function generateInitialManufacturingEvents(): ManufacturingEvent[] {
   return events;
 }
 
-// Initial Recall Case (Single Showcase Recall)
+// Initial Recall Case (Single Showcase Recall - Samsung Galaxy A55 5G)
 export const initialRecallCase: RecallCase = {
-  recallId: 'REC-2026-001',
-  batchId: 'ABC',
+  recallId: 'REC-2026-AAA',
+  batchId: 'AAA',
   sector: 'Consumer Electronics',
   componentType: 'Display',
   defectCategory: 'Delamination & Thermal Micro-fracture',
   severity: 'Critical',
   discoveryDate: '2026-10-05',
-  affectedOperation: '1.5 Adhesive Gluing / 1.7 Preheating Curing',
-  description: 'Display batch ABC exhibited micro-delamination along the lower bezel when subjected to extended thermal cycles. Curing oven PH-07 sensor variance caused premature crystallization of the optical adhesive.',
+  affectedOperation: 'Stage 2: Super AMOLED Display Module Lamination (Machine DISP-04)',
+  description: 'Display batch AAA exhibited micro-delamination and green line artifact along the lower matrix when subjected to thermal cycles. Machine DISP-04 thermal lamination sensor variance caused premature crystallization of the optical adhesive.',
   status: 'Recall Initiated',
   unitsInBatch: 1,
-  affectedComponents: ['ABC-0042'],
-  affectedProductIds: ['GT-DEV-00000851'],
+  affectedComponents: ['AAA-0042'],
+  affectedProductIds: ['AAA12345678'],
   affectedShipmentIds: ['GT-SHP-00000326'],
-  deliveredCount: 0,
-  inTransitCount: 1,
+  deliveredCount: 1,
+  inTransitCount: 0,
   warehouseCount: 0,
-  rootCause: 'Machine PH-07 thermal sensor thermocouple TC-03 uncalibrated by +8.2°C during cycle ABC-20261001-09.',
+  rootCause: 'Machine DISP-04 thermal sensor thermocouple uncalibrated by +8.2°C during Stage 2 display lamination of Batch AAA.',
   actionsTaken: [
-    'Flagged Batch ABC in GeneaTrace immutable ledger',
-    'Traversed Merkle-DAG to isolate product GT-DEV-00000851 in < 12ms',
-    'Dispatched targeted recall hold order to DHL carrier for shipment GT-SHP-00000326',
-    'Pushing signed DPP notification to retail POS & authorized distributor systems'
+    'Flagged Batch AAA in GeneaTrace immutable ledger',
+    'Traversed Merkle-DAG to isolate product AAA12345678 in < 12ms',
+    'Dispatched targeted recall hold order to Apex Retail Hub - Indiranagar',
+    'Generated RMA Docket RMA-BLR-AAA12345678 for factory repair & redelivery'
   ]
 };
 
-// Device Security Status (Single Showcase Device)
+// Device Security Status (Showcase Device - Samsung Galaxy A55 5G)
 export const initialSecurityStatus: SecurityStatus = {
-  productId: 'GT-DEV-00000851',
+  productId: 'AAA12345678',
   imei: '356789123456780',
   hardwareHashMatches: true,
   signatureValid: true,
@@ -246,9 +294,9 @@ export const initialSecurityStatus: SecurityStatus = {
   status: 'Verified',
   lockCommandStatus: 'None',
   simulatedAuditLogs: [
-    { timestamp: '2026-10-02 11:58:00', event: 'Factory DPP Identity Provisioned & Signed', actor: 'Gumi Mega-Hub Security Enclave', hash: '0x12a990bf...' },
+    { timestamp: '2026-10-02 10:45:00', event: 'Factory DPP Identity Provisioned & Signed', actor: 'Gumi Mega-Hub Security Enclave', hash: '0x12a990bf...' },
     { timestamp: '2026-10-03 08:31:00', event: 'Logistics Handover Attestation Validated', actor: 'DHL Secure Handheld Gate', hash: '0x88fca002...' },
-    { timestamp: '2026-10-05 06:16:00', event: 'Transit Checkpoint 4 Integrity Check Passed', actor: 'Munich Gateway Intermodal Scanner', hash: '0xbc3381a9...' }
+    { timestamp: '2026-10-06 11:30:00', event: 'Retail Hub Indiranagar Delivery Handover Passed', actor: 'Apex Retail Node Scanner', hash: '0xbc3381a9...' }
   ]
 };
 

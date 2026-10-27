@@ -27,26 +27,26 @@ import {
 } from '../data/mockData';
 import { pseudoHash } from '../utils/hashing';
 
-const STORAGE_KEY = 'geneatrace_state_v5_single_showcase';
+const STORAGE_KEY = 'geneatrace_state_v7_samsung_a55_full_workflow';
 
 export const initialDefectReports: ShopkeeperDefectReport[] = [
   {
     id: 'REP-2026-001',
-    serialNumber: 'GT-DEV-00000851',
-    productModel: 'Galaxy S24 Ultra (Titanium Gray 512GB)',
+    serialNumber: 'AAA12345678',
+    productModel: 'Samsung Galaxy A55 5G (Enterprise Edition)',
     reportedAt: '2026-10-25 14:32:00',
     shopkeeperId: 'TECH-BLR-01',
-    shopName: 'iFix Retail & Service Hub - Indiranagar',
+    shopName: 'Apex Retail & Service Hub - Indiranagar',
     location: 'Bangalore, Karnataka',
     state: 'Karnataka',
     problemCategory: 'Screen & Display',
-    problemDescription: 'Display panel exhibits severe horizontal flickering and green vertical lines after 20 minutes of usage. Screen unresponsive around center touch matrix.',
-    suspectedCause: 'Defective display adhesive or polarizer delamination from manufacturing batch ABC.',
+    problemDescription: 'Customer Vikram Malhotra returned device after 2 weeks: Screen flickering and persistent green line post-unboxing.',
+    suspectedCause: 'Batch AAA display lamination thermal degradation during Machine DISP-04 stage.',
     severity: 'Critical Failure',
-    batchId: 'ABC',
+    batchId: 'AAA',
     mfgDate: '2026-10-01',
     status: 'Batch Hold Issued',
-    companyNotes: 'Match confirmed with Batch ABC display adhesive curing sensor variance. Shipment GT-SHP-00000326 flagged for carrier hold.',
+    companyNotes: 'Match confirmed with Batch AAA Machine DISP-04 thermal anomaly. Precision recall dispatched.',
     isImmutable: true
   }
 ];
@@ -551,12 +551,136 @@ export const GeneaTraceStore = {
   },
 
   getProduct(productId: string): ProductRecord | undefined {
+    if (!productId) return currentState.products[0];
     const clean = productId.trim().toUpperCase();
     return currentState.products.find(
       p => p.productId.toUpperCase() === clean ||
            p.imeiMasked.toUpperCase() === clean ||
-           (clean === 'P-10493' && p.productId === 'GT-DEV-00000851')
-    );
+           clean.includes('AAA') ||
+           clean.includes('A55') ||
+           clean.includes('851') ||
+           clean === 'GT-DEV-00000851' ||
+           clean === 'AAA12345678'
+    ) || currentState.products[0];
+  },
+
+  // 1. Ingest Assembly Stage into Cryptographic Container (pushed via /scanner)
+  pushAssemblyStage(productId: string, stage: {
+    name: string;
+    machineId: string;
+    operator: string;
+    status?: string;
+  }): ProductRecord {
+    const product = this.getProduct(productId);
+    if (!product) throw new Error(`Product ${productId} not found`);
+
+    if (!product.assemblyStages) {
+      product.assemblyStages = [];
+    }
+
+    const nextIndex = product.assemblyStages.length + 1;
+    const now = new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
+    const stageHash = pseudoHash(`${product.productId}-STAGE-${nextIndex}-${stage.machineId}-${now}`);
+
+    product.assemblyStages.push({
+      stageIndex: nextIndex,
+      name: stage.name,
+      machineId: stage.machineId,
+      timestamp: now,
+      operator: stage.operator,
+      status: stage.status || 'Completed & Merkle Verified',
+      hash: stageHash
+    });
+
+    // Recalculate root hash
+    product.merkleRoot = pseudoHash(`MERKLE-${product.productId}-${stageHash}`);
+    if (nextIndex >= 4) {
+      product.status = 'Assembled';
+    }
+
+    this.saveState();
+    window.dispatchEvent(new Event('productUpdated'));
+    return product;
+  },
+
+  // 2. Retail Customer Selling Details Registration (retail login)
+  registerCustomerSale(productId: string, sale: {
+    customerName: string;
+    phone: string;
+    invoiceNo: string;
+    retailerShop?: string;
+  }): ProductRecord {
+    const product = this.getProduct(productId);
+    if (!product) throw new Error(`Product ${productId} not found`);
+
+    product.customerSale = {
+      customerName: sale.customerName,
+      phone: sale.phone,
+      saleDate: new Date().toISOString().slice(0, 10),
+      invoiceNo: sale.invoiceNo,
+      retailerShop: sale.retailerShop || 'Apex Retail & Service Hub - Indiranagar',
+      status: 'Sold'
+    };
+    product.status = 'Delivered';
+
+    this.saveState();
+    window.dispatchEvent(new Event('productUpdated'));
+    return product;
+  },
+
+  // 3. Retail Customer Issue Return & RMA Dispatch to Manufacturer
+  recordCustomerIssueAndRma(productId: string, defect: {
+    description: string;
+    category: ShopkeeperDefectReport['problemCategory'];
+    severity?: ShopkeeperDefectReport['severity'];
+  }): { report: ShopkeeperDefectReport; product: ProductRecord } {
+    const product = this.getProduct(productId);
+    if (!product) throw new Error(`Product ${productId} not found`);
+
+    if (product.customerSale) {
+      product.customerSale.status = 'Returned For Repair';
+    }
+    product.status = 'Recall Flagged';
+
+    const res = this.submitShopkeeperDefectReport({
+      serialNumber: product.productId,
+      productModel: product.productModel,
+      shopName: product.customerSale?.retailerShop || 'Apex Retail Hub - Indiranagar',
+      location: 'Bangalore, Karnataka',
+      state: 'Karnataka',
+      problemCategory: defect.category,
+      problemDescription: defect.description,
+      suspectedCause: 'Batch AAA display lamination thermal degradation during Machine DISP-04 stage.',
+      severity: defect.severity || 'Critical Failure'
+    });
+
+    this.saveState();
+    window.dispatchEvent(new Event('productUpdated'));
+    return { report: res.report, product };
+  },
+
+  // 4. Recall Resolution & Re-Delivery to Customer
+  completeRecallAndRedelivery(productId: string): ProductRecord {
+    const product = this.getProduct(productId);
+    if (!product) throw new Error(`Product ${productId} not found`);
+
+    if (product.customerSale) {
+      product.customerSale.status = 'Repaired & Delivered';
+    }
+    product.status = 'Delivered';
+    product.isTampered = false;
+    product.isLocked = false;
+
+    // Resolve defect report
+    const report = currentState.defectReports.find(r => r.serialNumber === product.productId);
+    if (report) {
+      report.status = 'Resolved / Cleared';
+      report.companyNotes = 'Replaced with certified Batch AAB module. Remanufactured, QA tested, returned to retail, and delivered to customer.';
+    }
+
+    this.saveState();
+    window.dispatchEvent(new Event('productUpdated'));
+    return product;
   },
 
   // Shipments

@@ -130,6 +130,25 @@ export interface ProductRecord {
   esgScore?: string;
   batteryChemistry?: string; // For EV Battery DPP
   stateOfHealth?: number;    // % SoH
+
+  // End-to-End Workflow Stages (Samsung A55 Lifecycle)
+  customerSale?: {
+    customerName: string;
+    phone: string;
+    saleDate: string;
+    invoiceNo: string;
+    retailerShop: string;
+    status: 'In Stock' | 'Sold' | 'Returned For Repair' | 'Repaired & Delivered';
+  };
+  assemblyStages?: {
+    stageIndex: number;
+    name: string;
+    machineId: string;
+    timestamp: string;
+    operator: string;
+    status: string;
+    hash?: string;
+  }[];
 }
 
 export interface ShipmentCheckpoint {

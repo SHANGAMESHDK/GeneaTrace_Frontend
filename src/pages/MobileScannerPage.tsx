@@ -47,7 +47,7 @@ export const MobileScannerPage: React.FC = () => {
         navigator.vibrate([300, 100, 300, 100, 400]);
       }
       // Trigger tamper in central store
-      GeneaTraceStore.simulateTampering('GT-DEV-00000851', true);
+      GeneaTraceStore.simulateTampering('AAA12345678', true);
 
       return {
         targetId: raw,
@@ -60,35 +60,35 @@ export const MobileScannerPage: React.FC = () => {
       };
     }
 
-    // 2. Genuine Smartphone Unit
-    if (raw.includes('GT-DEV-00000851') || raw.includes('851')) {
+    // 2. Genuine Smartphone Unit (Samsung Galaxy A55 5G - Batch AAA)
+    if (raw.includes('AAA') || raw.includes('A55') || raw.includes('851') || raw.includes('12345678')) {
       // Haptic Vibration for Success
       if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
         navigator.vibrate([80, 40, 80]);
       }
-      GeneaTraceStore.recoverDevice('GT-DEV-00000851');
+      GeneaTraceStore.recoverDevice('AAA12345678');
 
       return {
-        targetId: 'GT-DEV-00000851',
+        targetId: 'AAA12345678',
         verdict: 'GENUINE_PRODUCT',
-        title: 'VERIFIED: GALAXY S24 ULTRA',
-        subtitle: 'Factory Merkle Root validated against EVM Block #1849340.',
+        title: 'VERIFIED: SAMSUNG GALAXY A55 5G',
+        subtitle: 'Batch AAA Container Verified. Anchored on EVM Block #1849340.',
         hash: '0x9f3b8a1c4e72d05f88b14a2c91e3f706',
         timestamp: now,
         isValid: true,
       };
     }
 
-    // 3. Genuine Display Component
-    if (raw.includes('ABC') || raw.includes('0042')) {
+    // 3. Genuine Display Component (Batch AAA)
+    if (raw.includes('0042') || raw.includes('CMP-DIS')) {
       if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
         navigator.vibrate([60, 30, 60]);
       }
       return {
-        targetId: 'ABC-0042',
+        targetId: 'AAA-0042',
         verdict: 'GENUINE_COMPONENT',
-        title: 'VERIFIED: DISPLAY MODULE (BATCH ABC)',
-        subtitle: 'Authorized AMOLED Dynamic 2X panel from Assembly Cell 3.',
+        title: 'VERIFIED: SUPER AMOLED DISPLAY (BATCH AAA)',
+        subtitle: 'Authorized display module linked to Machine DISP-04 stage.',
         hash: '0x4e72d05f88b14a2c91e3f7069f3b8a1c',
         timestamp: now,
         isValid: true,
@@ -304,13 +304,118 @@ export const MobileScannerPage: React.FC = () => {
           </div>
         )}
 
+        {/* Assembly Line Process Ingestion Controls (Steps 4 & 5) */}
+        <div className="pt-2 border-t border-slate-800 space-y-2">
+          <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
+            <span className="flex items-center gap-1.5 text-emerald-400">
+              <Layers size={13} />
+              <span>Assembly Line Station Ingestion (Push to Container)</span>
+            </span>
+            <span className="text-slate-500">Target: AAA12345678</span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
+            <button
+              onClick={() => {
+                GeneaTraceStore.pushAssemblyStage('AAA12345678', {
+                  name: 'SMT PCB Solder & Flux Printing',
+                  machineId: 'SMT-01',
+                  operator: 'Rajesh V.',
+                  status: 'Completed & Signed'
+                });
+                setScanResult({
+                  targetId: 'AAA12345678',
+                  verdict: 'GENUINE_PRODUCT',
+                  title: 'STAGE 1 INGESTED: SMT-01',
+                  subtitle: 'Timestamp & SMT-01 machine ID pushed to container. Merkle Root recalculated.',
+                  hash: '0x1a8f9c4b220194bc',
+                  timestamp: new Date().toLocaleTimeString(),
+                  isValid: true
+                });
+              }}
+              className="py-1.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-left truncate"
+            >
+              + Stage 1 (SMT-01)
+            </button>
+
+            <button
+              onClick={() => {
+                GeneaTraceStore.pushAssemblyStage('AAA12345678', {
+                  name: 'Super AMOLED Display Module Lamination',
+                  machineId: 'DISP-04',
+                  operator: 'Elena Rostova',
+                  status: 'Flagged (Thermal Variance)'
+                });
+                setScanResult({
+                  targetId: 'AAA12345678',
+                  verdict: 'GENUINE_COMPONENT',
+                  title: 'STAGE 2 INGESTED: DISP-04',
+                  subtitle: 'Timestamp & DISP-04 pushed. Thermal profile logged to Batch AAA.',
+                  hash: '0x2b7e6d5a88194c71',
+                  timestamp: new Date().toLocaleTimeString(),
+                  isValid: true
+                });
+              }}
+              className="py-1.5 px-2 rounded-lg bg-amber-950/40 hover:bg-amber-900/50 text-amber-300 border border-amber-800/50 text-left truncate"
+            >
+              + Stage 2 (DISP-04)
+            </button>
+
+            <button
+              onClick={() => {
+                GeneaTraceStore.pushAssemblyStage('AAA12345678', {
+                  name: 'Motherboard & Secure Enclave Cryptographic Binding',
+                  machineId: 'SEC-02',
+                  operator: 'Kenji Sato',
+                  status: 'Completed'
+                });
+                setScanResult({
+                  targetId: 'AAA12345678',
+                  verdict: 'GENUINE_PRODUCT',
+                  title: 'STAGE 3 INGESTED: SEC-02',
+                  subtitle: 'Hardware Enclave bound to Blockchain serial AAA12345678.',
+                  hash: '0x3c6d5e4f440285a2',
+                  timestamp: new Date().toLocaleTimeString(),
+                  isValid: true
+                });
+              }}
+              className="py-1.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-left truncate"
+            >
+              + Stage 3 (SEC-02)
+            </button>
+
+            <button
+              onClick={() => {
+                GeneaTraceStore.pushAssemblyStage('AAA12345678', {
+                  name: 'Automated Optical Inspection Quality Gate',
+                  machineId: 'AOI-01',
+                  operator: 'Automated Gate',
+                  status: 'Sealed & Merkle Anchored'
+                });
+                setScanResult({
+                  targetId: 'AAA12345678',
+                  verdict: 'GENUINE_PRODUCT',
+                  title: 'STAGE 4: SEALED & ANCHORED',
+                  subtitle: 'Final Quality Gate passed. Container AAA12345678 sealed on EVM block #1849340.',
+                  hash: '0x4d5c6b7a993184ef',
+                  timestamp: new Date().toLocaleTimeString(),
+                  isValid: true
+                });
+              }}
+              className="py-1.5 px-2 rounded-lg bg-emerald-950/40 hover:bg-emerald-900/50 text-emerald-300 border border-emerald-800/50 text-left truncate"
+            >
+              + Stage 4 (AOI Gate)
+            </button>
+          </div>
+        </div>
+
         {/* Quick Demo Test Buttons for Immediate Simulation */}
         <div className="flex items-center justify-center gap-2 pt-1">
           <button
-            onClick={() => setScanResult(evaluateCode('GT-DEV-00000851'))}
+            onClick={() => setScanResult(evaluateCode('AAA12345678'))}
             className="flex-1 py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-medium border border-slate-700 text-center"
           >
-            Simulate Genuine 851
+            Scan Samsung A55
           </button>
           <button
             onClick={() => setScanResult(evaluateCode('FAKE-DISP-9999'))}

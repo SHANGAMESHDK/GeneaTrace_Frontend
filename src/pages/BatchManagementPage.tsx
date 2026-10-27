@@ -32,7 +32,7 @@ export const BatchManagementPage: React.FC = () => {
   const initialSearch = searchParams.get('search') || '';
 
   const [batches, setBatches] = useState<BatchRecord[]>(GeneaTraceStore.getBatches('All'));
-  const [selectedBatchId, setSelectedBatchId] = useState<string>('ABC');
+  const [selectedBatchId, setSelectedBatchId] = useState<string>('AAA');
   const [searchTerm, setSearchTerm] = useState(initialSearch);
   const [selectedSectorFilter, setSelectedSectorFilter] = useState<string>('All');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);

@@ -96,16 +96,16 @@ export const LogisticsPage: React.FC = () => {
             <div className="text-blue-900 font-bold mt-0.5">In Transit Cargo</div>
           </div>
           <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900">
-            <div className="text-[10px] text-amber-600 font-bold uppercase">4. Checkpoint</div>
-            <div className="text-amber-900 font-bold mt-0.5">Munich Gateway</div>
+            <div className="text-[10px] text-amber-600 font-bold uppercase">4. Air Cargo</div>
+            <div className="text-amber-900 font-bold mt-0.5">Incheon Transit</div>
           </div>
           <div className="p-3 bg-slate-50 border border-slate-200/60 rounded-xl">
             <div className="text-[10px] text-slate-400 font-semibold uppercase">5. Retailer</div>
-            <div className="text-slate-900 font-semibold mt-0.5">Frankfurt Depot</div>
+            <div className="text-slate-900 font-semibold mt-0.5">Indiranagar Hub</div>
           </div>
-          <div className="p-3 bg-slate-50 border border-slate-200/60 rounded-xl">
-            <div className="text-[10px] text-slate-400 font-semibold uppercase">6. Customer</div>
-            <div className="text-slate-900 font-semibold mt-0.5">Scan Passport</div>
+          <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-900">
+            <div className="text-[10px] text-emerald-600 font-bold uppercase">6. Customer</div>
+            <div className="text-emerald-900 font-bold mt-0.5">Vikram Malhotra</div>
           </div>
         </div>
       </div>
@@ -129,7 +129,7 @@ export const LogisticsPage: React.FC = () => {
             <div className="space-y-2 max-h-[560px] overflow-y-auto">
               {filteredShipments.map(s => {
                 const isSelected = activeShipment?.shipmentId === s.shipmentId;
-                const carriesFlagged = s.productIds.includes('GT-DEV-00000851');
+                const carriesShowcase = s.productIds.includes('AAA12345678') || s.productIds.includes('GT-DEV-00000851');
 
                 return (
                   <motion.div
@@ -162,9 +162,9 @@ export const LogisticsPage: React.FC = () => {
                       <span className="font-mono">{s.productIds.length} Unit</span>
                     </div>
 
-                    {carriesFlagged && (
-                      <div className="mt-2 text-[10px] text-rose-700 bg-rose-50 px-2 py-0.5 rounded-lg border border-rose-200 font-mono font-semibold">
-                        Contains Flagged GT-DEV-00000851
+                    {carriesShowcase && (
+                      <div className="mt-2 text-[10px] text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-200 font-mono font-semibold">
+                        Showcase: AAA12345678 (Samsung A55)
                       </div>
                     )}
                   </motion.div>
