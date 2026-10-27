@@ -182,23 +182,23 @@ export const Topbar: React.FC<TopbarProps> = ({ collapsed }) => {
               </div>
               <div
                 onClick={() => {
-                  navigate('/passport/GT-EVB-00094120');
+                  navigate('/passport/GT-DEV-00000852');
                   setShowSearchDropdown(false);
                 }}
                 className="px-2 py-1.5 hover:bg-[#faf3dc] rounded-none cursor-pointer flex items-center justify-between text-[#413634]"
               >
-                <span>GT-EVB-00094120 (800V EV Battery Pack)</span>
-                <span className="text-[10px] text-[#b87428] uppercase">EV Battery</span>
+                <span>GT-DEV-00000852 (Galaxy S24 Ultra - Black)</span>
+                <span className="text-[10px] text-[#49627d] uppercase">Electronics</span>
               </div>
               <div
                 onClick={() => {
-                  navigate('/passport/GT-MED-00041289');
+                  navigate('/passport/GT-DEV-00000853');
                   setShowSearchDropdown(false);
                 }}
                 className="px-2 py-1.5 hover:bg-[#faf3dc] rounded-none cursor-pointer flex items-center justify-between text-[#413634]"
               >
-                <span>GT-MED-00041289 (Cardiac Implant)</span>
-                <span className="text-[10px] text-[#2e6b4d] uppercase">Medical</span>
+                <span>GT-DEV-00000853 (Galaxy S24 Ultra - Amber)</span>
+                <span className="text-[10px] text-[#8b6c58] uppercase">Electronics</span>
               </div>
               <div
                 onClick={() => {

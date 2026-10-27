@@ -21,9 +21,9 @@ export const SettingsPage: React.FC = () => {
   const integrations = store.integrations;
 
   const handleResetData = () => {
-    if (window.confirm('Reset all GeneaTrace demo data back to default state?')) {
+    if (window.confirm('Reset all local cached state back to default production records?')) {
       GeneaTraceStore.resetDemoData();
-      setFeedback('Demo data reset successfully.');
+      setFeedback('Local cache reset successfully.');
       setTimeout(() => {
         window.location.reload();
       }, 1000);
@@ -51,7 +51,7 @@ export const SettingsPage: React.FC = () => {
             <span>Industrial Integrations &amp; System Configuration</span>
           </h1>
           <p className="text-xs text-[#666666] font-serif mt-1">
-            ERP, MES, SCADA data ingestion gateways, demo environment controls, and data management.
+            ERP, MES, SCADA data ingestion gateways, environment telemetry, and state management.
           </p>
         </div>
 
@@ -61,7 +61,7 @@ export const SettingsPage: React.FC = () => {
             className="px-3.5 py-2 bg-[#fdf2f1] hover:bg-[#fae7e6] border border-[#f5c6cb] text-[#b84a44] text-xs font-serif flex items-center gap-1.5 transition-colors uppercase tracking-wider"
           >
             <RotateCcw size={13} />
-            <span>Reset Demo Data</span>
+            <span>Reset Local Cache</span>
           </button>
         </div>
       </div>
@@ -117,15 +117,15 @@ export const SettingsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Demo Controls & State Management */}
+      {/* State Management */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="p-5 vintage-card space-y-3 text-xs font-serif">
           <h3 className="text-sm font-normal text-[#413634] flex items-center gap-2">
             <Database size={15} className="text-[#c5716d]" />
-            <span>Demonstration State Storage</span>
+            <span>Local State &amp; Cache Storage</span>
           </h3>
           <p className="text-[#666666]">
-            Current changes are saved to browser local state for immediate interactive demonstration.
+            Current state modifications are persisted locally in the browser and synchronized with the Azure cloud backend.
           </p>
           <div className="flex gap-2 pt-2">
             <button

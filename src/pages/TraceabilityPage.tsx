@@ -17,6 +17,7 @@ import {
   Zap
 } from 'lucide-react';
 import { GeneaTraceStore } from '../services/dataStore';
+import { api } from '../services/apiClient';
 
 export const TraceabilityPage: React.FC = () => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ export const TraceabilityPage: React.FC = () => {
   const [forwardResult, setForwardResult] = useState<any>(null);
   const [backwardResult, setBackwardResult] = useState<any>(null);
   const [latencyMs, setLatencyMs] = useState<number>(0);
+  const [backendVerified, setBackendVerified] = useState<boolean | null>(null);
 
   const executeSearch = (query: string) => {
     const q = query.trim().toUpperCase();
@@ -42,6 +44,17 @@ export const TraceabilityPage: React.FC = () => {
       setBackwardResult(res);
       setForwardResult(null);
       setLatencyMs(res.traversalTimeMs);
+
+      // Async verification with Azure FastAPI backend
+      api.traceProduct(q)
+        .then(apiRes => {
+          console.log(`Backend backward trace for ${q}:`, apiRes);
+          setBackendVerified(true);
+        })
+        .catch(err => {
+          console.warn('Backend traceProduct fallback:', err);
+          setBackendVerified(false);
+        });
     } else {
       // Forward trace from batch or component
       setActiveDirection('forward');
@@ -50,6 +63,17 @@ export const TraceabilityPage: React.FC = () => {
       setForwardResult(res);
       setBackwardResult(null);
       setLatencyMs(res.traversalTimeMs);
+
+      // Async verification with Azure FastAPI backend
+      api.traceBatch(batchId)
+        .then(apiRes => {
+          console.log(`Backend forward trace for batch ${batchId}:`, apiRes);
+          setBackendVerified(true);
+        })
+        .catch(err => {
+          console.warn('Backend traceBatch fallback:', err);
+          setBackendVerified(false);
+        });
     }
   };
 

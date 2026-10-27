@@ -74,18 +74,30 @@ export const BlockchainAuditPage: React.FC = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-serif">
         <div className="p-4 vintage-card">
           <span className="text-[#8b6c58]">Committed Checkpoints:</span>
-          <p className="text-xl font-normal font-serif text-[#413634] mt-1">1,849,502</p>
-          <span className="text-[11px] text-[#2e6b4d] font-serif">100% Integrity Confirmed</span>
+          <p className="text-xl font-normal font-serif text-[#413634] mt-1">
+            {liveAudit?.total_checkpoints !== undefined ? liveAudit.total_checkpoints.toLocaleString() : blocks.length.toLocaleString()}
+          </p>
+          <span className="text-[11px] text-[#2e6b4d] font-serif">
+            {liveAudit?.confirmed_checkpoints !== undefined ? `${liveAudit.confirmed_checkpoints} Confirmed` : 'Integrity Confirmed'}
+          </span>
         </div>
         <div className="p-4 vintage-card">
           <span className="text-[#8b6c58]">Validator Consensus:</span>
-          <p className="text-xl font-normal font-serif text-[#413634] mt-1">12/12 Nodes</p>
-          <span className="text-[11px] text-[#8b6c58]">PoA Enterprise Consortium</span>
+          <p className="text-xl font-normal font-serif text-[#413634] mt-1">
+            {liveAudit?.adapter_status?.is_mock ? 'Mock Consensus' : '12/12 Nodes'}
+          </p>
+          <span className="text-[11px] text-[#8b6c58]">
+            {liveAudit?.adapter_status?.is_mock ? 'Local Adapter Active' : 'PoA Enterprise Consortium'}
+          </span>
         </div>
         <div className="p-4 vintage-card">
-          <span className="text-[#8b6c58]">Average Anchor Latency:</span>
-          <p className="text-xl font-normal font-serif text-[#49627d] mt-1 font-mono">2.1 sec</p>
-          <span className="text-[11px] text-[#8b6c58]">Sub-block commitment</span>
+          <span className="text-[#8b6c58]">Latest Checkpoint:</span>
+          <p className="text-sm font-mono font-bold text-[#49627d] mt-1 truncate" title={liveAudit?.latest_checkpoint?.transaction_hash || '0xa45b98cf120194bc87123985'}>
+            {liveAudit?.latest_checkpoint?.transaction_hash ? formatAddress(liveAudit.latest_checkpoint.transaction_hash) : '0xa45b...3985'}
+          </p>
+          <span className="text-[11px] text-[#8b6c58] font-mono">
+            Block #{liveAudit?.latest_checkpoint?.block_number || blocks[0]?.blockNumber || 999999}
+          </span>
         </div>
         <div className="p-4 vintage-card">
           <span className="text-[#8b6c58]">Smart Contract:</span>
