@@ -18,7 +18,8 @@ import {
   AlertOctagon,
   Clock,
   Radio,
-  Share2
+  Share2,
+  ChevronDown
 } from 'lucide-react';
 import { GeneaTraceStore } from '../services/dataStore';
 import { ShopkeeperDefectReport } from '../types';
@@ -36,6 +37,7 @@ export const CompanyDefectHubPage: React.FC = () => {
   // Selected Report for Deep Batch Investigation
   const [selectedReportId, setSelectedReportId] = useState<string>(reports[0]?.id || '');
   const [holdDispatchedNotice, setHoldDispatchedNotice] = useState<string>('');
+  const [showSimilarDetails, setShowSimilarDetails] = useState<boolean>(false);
 
   const selectedReport = reports.find(r => r.id === selectedReportId) || reports[0];
 
@@ -58,9 +60,10 @@ export const CompanyDefectHubPage: React.FC = () => {
   });
 
   // Calculate Similar Defects Count (Checking if similar defect is reported)
-  const similarDefectsCount = selectedReport
-    ? reports.filter(r => r.problemCategory === selectedReport.problemCategory && r.id !== selectedReport.id).length
-    : 0;
+  const similarReports = selectedReport
+    ? reports.filter(r => r.problemCategory === selectedReport.problemCategory && r.id !== selectedReport.id)
+    : [];
+  const similarDefectsCount = similarReports.length;
 
   // Dispatch Hold Order to all shops/warehouses carrying mobiles from this batch
   const handleDispatchHold = () => {
@@ -323,13 +326,32 @@ export const CompanyDefectHubPage: React.FC = () => {
                       Defect Similarity Matching Analysis
                     </h3>
                   </div>
-                  <span className={`text-xs px-2 py-0.5 border ${
-                    similarDefectsCount > 0
-                      ? 'bg-[#fef7ec] text-[#b87428] border-[#b87428]'
-                      : 'bg-[#edf6f0] text-[#2e6b4d] border-[#2e6b4d]'
-                  }`}>
-                    {similarDefectsCount > 0 ? `${similarDefectsCount} Similar Defect Reports Found` : 'No Other Matches (Isolated Case)'}
-                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (similarDefectsCount > 0) {
+                        setShowSimilarDetails(!showSimilarDetails);
+                      }
+                    }}
+                    className={`text-xs px-2.5 py-1 border transition-all flex items-center gap-1.5 ${
+                      similarDefectsCount > 0
+                        ? 'bg-[#fef7ec] hover:bg-[#fde9cf] text-[#b87428] border-[#b87428] cursor-pointer'
+                        : 'bg-[#edf6f0] text-[#2e6b4d] border-[#2e6b4d] cursor-default'
+                    }`}
+                    title={similarDefectsCount > 0 ? 'Click to show similar defect products' : undefined}
+                  >
+                    <Search size={12} />
+                    <span className="font-medium">
+                      {similarDefectsCount > 0
+                        ? `${similarDefectsCount} Similar Defect Reports Found`
+                        : 'No Other Matches (Isolated Case)'}
+                    </span>
+                    {similarDefectsCount > 0 && (
+                      <span className="text-[10px] font-bold underline ml-1">
+                        {showSimilarDetails ? '▲ Hide Details' : '▼ Click to View'}
+                      </span>
+                    )}
+                  </button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
@@ -346,6 +368,119 @@ export const CompanyDefectHubPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Quick Toggle Button when similar defects exist */}
+                {similarDefectsCount > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setShowSimilarDetails(!showSimilarDetails)}
+                    className="w-full py-2 px-3 bg-[#faf3dc] hover:bg-[#f3ebd3] border border-[#b87428] text-[#b87428] text-xs flex items-center justify-between transition-colors font-medium cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle size={14} className="text-[#b87428]" />
+                      <span>
+                        {showSimilarDetails
+                          ? 'Hide Correlated Similar Defect Products'
+                          : `Click to View ${similarDefectsCount} Similar Defect Products (with Serial Numbers)`}
+                      </span>
+                    </div>
+                    <ChevronDown size={14} className={`transform transition-transform ${showSimilarDetails ? 'rotate-180' : ''}`} />
+                  </button>
+                )}
+
+                {/* Expanded Similar Defect Products with Serial Numbers */}
+                {showSimilarDetails && similarReports.length > 0 && (
+                  <div className="p-4 bg-[#fffdf6] border-2 border-[#b87428] space-y-3 mt-3 animate-in fade-in duration-200">
+                    <div className="flex items-center justify-between border-b border-[#e5e5e5] pb-2">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle size={16} className="text-[#b87428]" />
+                        <h4 className="text-xs font-semibold uppercase tracking-wider text-[#413634]">
+                          Correlated Products with Matching Defect ({similarReports.length})
+                        </h4>
+                      </div>
+                      <span className="text-[11px] font-mono text-[#b87428] font-bold">
+                        Category: {selectedReport.problemCategory}
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-[#666666]">
+                      The following <strong>{similarReports.length} products</strong> exhibit the identical defect category (<strong className="text-[#413634]">{selectedReport.problemCategory}</strong>) across authorized repair shops:
+                    </p>
+
+                    <div className="space-y-3">
+                      {similarReports.map(sr => (
+                        <div
+                          key={sr.id}
+                          className="p-3.5 bg-[#faf3dc] border border-[#e5e5e5] hover:border-[#413634] transition-all space-y-2.5"
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-b border-[#e5e5e5] pb-2">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] uppercase font-bold text-[#666666]">Serial No:</span>
+                              <span className="px-2.5 py-0.5 bg-[#fffdf6] text-[#c5716d] font-mono text-xs font-bold border border-[#c5716d]">
+                                {sr.serialNumber}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 text-[11px]">
+                              <span className="font-mono text-[#666666]">{sr.id}</span>
+                              <span className="px-1.5 py-0.2 bg-[#fdf2f1] text-[#b84a44] font-mono text-[10px] border border-[#b84a44]">
+                                {sr.status}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                            <div>
+                              <span className="text-[10px] text-[#666666] block">Model:</span>
+                              <strong className="text-[#413634] font-serif">{sr.productModel}</strong>
+                            </div>
+                            <div>
+                              <span className="text-[10px] text-[#666666] block">Reported By Shop &amp; Location:</span>
+                              <span className="text-[#413634] font-serif">{sr.shopName} ({sr.location})</span>
+                            </div>
+                          </div>
+
+                          <div className="p-2.5 bg-[#fffcf8] border border-[#e5e5e5] text-xs space-y-1">
+                            <div>
+                              <strong className="text-[10px] text-[#b84a44] uppercase tracking-wide">Reported Defect: </strong>
+                              <span className="text-[#413634]">{sr.problemDescription}</span>
+                            </div>
+                            <div>
+                              <strong className="text-[10px] text-[#8b6c58] uppercase tracking-wide">Suspected Cause: </strong>
+                              <span className="text-[#413634] italic">"{sr.suspectedCause}"</span>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-[11px] border-t border-[#e5e5e5]">
+                            <span className="text-[#666666]">
+                              Batch: <strong className="font-mono text-[#413634]">{sr.batchId || 'ABC'}</strong> • Mfg Date: <strong className="font-mono text-[#413634]">{sr.mfgDate || '2026-10-01'}</strong>
+                            </span>
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setSelectedReportId(sr.id);
+                                  setShowSimilarDetails(false);
+                                }}
+                                className="text-xs text-[#c5716d] hover:underline font-serif flex items-center gap-1 font-medium"
+                              >
+                                <span>Inspect This Incident</span>
+                                <ArrowRight size={12} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => navigate(`/passport/${sr.serialNumber}`)}
+                                className="btn-vintage-outline text-[11px] py-1 px-2.5 flex items-center gap-1"
+                              >
+                                <span>Passport</span>
+                                <ExternalLink size={11} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Step 2: Manufacturing Batch Correlation */}

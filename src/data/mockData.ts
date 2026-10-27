@@ -205,12 +205,14 @@ export function generateInitialProducts(): ProductRecord[] {
 export function generateInitialShipments(products: ProductRecord[]): ShipmentRecord[] {
   const shipments: ShipmentRecord[] = [];
   const destinations = [
-    { dest: 'Central European Distribution Hub (Frankfurt, DE)', carrier: 'DHL Express Global Forwarding' },
+    { dest: 'Saturn & MediaMarkt Flagship Retail Shop (Berlin, DE)', carrier: 'DHL Express Supply Chain' },
+    { dest: 'iFix Authorized Retail & Service Hub (Indiranagar, Bangalore)', carrier: 'BlueDart Air Express' },
+    { dest: 'Munich Rail Freight Gateway Hub (Distribution Warehouse)', carrier: 'DHL Global Forwarding' },
+    { dest: 'Apex Electronics Care Retail Store (Bandra West, Mumbai)', carrier: 'FedEx Priority Freight' },
     { dest: 'North American Hub (Chicago Logistics Center, US)', carrier: 'FedEx Priority Freight' },
-    { dest: 'Nordic Electronics Hub (Stockholm, SE)', carrier: 'Maersk Air Cargo' },
-    { dest: 'Asia-Pacific Retail Hub (Singapore Changi Logistics)', carrier: 'Nippon Express Air' },
-    { dest: 'UK Central Warehouse (Milton Keynes, UK)', carrier: 'DPD Logistics' },
-    { dest: 'Gulf Region Fulfillment (Dubai Logistics City, UAE)', carrier: 'Emirates SkyCargo' }
+    { dest: 'Central London Flagship Retail Store (Oxford Street, UK)', carrier: 'DPD Logistics' },
+    { dest: 'Frankfurt Central Distribution Center (Depot 3)', carrier: 'Maersk Air Cargo' },
+    { dest: 'Tokyo Shinjuku Electronics Superstore (Tokyo, JP)', carrier: 'Nippon Express Air' }
   ];
 
   const showcaseProducts = ['GT-DEV-00000851', 'GT-DEV-00000852', 'GT-DEV-00000853'];

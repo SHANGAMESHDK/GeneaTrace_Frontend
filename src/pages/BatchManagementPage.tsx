@@ -14,7 +14,13 @@ import {
   MapPin,
   Building2,
   Truck,
-  Smartphone
+  Smartphone,
+  Boxes,
+  Store,
+  Warehouse,
+  PackageCheck,
+  ExternalLink,
+  ChevronDown
 } from 'lucide-react';
 import { GeneaTraceStore } from '../services/dataStore';
 import { BatchRecord, ComponentCategory, IndustrySector } from '../types';
@@ -51,6 +57,11 @@ export const BatchManagementPage: React.FC = () => {
     installedProductId?: string;
   } | null>(null);
 
+  // Active Registry View: individual serials vs location bunches
+  const [activeTab, setActiveTab] = useState<'serials' | 'bunches'>('serials');
+  const [isBatchDetailsModalOpen, setIsBatchDetailsModalOpen] = useState(false);
+  const [selectedBunchLocation, setSelectedBunchLocation] = useState<string | null>(null);
+
   // New Batch Form State
   const [newBatchId, setNewBatchId] = useState('');
   const [newSector, setNewSector] = useState<IndustrySector>('Consumer Electronics');
@@ -69,6 +80,11 @@ export const BatchManagementPage: React.FC = () => {
   const batchComponents = useMemo(() => {
     if (!activeBatch) return [];
     return GeneaTraceStore.getComponents({ batchId: activeBatch.batchId, sector: 'All' });
+  }, [activeBatch]);
+
+  // Real-time batch locations & bunches of units
+  const activeBatchLocations = useMemo(() => {
+    return activeBatch?.batchId ? GeneaTraceStore.getBatchLocations(activeBatch.batchId) : null;
   }, [activeBatch]);
 
   // Filter batches list
@@ -285,7 +301,20 @@ export const BatchManagementPage: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsBatchDetailsModalOpen(true);
+                        setSelectedBunchLocation(null);
+                      }}
+                      className="btn-vintage-accent text-xs py-1.5 px-3 flex items-center gap-1.5 cursor-pointer shadow-xs"
+                      title="Inspect all physical stores, warehouses, delivery and hold statuses for this batch"
+                    >
+                      <Boxes size={14} />
+                      <span>Batch Details &amp; Location Bunches</span>
+                    </button>
+
                     {activeBatch.status !== 'Defective' && activeBatch.status !== 'Recalled' ? (
                       <button
                         onClick={() => handleMarkDefective(activeBatch.batchId)}
@@ -336,80 +365,336 @@ export const BatchManagementPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Individual Serials Table */}
+              {/* Tab Switcher: Unit Serial Registry vs Location Bunches */}
               <div className="p-5 vintage-card space-y-4">
-                <div className="flex items-center justify-between pb-2 border-b border-[#e5e5e5]">
-                  <div>
-                    <h3 className="text-sm text-[#413634]">
-                      Unit Serial Registry ({batchComponents.length} units in Batch {activeBatch.batchId})
-                    </h3>
-                    <p className="text-xs text-[#666666]">
-                      Individual unit-level identification. {activeBatch.batchId} is the batch; {activeBatch.batchId}-0001 is the unit serial.
-                    </p>
+                <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#e5e5e5]">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('serials')}
+                      className={`px-3 py-1.5 text-xs font-serif transition-colors flex items-center gap-1.5 cursor-pointer ${
+                        activeTab === 'serials'
+                          ? 'bg-[#413634] text-[#fffdf6] font-medium shadow-xs'
+                          : 'bg-[#faf3dc] text-[#666666] hover:text-[#413634] border border-[#e5e5e5]'
+                      }`}
+                    >
+                      <Smartphone size={13} />
+                      <span>Unit Serial Registry ({batchComponents.length} Units)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('bunches')}
+                      className={`px-3 py-1.5 text-xs font-serif transition-colors flex items-center gap-1.5 cursor-pointer ${
+                        activeTab === 'bunches'
+                          ? 'bg-[#413634] text-[#fffdf6] font-medium shadow-xs'
+                          : 'bg-[#faf3dc] text-[#666666] hover:text-[#413634] border border-[#e5e5e5]'
+                      }`}
+                    >
+                      <Boxes size={13} />
+                      <span>Location Bunches &amp; Store Distribution ({activeBatchLocations?.locationsSummary.length || 0} Stores / Warehouses)</span>
+                    </button>
                   </div>
-                  <span className="text-xs font-mono text-[#8b6c58]">{batchComponents.length} units</span>
+
+                  <span className="text-xs font-mono text-[#8b6c58]">
+                    {activeTab === 'serials'
+                      ? `${batchComponents.length} units registered`
+                      : `${activeBatchLocations?.locationsSummary.length || 0} location bunches`}
+                  </span>
                 </div>
 
-                <div className="max-h-96 overflow-y-auto border border-[#e5e5e5]">
-                  <table className="w-full text-left text-xs font-mono">
-                    <thead className="bg-[#faf3dc] text-[#666666] border-b border-[#e5e5e5]">
-                      <tr>
-                        <th className="py-2.5 px-3">Serial Number</th>
-                        <th className="py-2.5 px-3">Component ID</th>
-                        <th className="py-2.5 px-3">Sector</th>
-                        <th className="py-2.5 px-3">Status</th>
-                        <th className="py-2.5 px-3">Quality</th>
-                        <th className="py-2.5 px-3">Assigned Product</th>
-                        <th className="py-2.5 px-3 text-right">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#e5e5e5] bg-[#fffdf6]">
-                      {batchComponents.map(c => (
-                        <tr key={c.serialNumber} className="hover:bg-[#faf3dc]/60 transition-colors">
-                          <td className="py-2 px-3 text-[#c5716d]">{c.serialNumber}</td>
-                          <td className="py-2 px-3 text-[#413634]">{c.componentId}</td>
-                          <td className="py-2 px-3 text-[#8b6c58] text-[10px]">{c.sector}</td>
-                          <td className="py-2 px-3">
-                            <span
-                              className={`px-1.5 py-0.2 text-[9px] uppercase ${
-                                c.status === 'Recalled' || c.status === 'Quality Failed'
-                                  ? 'bg-[#fdf2f1] text-[#b84a44] border border-[#b84a44]'
-                                  : 'bg-[#edf6f0] text-[#2e6b4d]'
-                              }`}
-                            >
-                              {c.status}
+                {/* VIEW 1: INDIVIDUAL SERIALS TABLE */}
+                {activeTab === 'serials' && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between pb-1">
+                      <div>
+                        <h3 className="text-sm text-[#413634]">
+                          Unit Serial Registry ({batchComponents.length} units in Batch {activeBatch.batchId})
+                        </h3>
+                        <p className="text-xs text-[#666666]">
+                          Individual unit-level identification. {activeBatch.batchId} is the batch; {activeBatch.batchId}-0001 is the unit serial. Click <strong>Trace</strong> on any unit to view where it is right now.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="max-h-96 overflow-y-auto border border-[#e5e5e5]">
+                      <table className="w-full text-left text-xs font-mono">
+                        <thead className="bg-[#faf3dc] text-[#666666] border-b border-[#e5e5e5]">
+                          <tr>
+                            <th className="py-2.5 px-3">Serial Number</th>
+                            <th className="py-2.5 px-3">Component ID</th>
+                            <th className="py-2.5 px-3">Sector</th>
+                            <th className="py-2.5 px-3">Status</th>
+                            <th className="py-2.5 px-3">Quality</th>
+                            <th className="py-2.5 px-3">Assigned Product</th>
+                            <th className="py-2.5 px-3 text-right">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-[#e5e5e5] bg-[#fffdf6]">
+                          {batchComponents.map(c => (
+                            <tr key={c.serialNumber} className="hover:bg-[#faf3dc]/60 transition-colors">
+                              <td className="py-2 px-3 text-[#c5716d]">{c.serialNumber}</td>
+                              <td className="py-2 px-3 text-[#413634]">{c.componentId}</td>
+                              <td className="py-2 px-3 text-[#8b6c58] text-[10px]">{c.sector}</td>
+                              <td className="py-2 px-3">
+                                <span
+                                  className={`px-1.5 py-0.2 text-[9px] uppercase ${
+                                    c.status === 'Recalled' || c.status === 'Quality Failed'
+                                      ? 'bg-[#fdf2f1] text-[#b84a44] border border-[#b84a44]'
+                                      : 'bg-[#edf6f0] text-[#2e6b4d]'
+                                  }`}
+                                >
+                                  {c.status}
+                                </span>
+                              </td>
+                              <td className="py-2 px-3 text-[#666666]">{c.qualityStatus}</td>
+                              <td className="py-2 px-3 text-[#413634]">
+                                {c.installedInProductId ? (
+                                  <button
+                                    onClick={() => navigate(`/passport/${c.installedInProductId}`)}
+                                    className="text-[#c5716d] hover:underline"
+                                  >
+                                    {c.installedInProductId}
+                                  </button>
+                                ) : (
+                                  <span className="text-[#8b6c58]">Inventory</span>
+                                )}
+                              </td>
+                              <td className="py-2 px-3 text-right">
+                                <button
+                                  onClick={() => setSelectedTraceUnit({
+                                    serialNumber: c.serialNumber,
+                                    componentId: c.componentId,
+                                    installedProductId: c.installedInProductId
+                                  })}
+                                  className="btn-vintage-outline py-0.5 px-2 text-[11px] text-[#413634] hover:text-[#c5716d] hover:border-[#c5716d]"
+                                >
+                                  Trace
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {/* VIEW 2: LOCATION BUNCHES & STORE DISTRIBUTION */}
+                {activeTab === 'bunches' && (
+                  <div className="space-y-4">
+                    <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5] text-xs text-[#666666] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <Boxes size={16} className="text-[#c5716d] shrink-0" />
+                        <span>
+                          Batch <strong className="text-[#413634] font-mono">{activeBatch.batchId}</strong> ({activeBatch.batchSize} Units) is grouped into <strong>{activeBatchLocations?.locationsSummary.length || 0} physical location bunches</strong> across shops &amp; warehouses. Click any bunch below to inspect delivery &amp; hold status.
+                        </span>
+                      </div>
+                      <span className={`px-2 py-0.5 text-[10px] font-mono border font-bold shrink-0 ${
+                        activeBatch.status === 'Defective' || activeBatch.status === 'Recalled'
+                          ? 'bg-[#fdf2f1] text-[#b84a44] border-[#b84a44]'
+                          : 'bg-[#edf6f0] text-[#2e6b4d] border-[#2e6b4d]'
+                      }`}>
+                        {activeBatch.status === 'Defective' || activeBatch.status === 'Recalled'
+                          ? 'BATCH DEFECTIVE: DELIVERY HOLDED ON ALL BUNCHES'
+                          : 'BATCH QUALITY NOMINAL: NO DELIVERY HOLDS'}
+                      </span>
+                    </div>
+
+                    {/* Bunches Cards Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                      {activeBatchLocations?.locationsSummary.map(bunch => {
+                        const isSelected = selectedBunchLocation === bunch.location;
+                        const isBatchDefective = activeBatch.status === 'Defective' || activeBatch.status === 'Recalled';
+                        const isHold = isBatchDefective || bunch.isHold;
+
+                        return (
+                          <div
+                            key={bunch.location}
+                            onClick={() => setSelectedBunchLocation(isSelected ? null : bunch.location)}
+                            className={`p-3.5 border transition-all cursor-pointer space-y-2.5 ${
+                              isSelected
+                                ? 'bg-[#faf3dc] border-[#413634] ring-1 ring-[#413634]'
+                                : 'bg-[#fffdf6] border-[#e5e5e5] hover:border-[#8b6c58] hover:bg-[#faf3dc]/40'
+                            }`}
+                          >
+                            <div className="flex items-start justify-between gap-2 border-b border-[#e5e5e5] pb-2">
+                              <div className="flex items-center gap-2">
+                                {bunch.locationType === 'Retail Shop' ? (
+                                  <Store size={16} className="text-[#c5716d] shrink-0" />
+                                ) : bunch.locationType === 'Distribution Warehouse' ? (
+                                  <Warehouse size={16} className="text-[#8b6c58] shrink-0" />
+                                ) : (
+                                  <Truck size={16} className="text-[#49627d] shrink-0" />
+                                )}
+                                <span className="font-serif font-medium text-xs text-[#413634] line-clamp-1">
+                                  {bunch.location}
+                                </span>
+                              </div>
+                              <span className="px-2 py-0.5 bg-[#413634] text-white font-mono text-xs font-bold shrink-0">
+                                {bunch.count} Units Bunch
+                              </span>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-2 text-[11px] text-[#666666]">
+                              <div>
+                                <span>Type: </span>
+                                <strong className="text-[#413634]">{bunch.locationType || 'Retail Shop'}</strong>
+                              </div>
+                              <div>
+                                <span>Carrier: </span>
+                                <strong className="text-[#413634]">{bunch.carrier}</strong>
+                              </div>
+                            </div>
+
+                            {/* Status row: Delivered or not, Delivery holded or not */}
+                            <div className="flex items-center justify-between pt-1 border-t border-[#e5e5e5] text-xs">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-[10px] text-[#666666]">Delivery:</span>
+                                <span className={`px-1.5 py-0.2 text-[10px] font-mono border ${
+                                  bunch.status === 'Delivered'
+                                    ? 'bg-[#edf6f0] text-[#2e6b4d] border-[#2e6b4d]/40'
+                                    : 'bg-[#faf3dc] text-[#8b6c58] border-[#e5e5e5]'
+                                }`}>
+                                  {bunch.status === 'Delivered' ? 'DELIVERED' : 'IN TRANSIT'}
+                                </span>
+                              </div>
+
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-[10px] text-[#666666]">Hold:</span>
+                                {isHold ? (
+                                  <span className="px-1.5 py-0.2 text-[10px] font-mono bg-[#fdf2f1] text-[#b84a44] border border-[#b84a44] font-bold">
+                                    DELIVERY HOLDED
+                                  </span>
+                                ) : (
+                                  <span className="px-1.5 py-0.2 text-[10px] font-mono bg-[#edf6f0] text-[#2e6b4d] border border-[#2e6b4d]/40">
+                                    NOT HOLDED (CLEAR)
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="text-[10px] text-right text-[#c5716d] pt-0.5 flex items-center justify-end gap-1">
+                              <span>{isSelected ? 'Hide bunch units ▲' : 'Click to inspect all units in this bunch ▼'}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Detailed Unit List for the Selected Bunch */}
+                    {selectedBunchLocation && (() => {
+                      const currentBunch = activeBatchLocations?.locationsSummary.find(b => b.location === selectedBunchLocation);
+                      if (!currentBunch) return null;
+                      const isBatchDefective = activeBatch.status === 'Defective' || activeBatch.status === 'Recalled';
+                      const isHold = isBatchDefective || currentBunch.isHold;
+
+                      return (
+                        <div className="p-4 bg-[#fffdf6] border-2 border-[#413634] space-y-3 mt-4 animate-in fade-in duration-200">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#e5e5e5] pb-2">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <MapPin size={16} className="text-[#c5716d]" />
+                                <h4 className="text-sm font-medium text-[#413634]">
+                                  {currentBunch.location}
+                                </h4>
+                              </div>
+                              <p className="text-xs text-[#666666] mt-0.5 font-mono">
+                                Bunch Size: <strong>{currentBunch.count} Units</strong> • Carrier: {currentBunch.carrier} • Shipment: {currentBunch.shipmentId}
+                              </p>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              <span className={`px-2 py-0.5 text-xs font-mono border ${
+                                currentBunch.status === 'Delivered'
+                                  ? 'bg-[#edf6f0] text-[#2e6b4d] border-[#2e6b4d]'
+                                  : 'bg-[#faf3dc] text-[#8b6c58] border-[#e5e5e5]'
+                              }`}>
+                                {currentBunch.status === 'Delivered' ? 'DELIVERY STATUS: DELIVERED' : 'DELIVERY STATUS: IN TRANSIT'}
+                              </span>
+
+                              {isHold ? (
+                                <span className="px-2 py-0.5 text-xs font-mono bg-[#fdf2f1] text-[#b84a44] border border-[#b84a44] font-bold">
+                                  DELIVERY HOLDED
+                                </span>
+                              ) : (
+                                <span className="px-2 py-0.5 text-xs font-mono bg-[#edf6f0] text-[#2e6b4d] border border-[#2e6b4d]">
+                                  NOT HOLDED (CLEAR)
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Notice Banner */}
+                          <div className={`p-3 border text-xs flex items-center gap-2 ${
+                            isHold ? 'bg-[#fdf2f1] border-[#b84a44] text-[#b84a44]' : 'bg-[#edf6f0] border-[#2e6b4d] text-[#2e6b4d]'
+                          }`}>
+                            <AlertTriangle size={15} className="shrink-0" />
+                            <span>
+                              {isHold
+                                ? `Quarantine Hold Active: These ${currentBunch.count} units carry components from defective Batch ${activeBatch.batchId} and are held under stop-sale protocol.`
+                                : `Nominal Status: All ${currentBunch.count} units from Batch ${activeBatch.batchId} at this location are fully cleared and verified.`}
                             </span>
-                          </td>
-                          <td className="py-2 px-3 text-[#666666]">{c.qualityStatus}</td>
-                          <td className="py-2 px-3 text-[#413634]">
-                            {c.installedInProductId ? (
-                              <button
-                                onClick={() => navigate(`/passport/${c.installedInProductId}`)}
-                                className="text-[#c5716d] hover:underline"
-                              >
-                                {c.installedInProductId}
-                              </button>
-                            ) : (
-                              <span className="text-[#8b6c58]">Inventory</span>
-                            )}
-                          </td>
-                          <td className="py-2 px-3 text-right">
-                            <button
-                              onClick={() => setSelectedTraceUnit({
-                                serialNumber: c.serialNumber,
-                                componentId: c.componentId,
-                                installedProductId: c.installedInProductId
-                              })}
-                              className="btn-vintage-outline py-0.5 px-2 text-[11px] text-[#413634] hover:text-[#c5716d] hover:border-[#c5716d]"
-                            >
-                              Trace
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                          </div>
+
+                          {/* Units Table */}
+                          <div className="max-h-60 overflow-y-auto border border-[#e5e5e5]">
+                            <table className="w-full text-left text-xs font-mono">
+                              <thead className="bg-[#faf3dc] text-[#666666] border-b border-[#e5e5e5] text-[10px] uppercase">
+                                <tr>
+                                  <th className="p-2">Component Serial</th>
+                                  <th className="p-2">Assigned Product ID</th>
+                                  <th className="p-2">Model</th>
+                                  <th className="p-2">Delivery Status</th>
+                                  <th className="p-2">Hold Status</th>
+                                  <th className="p-2 text-right">Action</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-[#e5e5e5] bg-[#fffdf6]">
+                                {(currentBunch.units || []).map(u => (
+                                  <tr key={u.productId} className="hover:bg-[#faf3dc]/60">
+                                    <td className="p-2 text-[#c5716d] font-bold">{u.serialNumber || 'N/A'}</td>
+                                    <td className="p-2 text-[#413634]">{u.productId}</td>
+                                    <td className="p-2 text-[#666666]">{u.model}</td>
+                                    <td className="p-2">
+                                      <span className={`px-1.5 py-0.2 text-[10px] border ${
+                                        u.deliveryStatus === 'Delivered'
+                                          ? 'bg-[#edf6f0] text-[#2e6b4d] border-[#2e6b4d]/40'
+                                          : 'bg-[#faf3dc] text-[#8b6c58] border-[#e5e5e5]'
+                                      }`}>
+                                        {u.deliveryStatus || 'Delivered'}
+                                      </span>
+                                    </td>
+                                    <td className="p-2">
+                                      {isHold ? (
+                                        <span className="px-1.5 py-0.2 text-[9px] bg-[#fdf2f1] text-[#b84a44] border border-[#b84a44] font-bold">
+                                          DELIVERY HOLDED
+                                        </span>
+                                      ) : (
+                                        <span className="px-1.5 py-0.2 text-[9px] bg-[#edf6f0] text-[#2e6b4d] border border-[#2e6b4d]/40">
+                                          CLEAR (NOT HOLDED)
+                                        </span>
+                                      )}
+                                    </td>
+                                    <td className="p-2 text-right">
+                                      <button
+                                        type="button"
+                                        onClick={() => navigate(`/passport/${u.productId}`)}
+                                        className="text-[#c5716d] hover:underline flex items-center justify-end gap-1"
+                                      >
+                                        <span>Passport</span>
+                                        <ExternalLink size={11} />
+                                      </button>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
               </div>
             </>
           ) : (
@@ -645,22 +930,37 @@ export const BatchManagementPage: React.FC = () => {
                           <th className="p-2">Sister Product ID</th>
                           <th className="p-2">Model</th>
                           <th className="p-2">Shipment ID</th>
-                          <th className="p-2">Hold Status</th>
+                          <th className="p-2">Delivery / Hold Status</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-[#e5e5e5] text-[11px] bg-[#fffdf6]">
-                        {sisterUnitsInThisLocation.map(s => (
-                          <tr key={s.productId} className="hover:bg-[#faf3dc]">
-                            <td className="p-2 text-[#c5716d]">{s.productId}</td>
-                            <td className="p-2 text-[#413634]">{s.model}</td>
-                            <td className="p-2 text-[#666666]">{s.shipmentId}</td>
-                            <td className="p-2">
-                              <span className="px-1.5 py-0.2 text-[9px] bg-[#fdf2f1] text-[#b84a44] border border-[#b84a44]">
-                                HOLD
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
+                        {sisterUnitsInThisLocation.map(s => {
+                          const isBatchDefective = activeBatch.status === 'Defective' || activeBatch.status === 'Recalled';
+                          const isUnitHeld = isBatchDefective || s.isHoldNotified || s.status === 'Recall Flagged';
+
+                          return (
+                            <tr key={s.productId} className="hover:bg-[#faf3dc]">
+                              <td className="p-2 text-[#c5716d]">{s.productId}</td>
+                              <td className="p-2 text-[#413634]">{s.model}</td>
+                              <td className="p-2 text-[#666666]">{s.shipmentId}</td>
+                              <td className="p-2">
+                                {isUnitHeld ? (
+                                  <span className="px-1.5 py-0.2 text-[9px] bg-[#fdf2f1] text-[#b84a44] border border-[#b84a44] font-bold">
+                                    DELIVERY HOLDED
+                                  </span>
+                                ) : (
+                                  <span className={`px-1.5 py-0.2 text-[9px] border font-medium ${
+                                    s.status === 'Delivered'
+                                      ? 'bg-[#edf6f0] text-[#2e6b4d] border-[#2e6b4d]/40'
+                                      : 'bg-[#faf3dc] text-[#8b6c58] border-[#e5e5e5]'
+                                  }`}>
+                                    {s.status === 'Delivered' ? 'DELIVERED (CLEAR)' : (s.status || 'ACTIVE')}
+                                  </span>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>
@@ -694,6 +994,282 @@ export const BatchManagementPage: React.FC = () => {
           </div>
         );
       })()}
+
+      {/* BATCH DETAILS & LOCATION BUNCHES MODAL */}
+      {isBatchDetailsModalOpen && activeBatch && (
+        <div className="fixed inset-0 z-50 bg-[#413634]/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="w-full max-w-4xl max-h-[90vh] bg-[#fffdf6] border border-[#413634] p-6 space-y-5 shadow-2xl flex flex-col overflow-hidden">
+            {/* Modal Header */}
+            <div className="flex items-start justify-between pb-3 border-b border-[#e5e5e5] shrink-0">
+              <div>
+                <div className="flex items-center gap-2">
+                  <Boxes className="text-[#c5716d]" size={20} />
+                  <h3 className="text-base text-[#413634] font-medium">
+                    Batch Details — Store Location Bunches &amp; Delivery Status
+                  </h3>
+                </div>
+                <p className="text-xs text-[#666666] mt-0.5">
+                  Batch: <strong className="font-mono text-[#c5716d]">{activeBatch.batchId}</strong> ({activeBatch.componentType} • {activeBatch.sector}) • <strong className="font-mono">{activeBatch.batchSize} Total Units</strong>
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsBatchDetailsModalOpen(false);
+                  setSelectedBunchLocation(null);
+                }}
+                className="p-1 text-[#666666] hover:text-[#413634]"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Scrollable Modal Content */}
+            <div className="flex-1 overflow-y-auto space-y-4 pr-1">
+              {/* Overall Status Banner */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5]">
+                  <span className="text-[10px] text-[#666666] uppercase block">Total Batch Units:</span>
+                  <span className="text-base font-mono font-bold text-[#413634]">{activeBatch.batchSize} Units</span>
+                  <span className="text-[10px] text-[#8b6c58] block mt-0.5">Serial Range: {activeBatch.batchId}-0001 → {activeBatch.batchId}-{activeBatch.batchSize.toString().padStart(4, '0')}</span>
+                </div>
+                <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5]">
+                  <span className="text-[10px] text-[#666666] uppercase block">Distributed Stores &amp; Hubs:</span>
+                  <span className="text-base font-mono font-bold text-[#c5716d]">{activeBatchLocations?.locationsSummary.length || 0} Locations</span>
+                  <span className="text-[10px] text-[#8b6c58] block mt-0.5">Grouped in bunches of 10-15 units</span>
+                </div>
+                <div className={`p-3 border ${
+                  activeBatch.status === 'Defective' || activeBatch.status === 'Recalled'
+                    ? 'bg-[#fdf2f1] border-[#b84a44]'
+                    : 'bg-[#edf6f0] border-[#2e6b4d]'
+                }`}>
+                  <span className="text-[10px] uppercase block font-semibold text-[#666666]">Batch Delivery Hold Status:</span>
+                  <span className={`text-xs font-mono font-bold block mt-1 ${
+                    activeBatch.status === 'Defective' || activeBatch.status === 'Recalled'
+                      ? 'text-[#b84a44]'
+                      : 'text-[#2e6b4d]'
+                  }`}>
+                    {activeBatch.status === 'Defective' || activeBatch.status === 'Recalled'
+                      ? '🔴 DELIVERY HOLDED (QUARANTINE ACTIVE)'
+                      : '🟢 CLEAR / NOT HOLDED (NOMINAL DELIVERY)'}
+                  </span>
+                  <span className="text-[10px] text-[#666666] block mt-0.5">
+                    {activeBatch.status === 'Defective' || activeBatch.status === 'Recalled'
+                      ? 'Batch marked defective; retail stops active'
+                      : 'Nominal quality pass; all units cleared for sale'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Bunches Description */}
+              <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5] text-xs text-[#413634]">
+                <p>
+                  As requested, the <strong>{activeBatch.batchSize} units</strong> of Batch <strong>{activeBatch.batchId}</strong> are not stored in one single place — they are distributed as groups/bunches across <strong>{activeBatchLocations?.locationsSummary.length || 0} separate retail shops and warehouses</strong>. Click any bunch below to see its delivery status (Delivered vs In Transit) and hold status (Delivery Holded vs Clear):
+                </p>
+              </div>
+
+              {/* Bunches Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {activeBatchLocations?.locationsSummary.map(bunch => {
+                  const isSelected = selectedBunchLocation === bunch.location;
+                  const isBatchDefective = activeBatch.status === 'Defective' || activeBatch.status === 'Recalled';
+                  const isHold = isBatchDefective || bunch.isHold;
+
+                  return (
+                    <div
+                      key={bunch.location}
+                      onClick={() => setSelectedBunchLocation(isSelected ? null : bunch.location)}
+                      className={`p-3 border transition-all cursor-pointer space-y-2 ${
+                        isSelected
+                          ? 'bg-[#faf3dc] border-[#413634] ring-1 ring-[#413634]'
+                          : 'bg-[#fffdf6] border-[#e5e5e5] hover:border-[#8b6c58] hover:bg-[#faf3dc]/40'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2 border-b border-[#e5e5e5] pb-1.5">
+                        <div className="flex items-center gap-1.5">
+                          {bunch.locationType === 'Retail Shop' ? (
+                            <Store size={15} className="text-[#c5716d] shrink-0" />
+                          ) : (
+                            <Warehouse size={15} className="text-[#8b6c58] shrink-0" />
+                          )}
+                          <span className="font-serif font-medium text-xs text-[#413634] line-clamp-1">
+                            {bunch.location}
+                          </span>
+                        </div>
+                        <span className="px-2 py-0.5 bg-[#413634] text-white font-mono text-xs font-bold shrink-0">
+                          {bunch.count} Units Bunch
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-[11px] text-[#666666]">
+                        <div>
+                          <span>Type: </span>
+                          <strong className="text-[#413634]">{bunch.locationType || 'Retail Shop'}</strong>
+                        </div>
+                        <div>
+                          <span>Carrier: </span>
+                          <strong className="text-[#413634]">{bunch.carrier}</strong>
+                        </div>
+                      </div>
+
+                      {/* Status Indicators */}
+                      <div className="flex items-center justify-between pt-1 border-t border-[#e5e5e5] text-xs">
+                        <div className="flex items-center gap-1">
+                          <span className="text-[10px] text-[#666666]">Delivery:</span>
+                          <span className={`px-1.5 py-0.2 text-[10px] font-mono border ${
+                            bunch.status === 'Delivered'
+                              ? 'bg-[#edf6f0] text-[#2e6b4d] border-[#2e6b4d]/40'
+                              : 'bg-[#faf3dc] text-[#8b6c58] border-[#e5e5e5]'
+                          }`}>
+                            {bunch.status === 'Delivered' ? 'DELIVERED' : 'IN TRANSIT'}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-1">
+                          <span className="text-[10px] text-[#666666]">Hold:</span>
+                          {isHold ? (
+                            <span className="px-1.5 py-0.2 text-[10px] font-mono bg-[#fdf2f1] text-[#b84a44] border border-[#b84a44] font-bold">
+                              DELIVERY HOLDED
+                            </span>
+                          ) : (
+                            <span className="px-1.5 py-0.2 text-[10px] font-mono bg-[#edf6f0] text-[#2e6b4d] border border-[#2e6b4d]/40">
+                              NOT HOLDED (CLEAR)
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="text-[10px] text-right text-[#c5716d] pt-0.5">
+                        <span>{isSelected ? 'Hide bunch units ▲' : 'Click to inspect all units in this bunch ▼'}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Selected Bunch Unit Drill-Down */}
+              {selectedBunchLocation && (() => {
+                const currentBunch = activeBatchLocations?.locationsSummary.find(b => b.location === selectedBunchLocation);
+                if (!currentBunch) return null;
+                const isBatchDefective = activeBatch.status === 'Defective' || activeBatch.status === 'Recalled';
+                const isHold = isBatchDefective || currentBunch.isHold;
+
+                return (
+                  <div className="p-4 bg-[#fffdf6] border-2 border-[#413634] space-y-3 mt-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#e5e5e5] pb-2">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <MapPin size={16} className="text-[#c5716d]" />
+                          <h4 className="text-sm font-medium text-[#413634]">
+                            {currentBunch.location}
+                          </h4>
+                        </div>
+                        <p className="text-xs text-[#666666] mt-0.5 font-mono">
+                          Bunch Size: <strong>{currentBunch.count} Units</strong> • Carrier: {currentBunch.carrier} • Shipment: {currentBunch.shipmentId}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span className={`px-2 py-0.5 text-xs font-mono border ${
+                          currentBunch.status === 'Delivered'
+                            ? 'bg-[#edf6f0] text-[#2e6b4d] border-[#2e6b4d]'
+                            : 'bg-[#faf3dc] text-[#8b6c58] border-[#e5e5e5]'
+                        }`}>
+                          {currentBunch.status === 'Delivered' ? 'DELIVERY STATUS: DELIVERED' : 'DELIVERY STATUS: IN TRANSIT'}
+                        </span>
+
+                        {isHold ? (
+                          <span className="px-2 py-0.5 text-xs font-mono bg-[#fdf2f1] text-[#b84a44] border border-[#b84a44] font-bold">
+                            DELIVERY HOLDED
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 text-xs font-mono bg-[#edf6f0] text-[#2e6b4d] border border-[#2e6b4d]">
+                            NOT HOLDED (CLEAR)
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="max-h-52 overflow-y-auto border border-[#e5e5e5]">
+                      <table className="w-full text-left text-xs font-mono">
+                        <thead className="bg-[#faf3dc] text-[#666666] border-b border-[#e5e5e5] text-[10px] uppercase">
+                          <tr>
+                            <th className="p-2">Component Serial</th>
+                            <th className="p-2">Assigned Product ID</th>
+                            <th className="p-2">Model</th>
+                            <th className="p-2">Delivery Status</th>
+                            <th className="p-2">Hold Status</th>
+                            <th className="p-2 text-right">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-[#e5e5e5] bg-[#fffdf6]">
+                          {(currentBunch.units || []).map(u => (
+                            <tr key={u.productId} className="hover:bg-[#faf3dc]/60">
+                              <td className="p-2 text-[#c5716d] font-bold">{u.serialNumber || 'N/A'}</td>
+                              <td className="p-2 text-[#413634]">{u.productId}</td>
+                              <td className="p-2 text-[#666666]">{u.model}</td>
+                              <td className="p-2">
+                                <span className={`px-1.5 py-0.2 text-[10px] border ${
+                                  u.deliveryStatus === 'Delivered'
+                                    ? 'bg-[#edf6f0] text-[#2e6b4d] border-[#2e6b4d]/40'
+                                    : 'bg-[#faf3dc] text-[#8b6c58] border-[#e5e5e5]'
+                                }`}>
+                                  {u.deliveryStatus || 'Delivered'}
+                                </span>
+                              </td>
+                              <td className="p-2">
+                                {isHold ? (
+                                  <span className="px-1.5 py-0.2 text-[9px] bg-[#fdf2f1] text-[#b84a44] border border-[#b84a44] font-bold">
+                                    DELIVERY HOLDED
+                                  </span>
+                                ) : (
+                                  <span className="px-1.5 py-0.2 text-[9px] bg-[#edf6f0] text-[#2e6b4d] border border-[#2e6b4d]/40">
+                                    CLEAR (NOT HOLDED)
+                                  </span>
+                                )}
+                              </td>
+                              <td className="p-2 text-right">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setIsBatchDetailsModalOpen(false);
+                                    navigate(`/passport/${u.productId}`);
+                                  }}
+                                  className="text-[#c5716d] hover:underline flex items-center justify-end gap-1"
+                                >
+                                  <span>Passport</span>
+                                  <ExternalLink size={11} />
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex items-center justify-between pt-3 border-t border-[#e5e5e5] shrink-0 text-xs">
+              <span className="text-[#666666]">
+                Showing physical distribution across all stores &amp; hubs for Batch {activeBatch.batchId}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsBatchDetailsModalOpen(false);
+                  setSelectedBunchLocation(null);
+                }}
+                className="btn-vintage-accent"
+              >
+                Close Batch Details
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
