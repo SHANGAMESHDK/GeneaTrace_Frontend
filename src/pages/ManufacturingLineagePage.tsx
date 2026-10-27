@@ -39,27 +39,27 @@ const OperationNode = ({ data }: { data: any }) => {
     <div
       className={`px-3 py-2.5 rounded-none border text-xs min-w-[170px] shadow-sm transition-all cursor-pointer font-serif-vintage ${
         isDefective
-          ? 'bg-[#fdf2f1] border-[#b84a44] text-[#b84a44]'
+          ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-xl border-rose-500/30 text-rose-400'
           : isAssembly
-          ? 'bg-[#faf3dc] border-[#413634] text-[#413634]'
-          : 'bg-[#fffcf8] border-[#413634] text-[#413634]'
+          ? 'bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border-[#413634] text-white'
+          : 'bg-[#140c08]/92 border border-[#d9825b]/25 rounded-3xl border-[#413634] text-white'
       }`}
     >
       <Handle type="target" position={Position.Left} className="bg-[#413634]! w-1.5! h-1.5!" />
-      <div className="flex items-center justify-between pb-1 border-b border-[#e5e5e5]">
-        <span className="font-mono text-[9px] uppercase tracking-wider text-[#666666]">{data.step}</span>
+      <div className="flex items-center justify-between pb-1 border-b border-[#d9825b]/20">
+        <span className="font-mono text-[9px] uppercase tracking-wider text-[#cbb5aa]">{data.step}</span>
         <span
           className={`px-1 py-0.2 rounded-none text-[9px] font-mono ${
-            isDefective ? 'bg-[#b84a44] text-white' : 'bg-[#faf3dc] text-[#413634] border border-[#e5e5e5]'
+            isDefective ? 'bg-[#b84a44] text-white' : 'bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl text-white border border-[#d9825b]/20'
           }`}
         >
           {data.machine}
         </span>
       </div>
-      <div className="text-xs mt-1 text-[#413634] leading-tight font-normal">{data.label}</div>
-      <div className="mt-1 flex items-center justify-between text-[10px] text-[#666666] font-mono">
+      <div className="text-xs mt-1 text-white leading-tight font-normal">{data.label}</div>
+      <div className="mt-1 flex items-center justify-between text-[10px] text-[#cbb5aa] font-mono">
         <span>{data.event}</span>
-        <span className={data.result === 'OK' ? 'text-[#2e6b4d]' : 'text-[#b84a44]'}>{data.result}</span>
+        <span className={data.result === 'OK' ? 'text-emerald-400' : 'text-rose-400'}>{data.result}</span>
       </div>
       <Handle type="source" position={Position.Right} className="bg-[#c5716d]! w-1.5! h-1.5!" />
     </div>
@@ -69,14 +69,14 @@ const OperationNode = ({ data }: { data: any }) => {
 // Custom Node for Component Junction in Vintage Aesthetic
 const ComponentJunctionNode = ({ data }: { data: any }) => {
   return (
-    <div className="px-3.5 py-2.5 rounded-none bg-[#faf3dc] border border-[#413634] text-xs min-w-[190px] shadow-sm font-serif-vintage">
+    <div className="px-3.5 py-2.5 rounded-none bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#413634] text-xs min-w-[190px] shadow-sm font-serif-vintage">
       <Handle type="target" position={Position.Left} className="bg-[#413634]! w-1.5! h-1.5!" />
-      <div className="flex items-center gap-1.5 text-[#c5716d] mb-1">
+      <div className="flex items-center gap-1.5 text-[#f0a887] mb-1">
         <Cpu size={13} />
         <span className="text-xs">{data.title}</span>
       </div>
-      <div className="text-[11px] text-[#666666]">{data.desc}</div>
-      <div className="mt-1 text-[10px] font-mono text-[#8b6c58]">Batch: {data.batchId}</div>
+      <div className="text-[11px] text-[#cbb5aa]">{data.desc}</div>
+      <div className="mt-1 text-[10px] font-mono text-[#e89d7b]">Batch: {data.batchId}</div>
       <Handle type="source" position={Position.Right} className="bg-[#413634]! w-1.5! h-1.5!" />
     </div>
   );
@@ -187,26 +187,26 @@ export const ManufacturingLineagePage: React.FC = () => {
   return (
     <div className="space-y-4 h-[calc(100vh-100px)] flex flex-col font-serif-vintage">
       {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shrink-0 pb-2 border-b border-[#e5e5e5]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shrink-0 pb-2 border-b border-[#d9825b]/20">
         <div>
-          <h1 className="text-xl text-[#413634] flex items-center gap-2">
-            <GitFork className="text-[#c5716d]" size={20} />
+          <h1 className="text-xl text-white flex items-center gap-2">
+            <GitFork className="text-[#f0a887]" size={20} />
             <span>Manufacturing Lineage Map (Multi-Sector Merkle-DAG)</span>
           </h1>
-          <p className="text-xs text-[#666666]">
+          <p className="text-xs text-[#cbb5aa]">
             Interactive visual graph of component fabrication and end-product assembly.
           </p>
         </div>
 
         {/* Workflow Switcher */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center p-0.5 rounded-none bg-[#faf3dc] border border-[#e5e5e5] text-xs">
+          <div className="flex items-center p-0.5 rounded-none bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 text-xs">
             <button
               onClick={() => switchWorkflow('electronics')}
               className={`px-3 py-1 rounded-none transition-all ${
                 activeWorkflow === 'electronics'
                   ? 'bg-[#c5716d] text-[#fffdf6]'
-                  : 'text-[#413634] hover:text-[#c5716d]'
+                  : 'text-white hover:text-[#f0a887]'
               }`}
             >
               📱 Display &amp; Mobile Lineage
@@ -216,7 +216,7 @@ export const ManufacturingLineagePage: React.FC = () => {
               className={`px-3 py-1 rounded-none transition-all ${
                 activeWorkflow === 'ev_battery'
                   ? 'bg-[#c5716d] text-[#fffdf6]'
-                  : 'text-[#413634] hover:text-[#c5716d]'
+                  : 'text-white hover:text-[#f0a887]'
               }`}
             >
               🚗 EV Battery Cell-to-Pack
@@ -226,7 +226,7 @@ export const ManufacturingLineagePage: React.FC = () => {
       </div>
 
       {/* Main Graph Area */}
-      <div className="flex-1 border border-[#e5e5e5] bg-[#fffdf6] relative overflow-hidden flex shadow-xs">
+      <div className="flex-1 border border-[#d9825b]/20 bg-[#160e0a] border border-[#d9825b]/20 rounded-xl relative overflow-hidden flex shadow-xs">
         <div className="flex-1 h-full">
           <ReactFlow
             nodes={nodes}
@@ -241,7 +241,7 @@ export const ManufacturingLineagePage: React.FC = () => {
             maxZoom={1.5}
           >
             <Background color="#e5e5e5" gap={20} size={1} />
-            <Controls className="bg-[#fffcf8]! border-[#e5e5e5]! text-[#413634]!" />
+            <Controls className="bg-[#140c08]/92 border border-[#d9825b]/25 rounded-3xl! border-[#d9825b]/20! text-white!" />
             <MiniMap
               nodeColor={node => {
                 const d = node.data as any;
@@ -249,74 +249,74 @@ export const ManufacturingLineagePage: React.FC = () => {
                 if (d?.section?.includes('Assembly')) return '#8b6c58';
                 return '#c5716d';
               }}
-              className="bg-[#faf3dc]! border-[#e5e5e5]!"
+              className="bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl! border-[#d9825b]/20!"
             />
           </ReactFlow>
         </div>
 
         {/* Node Detail Inspector Drawer */}
         {selectedNode && (
-          <div className="w-80 md:w-96 bg-[#fffcf8] border-l border-[#e5e5e5] p-5 flex flex-col justify-between overflow-y-auto shadow-md z-20">
+          <div className="w-80 md:w-96 bg-[#140c08]/92 border border-[#d9825b]/25 rounded-3xl border-l border-[#d9825b]/20 p-5 flex flex-col justify-between overflow-y-auto shadow-md z-20">
             <div className="space-y-4">
-              <div className="flex items-center justify-between pb-2 border-b border-[#e5e5e5]">
-                <span className="text-xs uppercase tracking-wider text-[#c5716d]">
+              <div className="flex items-center justify-between pb-2 border-b border-[#d9825b]/20">
+                <span className="text-xs uppercase tracking-wider text-[#f0a887]">
                   Unit-Level Event Inspector
                 </span>
                 <button
                   onClick={() => setSelectedNode(null)}
-                  className="text-[#666666] hover:text-[#413634] text-xs px-2 py-0.5 border border-[#e5e5e5] bg-[#faf3dc]"
+                  className="text-[#cbb5aa] hover:text-white text-xs px-2 py-0.5 border border-[#d9825b]/20 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl"
                 >
                   Close
                 </button>
               </div>
 
               <div>
-                <h3 className="text-base text-[#413634]">{selectedNode.data.label || selectedNode.data.title}</h3>
-                <span className="text-xs font-mono text-[#8b6c58]">{selectedNode.data.step || selectedNode.id}</span>
+                <h3 className="text-base text-white">{selectedNode.data.label || selectedNode.data.title}</h3>
+                <span className="text-xs font-mono text-[#e89d7b]">{selectedNode.data.step || selectedNode.id}</span>
               </div>
 
-              <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5] space-y-2 text-xs font-mono">
+              <div className="p-3 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 space-y-2 text-xs font-mono">
                 <div className="flex justify-between">
-                  <span className="text-[#666666]">Machine / Station:</span>
-                  <span className="text-[#413634]">{selectedNode.data.machine || 'Automated Hub'}</span>
+                  <span className="text-[#cbb5aa]">Machine / Station:</span>
+                  <span className="text-white">{selectedNode.data.machine || 'Automated Hub'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#666666]">Operator Identity:</span>
-                  <span className="text-[#413634]">{selectedNode.data.operator || 'SYSTEM_ROBOTIC'}</span>
+                  <span className="text-[#cbb5aa]">Operator Identity:</span>
+                  <span className="text-white">{selectedNode.data.operator || 'SYSTEM_ROBOTIC'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#666666]">Event Execution:</span>
-                  <span className="text-[#c5716d]">{selectedNode.data.event || selectedNode.data.batchId}</span>
+                  <span className="text-[#cbb5aa]">Event Execution:</span>
+                  <span className="text-[#f0a887]">{selectedNode.data.event || selectedNode.data.batchId}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#666666]">Inspection Status:</span>
-                  <span className={selectedNode.data.isDefective ? 'text-[#b84a44] font-bold' : 'text-[#2e6b4d]'}>
+                  <span className="text-[#cbb5aa]">Inspection Status:</span>
+                  <span className={selectedNode.data.isDefective ? 'text-rose-400 font-bold' : 'text-emerald-400'}>
                     {selectedNode.data.result || 'Anchored OK'}
                   </span>
                 </div>
               </div>
 
               {selectedNode.data.isDefective && (
-                <div className="p-3 bg-[#fdf2f1] border border-[#b84a44] text-xs text-[#b84a44] space-y-1">
+                <div className="p-3 bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-xl border border-rose-500/30 text-xs text-rose-400 space-y-1">
                   <div className="flex items-center gap-1.5 font-normal">
                     <AlertTriangle size={14} />
                     <span>Defect Root Cause Registered</span>
                   </div>
-                  <p className="text-[11px] text-[#413634] leading-relaxed">
+                  <p className="text-[11px] text-white leading-relaxed">
                     Oven PH-07 thermal variance caused premature crystallization of the optical adhesive (AG-05). All 100 display serials (ABC-0001 to ABC-0100) are flagged.
                   </p>
                 </div>
               )}
 
               <div className="space-y-1">
-                <span className="text-[11px] uppercase tracking-wider text-[#666666]">Merkle Hash Commitment</span>
-                <div className="p-2 bg-[#faf3dc] border border-[#e5e5e5] font-mono text-[10px] text-[#413634] break-all">
+                <span className="text-[11px] uppercase tracking-wider text-[#cbb5aa]">Merkle Hash Commitment</span>
+                <div className="p-2 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 font-mono text-[10px] text-white break-all">
                   0x94bca001e8812cfa09923847529841bb2347890123...
                 </div>
               </div>
             </div>
 
-            <div className="pt-4 border-t border-[#e5e5e5] space-y-2">
+            <div className="pt-4 border-t border-[#d9825b]/20 space-y-2">
               <button
                 onClick={() => navigate(`/traceability?query=${selectedNode.data.batchId || 'ABC'}`)}
                 className="btn-vintage-primary w-full justify-center"

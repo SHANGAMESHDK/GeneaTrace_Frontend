@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GeneaTrace — Physical Hardware Barcode & QR Label Generator</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+  <style>
+    @media print {
+      body { background: white; margin: 0; padding: 0; }
+      .no-print { display: none !important; }
+      .sheet { box-shadow: none !important; margin: 0 !important; border: none !important; }
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      margin: 0;
+      padding: 30px;
+      color: #0f172a;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .panel {
+      background: white;
+      padding: 20px 24px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    h1 {
+      font-family: 'Times New Roman', serif;
+      margin-top: 0;
+      font-size: 24px;
+      color: #0f172a;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 8px;
+    }
+    label {
+      font-size: 12px;
+      font-weight: bold;
+      color: #334155;
+      display: block;
+      margin-bottom: 4px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 13px;
+      box-sizing: border-box;
+      margin-bottom: 12px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #1e3a8a;
+      color: white;
+      font-weight: bold;
+      font-size: 13px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #172554;
+    }
+    /* Printable Stickers Sheet */
+    .sheet {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px dashed #94a3b8;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: flex-start;
+    }
+    /* RAM Stick Sized Label: 2.2 x 0.85 inches */
+    .sticker {
+      width: 250px;
+      height: 96px;
+      border: 1.5px solid #000;
+      padding: 6px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-sizing: border-box;
+      position: relative;
+    }
+    .sticker-qr {
+      width: 80px;
+      height: 80px;
+      flex-shrink: 0;
+    }
+    .sticker-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .sticker-brand {
+      font-size: 8px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #000;
+    }
+    .sticker-title {
+      font-size: 10px;
+      font-weight: bold;
+      color: #000;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sticker-sn {
+      font-family: monospace;
+      font-size: 10px;
+      font-weight: bold;
+      color: #000;
+      margin: 2px 0;
+    }
+    .sticker-bc {
+      height: 28px;
+      max-width: 140px;
+    }
+    .tag {
+      position: absolute;
+      bottom: 3px;
+      right: 4px;
+      font-size: 7px;
+      font-family: monospace;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="panel no-print">
+      <h1>Physical RAM &amp; Hardware Barcode Label Generator</h1>
+      <p style="font-size: 12.5px; color: #475569; margin-top: 0;">
+        Enter your real RAM / Hardware Serial Number and Base URL. This generates printable sticker labels sized specifically for RAM modules, components, or boxes so you can scan them with your phone camera or barcode gun in real time.
+      </p>
+
+      <div class="grid">
+        <div>
+          <label>Hardware Serial Number (to paste on RAM):</label>
+          <input type="text" id="snInput" value="RAM-DDR5-16GB-0012">
+        </div>
+        <div>
+          <label>Hardware Model Name:</label>
+          <input type="text" id="modelInput" value="DDR5 16GB 5600MHz Synchronous RAM">
+        </div>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label>Web Portal Base URL (Your PC's IP or Ngrok / Localhost):</label>
+          <input type="text" id="urlInput" value="http://localhost:5173">
+        </div>
+        <div>
+          <label>Number of Stickers to Generate:</label>
+          <select id="countInput">
+            <option value="4">4 Stickers</option>
+            <option value="8" selected>8 Stickers (Full Row)</option>
+            <option value="12">12 Stickers</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <button onclick="generateLabels()">Generate Stickers</button>
+        <button onclick="window.print()" style="background: #059669;">🖨️ Print Labels</button>
+        <span style="font-size: 11px; color: #64748b;">(Tip: Set printer scale to 100% or fit to page)</span>
+      </div>
+    </div>
+
+    <!-- Printable Sheet -->
+    <div id="labelsSheet" class="sheet"></div>
+  </div>
+
+  <script>
+    function generateLabels() {
+      const sn = document.getElementById('snInput').value.trim().toUpperCase() || 'RAM-DDR5-001';
+      const model = document.getElementById('modelInput').value.trim() || 'DDR5 16GB SDRAM';
+      let baseUrl = document.getElementById('urlInput').value.trim().replace(/\/$/, '');
+      const count = parseInt(document.getElementById('countInput').value, 10) || 8;
+
+      const targetUrl = `${baseUrl}/shop-portal?sn=${encodeURIComponent(sn)}`;
+
+      const sheet = document.getElementById('labelsSheet');
+      sheet.innerHTML = '';
+
+      for (let i = 1; i <= count; i++) {
+        const itemSn = count > 1 ? sn.replace(/\d+$/, (m) => String(parseInt(m, 10) + (i - 1)).padStart(m.length, '0')) : sn;
+        const itemUrl = `${baseUrl}/shop-portal?sn=${encodeURIComponent(itemSn)}`;
+
+        const sticker = document.createElement('div');
+        sticker.className = 'sticker';
+        sticker.innerHTML = `
+          <canvas id="qr-${i}" class="sticker-qr"></canvas>
+          <div class="sticker-info">
+            <span class="sticker-brand">GENEATRACE DPP &bull; SECURE</span>
+            <span class="sticker-title">${model}</span>
+            <span class="sticker-sn">S/N: ${itemSn}</span>
+            <svg id="bc-${i}" class="sticker-bc"></svg>
+          </div>
+          <span class="tag">DPP-V2</span>
+        `;
+        sheet.appendChild(sticker);
+
+        // Generate QR Code with target deep-link URL
+        QRCode.toCanvas(document.getElementById(`qr-${i}`), itemUrl, {
+          width: 80,
+          margin: 1,
+          color: { dark: '#000000', light: '#ffffff' }
+        });
+
+        // Generate 1D Code128 Barcode with serial number
+        JsBarcode(`#bc-${i}`, itemSn, {
+          format: "CODE128",
+          width: 1.1,
+          height: 20,
+          displayValue: false,
+          margin: 0
+        });
+      }
+    }
+
+    // Auto-generate on load
+    window.onload = generateLabels;
+  </script>
+</body>
+</html>
+

@@ -314,15 +314,15 @@ export const PassportPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 font-serif-vintage max-w-5xl mx-auto pb-12">
+    <div className="space-y-6 font-sans max-w-6xl mx-auto pb-12 text-white select-none">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-[#e5e5e5]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-[#d9825b]/20">
         <div>
-          <h1 className="text-2xl text-[#413634] flex items-center gap-2">
-            <QrCode className="text-[#c5716d]" size={22} />
+          <h1 className="text-2xl font-serif font-bold text-white tracking-tight flex items-center gap-2">
+            <QrCode className="text-[#e89d7b]" size={22} />
             <span>Digital Product Passport (DPP) &amp; Lineage Engine</span>
           </h1>
-          <p className="text-xs text-[#666666] mt-0.5">
+          <p className="text-xs text-[#cbb5aa] mt-1">
             15-Step End-to-End Traceability Workflow: From Genesis Null Container to Assembly, Logistics, Retail, Defect Backtrace, Batch Recall, and Anti-Tamper Lock.
           </p>
         </div>
@@ -330,26 +330,26 @@ export const PassportPage: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => navigate('/scanner')}
-            className="btn-vintage-outline text-xs flex items-center gap-1.5"
+            className="btn-glass text-xs flex items-center gap-1.5 cursor-pointer"
             title="Scan QR Code or Push Assembly Stage"
           >
-            <Smartphone size={13} className="text-[#2e6b4d]" />
+            <Smartphone size={13} className="text-emerald-400" />
             <span>Station Scanner (/scanner)</span>
           </button>
           <button
             onClick={() => navigate('/shop-portal')}
-            className="btn-vintage-outline text-xs flex items-center gap-1.5"
+            className="btn-glass text-xs flex items-center gap-1.5"
           >
-            <Wrench size={13} className="text-[#c5716d]" />
+            <Wrench size={13} className="text-[#f0a887]" />
             <span>Retail Hub Portal</span>
           </button>
         </div>
       </div>
 
       {/* Clean Search Input Form */}
-      <div className="p-6 vintage-card bg-[#fffcf8] space-y-3">
+      <div className="p-6 bg-[#140c08]/92 border border-[#d9825b]/25 rounded-3xl shadow-xl space-y-4 backdrop-blur-2xl">
         <form onSubmit={handleSearchSubmit} className="space-y-3">
-          <label className="block text-xs font-medium text-[#413634]">
+          <label className="block text-xs font-semibold text-[#f7d5c5] uppercase tracking-wider font-mono">
             Enter Device Serial Number / IMEI / Cryptographic Container ID:
           </label>
           <div className="flex items-center gap-2">
@@ -360,13 +360,13 @@ export const PassportPage: React.FC = () => {
                 value={searchInput}
                 onChange={e => setSearchInput(e.target.value)}
                 placeholder="e.g. AAA12345678, GT-DEV-00000851, GT-EVB-00094120..."
-                className="w-full pl-9 pr-4 py-2.5 bg-[#fffdf6] border border-[#413634] text-sm text-[#413634] font-mono placeholder-[#8b6c58]/60 focus:outline-none"
+                className="w-full pl-9 pr-4 py-2.5 bg-[#120a07] border border-[#d9825b]/30 rounded-xl text-sm text-white font-mono placeholder-[#7d6b62] focus:border-[#e89d7b] focus:outline-none"
               />
-              <Search className="w-4 h-4 text-[#666666] absolute left-3 top-3" />
+              <Search className="w-4 h-4 text-[#e89d7b] absolute left-3 top-3" />
             </div>
             <button
               type="submit"
-              className="btn-vintage-accent px-6 py-2.5 text-xs font-medium flex items-center gap-2"
+              className="btn-sunset px-6 py-2.5 text-xs font-bold flex items-center gap-2 cursor-pointer"
             >
               <span>Search Passport</span>
               <ArrowRight size={14} />
@@ -375,7 +375,7 @@ export const PassportPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleClear}
-                className="btn-vintage-outline px-4 py-2.5 text-xs"
+                className="btn-glass px-4 py-2.5 text-xs cursor-pointer"
               >
                 Clear
               </button>
@@ -384,7 +384,7 @@ export const PassportPage: React.FC = () => {
         </form>
 
         {/* Quick Sample Serials across sectors */}
-        <div className="pt-2 border-t border-[#e5e5e5] flex flex-wrap items-center gap-2 text-[11px] text-[#666666]">
+        <div className="pt-2 border-t border-white/10 flex flex-wrap items-center gap-2 text-[11px] text-[#cbb5aa]">
           <span>Showcase product:</span>
           {[
             { s: 'AAA12345678', label: 'Samsung Galaxy A55 5G (Batch AAA)' },
@@ -400,7 +400,7 @@ export const PassportPage: React.FC = () => {
                 setActiveSearchedSerial(item.s);
                 navigate(`/passport/${item.s}`, { replace: true });
               }}
-              className="px-2.5 py-0.5 bg-[#faf3dc] border border-[#e5e5e5] hover:border-[#413634] font-mono text-[#c5716d]"
+              className="px-2.5 py-1 bg-white/5 hover:bg-white/10 border border-[#d9825b]/25 hover:border-[#e89d7b]/50 rounded-lg font-mono text-[#f0a887] cursor-pointer transition-all"
               title={item.label}
             >
               <strong>{item.s}</strong> ({item.label})
@@ -411,18 +411,18 @@ export const PassportPage: React.FC = () => {
 
       {/* NOT FOUND: Error State */}
       {hasSearched && !product && !defectReport && (
-        <div className="p-8 vintage-card text-center space-y-3 bg-[#fffdf6] border border-[#b84a44]">
-          <div className="w-10 h-10 mx-auto rounded-none bg-[#fdf2f1] text-[#b84a44] border border-[#b84a44] flex items-center justify-center">
+        <div className="p-8 text-center space-y-3 bg-[#160e0a] border border-[#d9825b]/20 rounded-xl border border-rose-500/30">
+          <div className="w-10 h-10 mx-auto rounded-none bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-xl text-rose-400 border border-rose-500/30 flex items-center justify-center">
             <AlertTriangle size={20} />
           </div>
-          <h3 className="text-base text-[#413634] font-medium">No Record Found</h3>
-          <p className="text-xs text-[#666666]">
-            No verified digital passport found for serial <strong className="font-mono text-[#b84a44]">"{searchInput}"</strong>.
+          <h3 className="text-base text-white font-medium">No Record Found</h3>
+          <p className="text-xs text-[#cbb5aa]">
+            No verified digital passport found for serial <strong className="font-mono text-rose-400">"{searchInput}"</strong>.
           </p>
           <div className="pt-2">
             <button
               onClick={() => navigate('/shop-portal')}
-              className="btn-vintage-outline text-xs"
+              className="btn-glass text-xs"
             >
               Log New Defect Incident for this Serial as Service Technician
             </button>
@@ -434,29 +434,29 @@ export const PassportPage: React.FC = () => {
       {hasSearched && (product || defectReport) && (
         <div className="space-y-6">
           {/* Master Certificate & Container Overview Banner */}
-          <div className="p-6 vintage-card bg-[#fffcf8] space-y-5 border-l-4 border-l-[#2e6b4d]">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#e5e5e5] pb-4">
+          <div className="p-6 bg-[#140c08]/92 border border-[#d9825b]/30 rounded-3xl shadow-2xl space-y-6 backdrop-blur-2xl glow-copper">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#d9825b]/20 pb-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs uppercase font-mono tracking-widest text-[#2e6b4d] font-bold">
+                  <span className="text-xs uppercase font-mono tracking-widest text-emerald-400 font-bold">
                     Official EU DPP Directive (ESPR)
                   </span>
-                  <span className="text-xs px-2 py-0.5 bg-[#edf6f0] border border-[#2e6b4d] text-[#2e6b4d] font-mono">
+                  <span className="text-xs px-2 py-0.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 rounded-full font-mono">
                     Cryptographically Sealed (Step 6)
                   </span>
                 </div>
-                <h2 className="text-2xl text-[#413634] font-medium">
+                <h2 className="text-2xl font-serif font-bold text-white tracking-tight">
                   {product?.productModel || defectReport?.productModel || 'Samsung Galaxy A55 5G'}
                 </h2>
-                <div className="flex flex-wrap items-center gap-4 text-xs text-[#666666] pt-1">
-                  <span>Blockchain Serial / Container: <strong className="font-mono text-[#c5716d]">{product?.productId || activeSearchedSerial}</strong></span>
-                  <span>Batch: <strong className="font-mono text-[#413634]">{primaryBatchId}</strong></span>
+                <div className="flex flex-wrap items-center gap-4 text-xs text-[#cbb5aa] pt-1">
+                  <span>Blockchain Serial / Container: <strong className="font-mono text-[#f0a887]">{product?.productId || activeSearchedSerial}</strong></span>
+                  <span>Batch: <strong className="font-mono text-white">{primaryBatchId}</strong></span>
                   <span>Facility: <strong>{product?.assemblyFacility || 'Samsung Smart Mega-Hub 4, Gumi'}</strong></span>
                 </div>
               </div>
 
               {/* QR Code Anchor & Pictorial Download */}
-              <div className="flex items-center gap-3 bg-[#faf3dc] p-3 border border-[#e5e5e5]">
+              <div className="flex items-center gap-3 bg-[#1c120d] p-3 border border-[#d9825b]/30 rounded-2xl">
                 <QRCodeSVG
                   id="passport-qr-svg"
                   value={`https://geneatrace.vercel.app/passport/${product?.productId || activeSearchedSerial}`}
@@ -464,172 +464,108 @@ export const PassportPage: React.FC = () => {
                   level="M"
                 />
                 <div className="text-[10px] space-y-1">
-                  <div className="font-bold text-[#413634]">Live DPP QR</div>
+                  <div className="font-bold text-white">Live DPP QR</div>
                   <button
                     onClick={() => copyToClipboard(`https://geneatrace.vercel.app/passport/${product?.productId || activeSearchedSerial}`)}
-                    className="flex items-center gap-1 text-[#c5716d] hover:underline"
+                    className="flex items-center gap-1 text-[#f0a887] hover:underline"
                   >
                     <Copy size={11} />
                     <span>{copied ? 'Copied URL!' : 'Copy Link'}</span>
                   </button>
                   <button
                     onClick={downloadPictorialLabel}
-                    className="flex items-center gap-1 text-[#2e6b4d] font-bold hover:underline"
+                    className="flex items-center gap-1 text-emerald-400 font-bold hover:underline"
                     title="Download newly generated cryptographic serial no. as PNG pictorial label"
                   >
                     <Download size={11} />
                     <span>Download Label (PNG)</span>
                   </button>
-                  <div className="text-[#666666] font-mono text-[9px]">Merkle Anchored</div>
+                  <div className="text-[#cbb5aa] font-mono text-[9px]">Merkle Anchored</div>
                 </div>
               </div>
             </div>
 
             {/* Cryptographic Container & Merkle Details */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-[#faf3dc] p-3.5 border border-[#e5e5e5]">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-[#160e0a]/90 p-4 border border-[#d9825b]/25 rounded-2xl">
               <div>
-                <span className="text-[10px] text-[#666666] uppercase block">Merkle Root Hash</span>
-                <span className="font-mono text-[11px] text-[#413634] break-all">
+                <span className="text-[10px] text-[#e89d7b] font-mono font-bold uppercase block">Merkle Root Hash</span>
+                <span className="font-mono text-[11px] text-white break-all">
                   {product?.merkleRoot || '0x9f3b8a1c4e72d05f88b14a2c91e3f706'}
                 </span>
               </div>
               <div>
-                <span className="text-[10px] text-[#666666] uppercase block">Blockchain Anchor Tx</span>
-                <span className="font-mono text-[11px] text-[#2e6b4d] break-all">
+                <span className="text-[10px] text-[#e89d7b] font-mono font-bold uppercase block">Blockchain Anchor Tx</span>
+                <span className="font-mono text-[11px] text-emerald-400 break-all">
                   {product?.blockchainTx || '0xa45b98cf120194bc87123985'}
                 </span>
               </div>
               <div>
-                <span className="text-[10px] text-[#666666] uppercase block">Hardware Lock / Tamper Status</span>
-                <span className={`font-mono font-medium ${product?.isLocked ? 'text-[#b84a44]' : 'text-[#2e6b4d]'}`}>
-                  {product?.isLocked ? 'LOCKED (Tamper Triggered)' : 'Genuine OEM Attested'}
+                <span className="text-[10px] text-[#e89d7b] font-mono font-bold uppercase block">Hardware Lock / Tamper Status</span>
+                <span className={`font-mono font-bold ${product?.isLocked ? 'text-rose-400' : 'text-emerald-400'}`}>
+                  {product?.isLocked ? 'LOCKED (Tamper Triggered)' : '● Genuine OEM Attested'}
                 </span>
               </div>
             </div>
 
             {/* STRICT HIERARCHICAL 7-STEP WORKFLOW TABS */}
-            <div className="space-y-1.5 pt-2 border-t border-[#e5e5e5]">
-              <div className="flex items-center justify-between text-[11px] text-[#8b6c58] font-mono">
+            <div className="space-y-1.5 pt-2 border-t border-[#d9825b]/20">
+              <div className="flex items-center justify-between text-[11px] text-[#e89d7b] font-mono">
                 <span>EXPLAIN THE JURY ACCORDING TO THIS HIERARCHY:</span>
                 <span>STEPS 1 ➔ 16</span>
               </div>
 
-              <div className="flex flex-wrap items-center gap-1.5">
-                {/* 1. Genesis & Null Container */}
-                <button
-                  onClick={() => setActiveTab('genesis')}
-                  className={`px-3 py-1.5 text-xs font-medium border flex items-center gap-1.5 transition-all ${
-                    activeTab === 'genesis'
-                      ? 'bg-[#0284c7] text-white border-[#0284c7] shadow-xs'
-                      : 'bg-[#fffdf6] text-[#413634] border-[#e5e5e5] hover:border-[#0284c7]'
-                  }`}
-                >
-                  <Layers size={13} />
-                  <span>1. Genesis &amp; Null Container (Steps 1–3)</span>
-                </button>
-
-                {/* 2. Assembly Station Ingestion */}
-                <button
-                  onClick={() => setActiveTab('assembly')}
-                  className={`px-3 py-1.5 text-xs font-medium border flex items-center gap-1.5 transition-all ${
-                    activeTab === 'assembly'
-                      ? 'bg-[#2e6b4d] text-white border-[#2e6b4d] shadow-xs'
-                      : 'bg-[#fffdf6] text-[#413634] border-[#e5e5e5] hover:border-[#2e6b4d]'
-                  }`}
-                >
-                  <Smartphone size={13} />
-                  <span>2. Assembly Stations Ingestion (Steps 4–6)</span>
-                </button>
-
-                {/* 3. Logistics & Factory Custody */}
-                <button
-                  onClick={() => setActiveTab('logistics')}
-                  className={`px-3 py-1.5 text-xs font-medium border flex items-center gap-1.5 transition-all ${
-                    activeTab === 'logistics'
-                      ? 'bg-[#b87428] text-white border-[#b87428] shadow-xs'
-                      : 'bg-[#fffdf6] text-[#413634] border-[#e5e5e5] hover:border-[#b87428]'
-                  }`}
-                >
-                  <Truck size={13} />
-                  <span>3. Logistics &amp; Custody (Step 7)</span>
-                </button>
-
-                {/* 4. Retail Handover & Customer Sale */}
-                <button
-                  onClick={() => setActiveTab('retail_sale')}
-                  className={`px-3 py-1.5 text-xs font-medium border flex items-center gap-1.5 transition-all ${
-                    activeTab === 'retail_sale'
-                      ? 'bg-[#413634] text-white border-[#413634] shadow-xs'
-                      : 'bg-[#fffdf6] text-[#413634] border-[#e5e5e5] hover:border-[#413634]'
-                  }`}
-                >
-                  <UserCheck size={13} />
-                  <span>4. Retail Handover &amp; Customer Sale (Steps 8–9)</span>
-                </button>
-
-                {/* 5. Defect Backtrace */}
-                <button
-                  onClick={() => setActiveTab('rma_backtrace')}
-                  className={`px-3 py-1.5 text-xs font-medium border flex items-center gap-1.5 transition-all ${
-                    activeTab === 'rma_backtrace'
-                      ? 'bg-[#b84a44] text-white border-[#b84a44] shadow-xs'
-                      : 'bg-[#fdf2f1] text-[#b84a44] border-[#b84a44] hover:bg-[#b84a44] hover:text-white'
-                  }`}
-                >
-                  <AlertOctagon size={13} />
-                  <span>5. Customer Return &amp; Defect Backtrace (Steps 10–12)</span>
-                </button>
-
-                {/* 6. Batch Recall & Customer Re-Delivery */}
-                <button
-                  onClick={() => setActiveTab('recall_redelivery')}
-                  className={`px-3 py-1.5 text-xs font-medium border flex items-center gap-1.5 transition-all ${
-                    activeTab === 'recall_redelivery'
-                      ? 'bg-[#b84a44] text-white border-[#b84a44] shadow-xs'
-                      : 'bg-[#fffdf6] text-[#413634] border-[#e5e5e5] hover:border-[#b84a44]'
-                  }`}
-                >
-                  <RotateCcw size={13} />
-                  <span>6. Batch AAA Recall &amp; Re-Delivery (Steps 13–15)</span>
-                </button>
-
-                {/* 7. Third-Party Fake Part Lock */}
-                <button
-                  onClick={() => setActiveTab('antitamper_lock')}
-                  className={`px-3 py-1.5 text-xs font-medium border flex items-center gap-1.5 transition-all ${
-                    activeTab === 'antitamper_lock'
-                      ? 'bg-[#7c3aed] text-white border-[#7c3aed] shadow-xs'
-                      : 'bg-[#fffdf6] text-[#7c3aed] border-[#e5e5e5] hover:border-[#7c3aed]'
-                  }`}
-                >
-                  <Lock size={13} />
-                  <span>7. Third-Party Fake Part Auto-Lock (Security)</span>
-                </button>
+              <div className="flex flex-wrap items-center gap-2 font-sans">
+                {[
+                  { id: 'genesis' as WorkflowTab, label: '1. Genesis & Null Container (Steps 1–3)', icon: Layers },
+                  { id: 'assembly' as WorkflowTab, label: '2. Assembly Stations Ingestion (Steps 4–6)', icon: Smartphone },
+                  { id: 'logistics' as WorkflowTab, label: '3. Logistics & Custody (Step 7)', icon: Truck },
+                  { id: 'retail_sale' as WorkflowTab, label: '4. Retail Handover & Customer Sale (Steps 8–9)', icon: UserCheck },
+                  { id: 'rma_backtrace' as WorkflowTab, label: '5. Customer Return & Defect Backtrace (Steps 10–12)', icon: AlertOctagon },
+                  { id: 'recall_redelivery' as WorkflowTab, label: '6. Batch AAA Recall & Re-Delivery (Steps 13–15)', icon: RotateCcw },
+                  { id: 'antitamper_lock' as WorkflowTab, label: '7. Third-Party Fake Part Auto-Lock (Security)', icon: Lock },
+                ].map((item) => {
+                  const Icon = item.icon;
+                  const isActive = activeTab === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveTab(item.id)}
+                      className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
+                        isActive
+                          ? 'bg-gradient-to-r from-[#e89d7b] to-[#c67651] text-[#120a07] shadow-lg shadow-[#c67651]/30 font-bold border border-[#e89d7b]'
+                          : 'bg-[#160e0a]/90 text-[#cbb5aa] border border-[#d9825b]/25 hover:text-white hover:border-[#e89d7b]/50 hover:bg-[#20140e]'
+                      }`}
+                    >
+                      <Icon size={14} className={isActive ? 'text-[#120a07]' : 'text-[#e89d7b]'} />
+                      <span>{item.label}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
 
           {/* TAB 1: Genesis & Null Container (Steps 1–3) */}
           {activeTab === 'genesis' && (
-            <div className="p-6 vintage-card bg-[#fffcf8] space-y-6 border-l-4 border-l-[#0284c7] animate-in fade-in duration-200">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#e5e5e5] pb-3">
+            <div className="p-6 bg-[#140c08]/92 border border-[#d9825b]/25 rounded-3xl space-y-6 border-l-4 border-l-[#e89d7b] animate-in fade-in duration-200">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#d9825b]/20 pb-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 bg-[#e0f2fe] text-[#0284c7] text-[10px] font-mono font-bold uppercase">
+                    <span className="px-2 py-0.5 bg-[#e89d7b]/15 text-[#f0a887] border border-[#e89d7b]/30 rounded-xl text-[#e89d7b] text-[10px] font-mono font-bold uppercase">
                       Steps 1, 2 &amp; 3
                     </span>
-                    <h3 className="text-lg text-[#413634] font-medium">
+                    <h3 className="text-lg text-white font-medium">
                       Manufacturer Login Genesis &amp; Null Container Initialization
                     </h3>
                   </div>
-                  <p className="text-xs text-[#666666] mt-1">
+                  <p className="text-xs text-[#cbb5aa] mt-1">
                     Done in Manufacturer Login: Batch AAA assigned, cryptographic serial created with a null container.
                   </p>
                 </div>
 
                 <button
                   onClick={downloadNullContainerQr}
-                  className="btn-vintage-accent text-xs flex items-center gap-1.5 shadow-sm"
+                  className="btn-sunset text-xs flex items-center gap-1.5 shadow-sm"
                   title="Download Null Container QR code as PNG for scanning demonstration"
                 >
                   <Download size={13} />
@@ -640,59 +576,59 @@ export const PassportPage: React.FC = () => {
               {/* The 3 Steps Explanatory Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
                 {/* Step 1 */}
-                <div className="p-4 bg-[#faf3dc] border border-[#e5e5e5] space-y-2">
+                <div className="p-4 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-[#0284c7] text-white flex items-center justify-center font-bold text-[10px]">
+                    <span className="w-5 h-5 rounded-full bg-gradient-to-tr from-[#e89d7b] to-[#b85d38] text-[#120a07] text-white flex items-center justify-center font-bold text-[10px]">
                       1
                     </span>
-                    <strong className="text-sm text-[#413634]">Step 1: Batch Assigned</strong>
+                    <strong className="text-sm text-white">Step 1: Batch Assigned</strong>
                   </div>
-                  <div className="text-base text-[#0284c7] font-mono font-bold">
+                  <div className="text-base text-[#e89d7b] font-mono font-bold">
                     Batch: AAA
                   </div>
-                  <p className="text-[#666666] leading-relaxed">
+                  <p className="text-[#cbb5aa] leading-relaxed">
                     Manufacturer registers the production batch (Samsung Display Corp, Cleanroom Complex Alpha Line 3).
                   </p>
                 </div>
 
                 {/* Step 2 */}
-                <div className="p-4 bg-[#faf3dc] border border-[#e5e5e5] space-y-2">
+                <div className="p-4 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-[#0284c7] text-white flex items-center justify-center font-bold text-[10px]">
+                    <span className="w-5 h-5 rounded-full bg-gradient-to-tr from-[#e89d7b] to-[#b85d38] text-[#120a07] text-white flex items-center justify-center font-bold text-[10px]">
                       2
                     </span>
-                    <strong className="text-sm text-[#413634]">Step 2: Cryptographic Serial</strong>
+                    <strong className="text-sm text-white">Step 2: Cryptographic Serial</strong>
                   </div>
-                  <div className="text-base text-[#c5716d] font-mono font-bold">
+                  <div className="text-base text-[#f0a887] font-mono font-bold">
                     AAA12345678
                   </div>
-                  <p className="text-[#666666] leading-relaxed">
+                  <p className="text-[#cbb5aa] leading-relaxed">
                     A unique Blockchain Cryptographic serial number is generated to act as the unit's digital identity container.
                   </p>
                 </div>
 
                 {/* Step 3 */}
-                <div className="p-4 bg-[#e0f2fe] border border-[#0284c7] space-y-2">
+                <div className="p-4 bg-[#e89d7b]/15 text-[#f0a887] border border-[#e89d7b]/30 rounded-xl border border-[#d9825b]/40 space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-[#0284c7] text-white flex items-center justify-center font-bold text-[10px]">
+                    <span className="w-5 h-5 rounded-full bg-gradient-to-tr from-[#e89d7b] to-[#b85d38] text-[#120a07] text-white flex items-center justify-center font-bold text-[10px]">
                       3
                     </span>
-                    <strong className="text-sm text-[#0284c7]">Step 3: Container is NULL</strong>
+                    <strong className="text-sm text-[#e89d7b]">Step 3: Container is NULL</strong>
                   </div>
-                  <div className="text-xs px-2 py-0.5 bg-white text-[#0284c7] border border-[#0284c7] font-mono font-bold inline-block">
+                  <div className="text-xs px-2.5 py-1 bg-amber-500/15 text-amber-300 border border-amber-500/30 rounded-lg font-mono font-bold inline-block">
                     PAYLOAD: NULL (UNSEALED)
                   </div>
-                  <p className="text-[#413634] leading-relaxed">
+                  <p className="text-white leading-relaxed">
                     At this stage before assembly, the container holds no process events. It is primed to receive station scans.
                   </p>
                 </div>
               </div>
 
               {/* High-Resolution Null Container QR Code Plate for Demonstration */}
-              <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl text-white flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="p-5 bg-[#160e0a] border border-[#d9825b]/30 shadow-2xl rounded-2xl text-white flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="space-y-3 max-w-md">
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 font-mono text-[10px] font-bold uppercase border border-sky-500/30">
+                    <span className="px-2 py-0.5 rounded bg-[#e89d7b]/15 text-[#f0a887] font-mono text-[10px] font-bold uppercase border border-[#e89d7b]/30">
                       Demonstration Token
                     </span>
                     <span className="text-xs text-slate-400 font-mono">Step 3 Pictorial Asset</span>
@@ -706,14 +642,14 @@ export const PassportPage: React.FC = () => {
                   <div className="flex items-center gap-3 pt-1">
                     <button
                       onClick={downloadNullContainerQr}
-                      className="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-sky-500/20 transition-all"
+                      className="btn-sunset text-xs flex items-center gap-2"
                     >
                       <Download size={14} />
                       <span>Download Null QR (PNG)</span>
                     </button>
                     <button
                       onClick={() => navigate('/scanner')}
-                      className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs flex items-center gap-1.5 border border-slate-700 transition-all"
+                      className="btn-glass text-xs flex items-center gap-1.5"
                     >
                       <Smartphone size={13} className="text-emerald-400" />
                       <span>Open Station Scanner ➔</span>
@@ -722,7 +658,7 @@ export const PassportPage: React.FC = () => {
                 </div>
 
                 {/* Rendered Null QR Image Box */}
-                <div className="bg-white p-4 rounded-xl shadow-2xl flex flex-col items-center gap-2 text-slate-950">
+                <div className="bg-[#1c120d] p-4 rounded-2xl border border-[#d9825b]/30 shadow-2xl flex flex-col items-center gap-2 text-white">
                   <QRCodeSVG
                     id="null-container-qr-svg"
                     value={`https://geneatrace.vercel.app/scanner?target=${product?.productId || 'AAA12345678'}`}
@@ -739,24 +675,24 @@ export const PassportPage: React.FC = () => {
 
           {/* TAB 2: Assembly Station Ingestion (Steps 4–6) */}
           {activeTab === 'assembly' && (
-            <div className="p-6 vintage-card bg-[#fffcf8] space-y-5 border-l-4 border-l-[#2e6b4d] animate-in fade-in duration-200">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#e5e5e5] pb-3">
+            <div className="p-6 bg-[#140c08]/92 border border-[#d9825b]/25 rounded-3xl space-y-5 border-l-4 border-l-emerald-500 animate-in fade-in duration-200">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#d9825b]/20 pb-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 bg-[#edf6f0] text-[#2e6b4d] text-[10px] font-mono font-bold uppercase">
+                    <span className="px-2 py-0.5 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-xl text-emerald-400 text-[10px] font-mono font-bold uppercase">
                       Steps 4, 5 &amp; 6
                     </span>
-                    <h3 className="text-lg text-[#413634] font-medium">
+                    <h3 className="text-lg text-white font-medium">
                       Assembly Stations Ingestion &amp; Sealing (/scanner)
                     </h3>
                   </div>
-                  <p className="text-xs text-[#666666] mt-1">
+                  <p className="text-xs text-[#cbb5aa] mt-1">
                     On every stage after scanning, timestamp, machine ID, operator, and process are pushed to the container. Finally sealed under serial AAA12345678.
                   </p>
                 </div>
                 <button
                   onClick={() => navigate('/scanner')}
-                  className="btn-vintage-accent text-xs flex items-center gap-1.5"
+                  className="btn-sunset text-xs flex items-center gap-1.5"
                 >
                   <Smartphone size={13} />
                   <span>Scan Next Station at /scanner</span>
@@ -810,8 +746,8 @@ export const PassportPage: React.FC = () => {
                       key={stage.stageIndex}
                       className={`p-4 border text-xs space-y-2 ${
                         isFlagged
-                          ? 'bg-[#fdf2f1] border-[#b84a44]'
-                          : 'bg-[#faf3dc] border-[#e5e5e5]'
+                          ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-xl border-rose-500/30'
+                          : 'bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border-[#d9825b]/20'
                       }`}
                     >
                       <div className="flex items-center justify-between">
@@ -821,7 +757,7 @@ export const PassportPage: React.FC = () => {
                           }`}>
                             {stage.stageIndex}
                           </span>
-                          <strong className="text-sm text-[#413634]">{stage.name}</strong>
+                          <strong className="text-sm text-white">{stage.name}</strong>
                           {isFlagged && (
                             <span className="px-1.5 py-0.2 bg-[#b84a44] text-white text-[9px] font-mono">
                               ROOT CAUSE STAGE (MACHINE DISP-04)
@@ -830,25 +766,25 @@ export const PassportPage: React.FC = () => {
                         </div>
                         <span className={`font-mono text-[10px] px-2 py-0.5 border ${
                           isFlagged
-                            ? 'bg-white text-[#b84a44] border-[#b84a44]'
-                            : 'bg-white text-[#2e6b4d] border-[#2e6b4d]'
+                            ? 'bg-white text-rose-400 border-rose-500/30'
+                            : 'bg-white text-emerald-400 border-emerald-500/30'
                         }`}>
                           {stage.status}
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[11px] text-[#666666]">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[11px] text-[#cbb5aa]">
                         <div>
-                          Machine ID: <strong className="font-mono text-[#413634]">{stage.machineId}</strong>
+                          Machine ID: <strong className="font-mono text-white">{stage.machineId}</strong>
                         </div>
                         <div>
-                          Operator: <strong className="text-[#413634]">{stage.operator}</strong>
+                          Operator: <strong className="text-white">{stage.operator}</strong>
                         </div>
                         <div>
-                          Timestamp: <strong className="font-mono text-[#413634]">{stage.timestamp}</strong>
+                          Timestamp: <strong className="font-mono text-white">{stage.timestamp}</strong>
                         </div>
                         <div>
-                          Stage Hash: <strong className="font-mono text-[#413634]">{stage.hash?.slice(0, 10) || '0x9f3b...'}...</strong>
+                          Stage Hash: <strong className="font-mono text-white">{stage.hash?.slice(0, 10) || '0x9f3b...'}...</strong>
                         </div>
                       </div>
                     </div>
@@ -857,18 +793,18 @@ export const PassportPage: React.FC = () => {
               </div>
 
               {/* Step 6 Callout */}
-              <div className="p-3.5 bg-[#edf6f0] border border-[#2e6b4d] text-xs flex items-center justify-between">
+              <div className="p-3.5 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-xl border border-emerald-500/30 text-xs flex items-center justify-between">
                 <div>
-                  <strong className="text-[#2e6b4d] block font-mono">
+                  <strong className="text-emerald-400 block font-mono">
                     Step 6 Sealed Container: AAA12345678
                   </strong>
-                  <span className="text-[#666666]">
+                  <span className="text-[#cbb5aa]">
                     Merkle DAG Root Hash: <strong>{product?.merkleRoot || '0x9f3b8a1c4e72d05f88b14a2c91e3f706'}</strong>
                   </span>
                 </div>
                 <button
                   onClick={downloadPictorialLabel}
-                  className="btn-vintage-accent text-xs flex items-center gap-1"
+                  className="btn-sunset text-xs flex items-center gap-1"
                 >
                   <Download size={12} />
                   <span>Download Sealed Label (PNG)</span>
@@ -879,24 +815,24 @@ export const PassportPage: React.FC = () => {
 
           {/* TAB 3: Logistics & Factory Custody (Step 7) */}
           {activeTab === 'logistics' && (
-            <div className="p-6 vintage-card bg-[#fffcf8] space-y-5 border-l-4 border-l-[#b87428] animate-in fade-in duration-200">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#e5e5e5] pb-3">
+            <div className="p-6 bg-[#140c08]/92 border border-[#d9825b]/25 rounded-3xl space-y-5 border-l-4 border-l-amber-500 animate-in fade-in duration-200">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#d9825b]/20 pb-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 bg-[#fef7ec] text-[#b87428] text-[10px] font-mono font-bold uppercase">
+                    <span className="px-2 py-0.5 bg-amber-500/15 text-amber-300 border border-amber-500/30 rounded-xl text-[#b87428] text-[10px] font-mono font-bold uppercase">
                       Step 7
                     </span>
-                    <h3 className="text-lg text-[#413634] font-medium">
+                    <h3 className="text-lg text-white font-medium">
                       Manufacturer Logistics Chain of Custody
                     </h3>
                   </div>
-                  <p className="text-xs text-[#666666] mt-1">
+                  <p className="text-xs text-[#cbb5aa] mt-1">
                     Done in Manufacturer Login: Packing ➔ Warehouse Clearance ➔ Dispatched Air Corridor ➔ Delivered to Retail.
                   </p>
                 </div>
                 <button
                   onClick={() => navigate('/logistics')}
-                  className="btn-vintage-outline text-xs flex items-center gap-1"
+                  className="btn-glass text-xs flex items-center gap-1"
                 >
                   <span>Open Full Logistics Hub</span>
                   <ArrowRight size={12} />
@@ -904,37 +840,37 @@ export const PassportPage: React.FC = () => {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
-                <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5] space-y-1">
-                  <div className="text-[10px] text-[#666666] uppercase font-semibold">1. Factory Packing</div>
-                  <strong className="text-[#413634] block">Packaging &amp; Seal</strong>
-                  <div className="text-[10px] text-[#8b6c58]">Gumi Mega-Hub Cleanroom</div>
-                  <span className="inline-block mt-1 px-1.5 py-0.2 bg-[#edf6f0] text-[#2e6b4d] font-mono text-[9px]">
+                <div className="p-3 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 space-y-1">
+                  <div className="text-[10px] text-[#cbb5aa] uppercase font-semibold">1. Factory Packing</div>
+                  <strong className="text-white block">Packaging &amp; Seal</strong>
+                  <div className="text-[10px] text-[#e89d7b]">Gumi Mega-Hub Cleanroom</div>
+                  <span className="inline-block mt-1 px-1.5 py-0.2 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-xl text-emerald-400 font-mono text-[9px]">
                     COMPLETED
                   </span>
                 </div>
 
-                <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5] space-y-1">
-                  <div className="text-[10px] text-[#666666] uppercase font-semibold">2. Factory Warehouse</div>
-                  <strong className="text-[#413634] block">Outbound Clearance</strong>
-                  <div className="text-[10px] text-[#8b6c58]">Gumi Logistics Bay 2</div>
-                  <span className="inline-block mt-1 px-1.5 py-0.2 bg-[#edf6f0] text-[#2e6b4d] font-mono text-[9px]">
+                <div className="p-3 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 space-y-1">
+                  <div className="text-[10px] text-[#cbb5aa] uppercase font-semibold">2. Factory Warehouse</div>
+                  <strong className="text-white block">Outbound Clearance</strong>
+                  <div className="text-[10px] text-[#e89d7b]">Gumi Logistics Bay 2</div>
+                  <span className="inline-block mt-1 px-1.5 py-0.2 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-xl text-emerald-400 font-mono text-[9px]">
                     CLEARED
                   </span>
                 </div>
 
-                <div className="p-3 bg-[#faf3dc] border border-[#e5e5e5] space-y-1">
-                  <div className="text-[10px] text-[#666666] uppercase font-semibold">3. Dispatched</div>
-                  <strong className="text-[#413634] block">Air Freight Corridor</strong>
-                  <div className="text-[10px] text-[#8b6c58]">Incheon ➔ Bangalore Airport</div>
-                  <span className="inline-block mt-1 px-1.5 py-0.2 bg-[#edf6f0] text-[#2e6b4d] font-mono text-[9px]">
+                <div className="p-3 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 space-y-1">
+                  <div className="text-[10px] text-[#cbb5aa] uppercase font-semibold">3. Dispatched</div>
+                  <strong className="text-white block">Air Freight Corridor</strong>
+                  <div className="text-[10px] text-[#e89d7b]">Incheon ➔ Bangalore Airport</div>
+                  <span className="inline-block mt-1 px-1.5 py-0.2 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-xl text-emerald-400 font-mono text-[9px]">
                     DISPATCHED
                   </span>
                 </div>
 
-                <div className="p-3 bg-[#edf6f0] border border-[#2e6b4d] space-y-1">
-                  <div className="text-[10px] text-[#2e6b4d] uppercase font-semibold">4. Retail Store</div>
-                  <strong className="text-[#413634] block">Delivered to Retail</strong>
-                  <div className="text-[10px] text-[#2e6b4d]">Indiranagar Hub, Bangalore</div>
+                <div className="p-3 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-xl border border-emerald-500/30 space-y-1">
+                  <div className="text-[10px] text-emerald-400 uppercase font-semibold">4. Retail Store</div>
+                  <strong className="text-white block">Delivered to Retail</strong>
+                  <div className="text-[10px] text-emerald-400">Indiranagar Hub, Bangalore</div>
                   <span className="inline-block mt-1 px-1.5 py-0.2 bg-[#2e6b4d] text-white font-mono text-[9px]">
                     DELIVERED (STEP 8)
                   </span>
@@ -945,61 +881,61 @@ export const PassportPage: React.FC = () => {
 
           {/* TAB 4: Retail Handover & Customer Sale (Steps 8 & 9) */}
           {activeTab === 'retail_sale' && (
-            <div className="p-6 vintage-card bg-[#fffcf8] space-y-5 border-l-4 border-l-[#413634] animate-in fade-in duration-200">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#e5e5e5] pb-3">
+            <div className="p-6 bg-[#140c08]/92 border border-[#d9825b]/25 rounded-3xl space-y-5 border-l-4 border-l-[#e89d7b] animate-in fade-in duration-200">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#d9825b]/20 pb-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 bg-[#faf3dc] text-[#413634] text-[10px] font-mono font-bold uppercase">
+                    <span className="px-2 py-0.5 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl text-white text-[10px] font-mono font-bold uppercase">
                       Steps 8 &amp; 9
                     </span>
-                    <h3 className="text-lg text-[#413634] font-medium">
+                    <h3 className="text-lg text-white font-medium">
                       Retail Delivery &amp; Customer Selling Details
                     </h3>
                   </div>
-                  <p className="text-xs text-[#666666] mt-1">
+                  <p className="text-xs text-[#cbb5aa] mt-1">
                     Once delivered to retail, retail login takes over. Selling details uploaded in retail login page.
                   </p>
                 </div>
-                <span className="px-2.5 py-1 text-xs border bg-[#edf6f0] text-[#2e6b4d] border-[#2e6b4d] font-mono">
+                <span className="px-2.5 py-1 text-xs border bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-xl text-emerald-400 border-emerald-500/30 font-mono">
                   {product?.customerSale?.status || 'Active Customer Ownership'}
                 </span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 bg-[#faf3dc] border border-[#e5e5e5] space-y-2">
-                  <span className="text-[10px] text-[#666666] uppercase block font-semibold">Step 9: Customer Information</span>
-                  <div className="text-base text-[#413634] font-medium">
+                <div className="p-4 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 space-y-2">
+                  <span className="text-[10px] text-[#cbb5aa] uppercase block font-semibold">Step 9: Customer Information</span>
+                  <div className="text-base text-white font-medium">
                     {product?.customerSale?.customerName || 'Vikram Malhotra'}
                   </div>
-                  <div className="text-xs text-[#666666] font-mono">
+                  <div className="text-xs text-[#cbb5aa] font-mono">
                     Phone: {product?.customerSale?.phone || '+91 98765 43210'}
                   </div>
-                  <div className="text-xs text-[#666666]">
+                  <div className="text-xs text-[#cbb5aa]">
                     Delivery: 100ft Road, Indiranagar, Bangalore, Karnataka
                   </div>
                 </div>
 
-                <div className="p-4 bg-[#faf3dc] border border-[#e5e5e5] space-y-2">
-                  <span className="text-[10px] text-[#666666] uppercase block font-semibold">Retail Sale Record (Retailer Login)</span>
-                  <div className="text-xs text-[#413634]">
+                <div className="p-4 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 space-y-2">
+                  <span className="text-[10px] text-[#cbb5aa] uppercase block font-semibold">Retail Sale Record (Retailer Login)</span>
+                  <div className="text-xs text-white">
                     Retail Store: <strong>{product?.customerSale?.retailerShop || 'Apex Retail & Service Hub - Indiranagar'}</strong>
                   </div>
-                  <div className="text-xs text-[#413634] font-mono">
+                  <div className="text-xs text-white font-mono">
                     Invoice No: <strong>{product?.customerSale?.invoiceNo || 'INV-BLR-2026-8812'}</strong>
                   </div>
-                  <div className="text-xs text-[#666666]">
+                  <div className="text-xs text-[#cbb5aa]">
                     Sale Date: <strong className="font-mono">{product?.customerSale?.saleDate || '2026-10-15'}</strong>
                   </div>
                 </div>
               </div>
 
               <div className="pt-2 flex items-center justify-between text-xs">
-                <span className="text-[#666666]">
+                <span className="text-[#cbb5aa]">
                   Retailers can update customer invoice and sales data via the Retail Portal:
                 </span>
                 <button
                   onClick={() => navigate('/shop-portal')}
-                  className="btn-vintage-outline text-xs flex items-center gap-1"
+                  className="btn-glass text-xs flex items-center gap-1"
                 >
                   <span>Open Retail Portal (/shop-portal)</span>
                   <ArrowRight size={12} />
@@ -1010,26 +946,26 @@ export const PassportPage: React.FC = () => {
 
           {/* TAB 5: Customer Return & Defect Backtrace (Steps 10–12) */}
           {activeTab === 'rma_backtrace' && (
-            <div className="p-6 vintage-card bg-[#fffcf8] space-y-5 border-l-4 border-l-[#b84a44] animate-in fade-in duration-200">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#e5e5e5] pb-3">
+            <div className="p-6 bg-[#140c08]/92 border border-[#d9825b]/25 rounded-3xl space-y-5 border-l-4 border-l-rose-500 animate-in fade-in duration-200">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#d9825b]/20 pb-3">
                 <div className="flex items-center gap-2">
-                  <AlertOctagon className="text-[#b84a44]" size={20} />
+                  <AlertOctagon className="text-rose-400" size={20} />
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 bg-[#fdf2f1] text-[#b84a44] text-[10px] font-mono font-bold uppercase">
+                      <span className="px-2 py-0.5 bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-xl text-rose-400 text-[10px] font-mono font-bold uppercase">
                         Steps 10, 11 &amp; 12
                       </span>
-                      <h3 className="text-lg text-[#413634] font-medium">
+                      <h3 className="text-lg text-white font-medium">
                         Customer Return, Retailer RMA &amp; Root Cause Backtrace
                       </h3>
                     </div>
-                    <p className="text-xs text-[#666666] mt-0.5">
+                    <p className="text-xs text-[#cbb5aa] mt-0.5">
                       Customer returns device with issue; retailer files report and sends to manufacturer; manufacturer backtraces to Stage 2 Machine DISP-04.
                     </p>
                   </div>
                 </div>
 
-                <span className="px-2.5 py-1 text-xs border bg-[#fdf2f1] text-[#b84a44] border-[#b84a44] font-mono">
+                <span className="px-2.5 py-1 text-xs border bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-xl text-rose-400 border-rose-500/30 font-mono">
                   {defectReport?.status || 'Defect Incident Logged'}
                 </span>
               </div>
@@ -1037,38 +973,38 @@ export const PassportPage: React.FC = () => {
               {/* 2 Primary Informations Given by the Shopkeeper */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* 1. What is the Reported Defect */}
-                <div className="p-4 bg-[#fdf2f1] border border-[#b84a44] space-y-2">
+                <div className="p-4 bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-xl border border-rose-500/30 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs uppercase tracking-wider text-[#b84a44] font-semibold flex items-center gap-1.5">
+                    <span className="text-xs uppercase tracking-wider text-rose-400 font-semibold flex items-center gap-1.5">
                       <AlertTriangle size={14} />
                       <span>Step 10: Reported Issue (Symptoms)</span>
                     </span>
-                    <span className="text-[10px] text-[#666666]">Customer Return</span>
+                    <span className="text-[10px] text-[#cbb5aa]">Customer Return</span>
                   </div>
-                  <p className="text-xs text-[#413634] leading-relaxed font-medium">
+                  <p className="text-xs text-white leading-relaxed font-medium">
                     {defectReport?.problemDescription ||
                       'Customer Vikram Malhotra returned device after 2 weeks: Screen flickering and persistent green vertical line post-unboxing.'}
                   </p>
-                  <div className="text-[11px] text-[#8b6c58] pt-1 border-t border-[#f5c6cb]">
+                  <div className="text-[11px] text-[#e89d7b] pt-1 border-t border-[#f5c6cb]">
                     Category: <strong>{defectReport?.problemCategory || 'Screen & Display'}</strong> • Serial: <span className="font-mono">{product?.productId}</span>
                   </div>
                 </div>
 
                 {/* 2. What May Be the Cause (Suspected Cause & RMA) */}
-                <div className="p-4 bg-[#faf3dc] border border-[#e5e5e5] space-y-2">
+                <div className="p-4 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs uppercase tracking-wider text-[#b87428] font-semibold flex items-center gap-1.5">
                       <Wrench size={14} />
                       <span>Step 11 &amp; 12: Root Cause Backtrace</span>
                     </span>
-                    <span className="text-[10px] text-[#666666]">Manufacturer Graph Traversal</span>
+                    <span className="text-[10px] text-[#cbb5aa]">Manufacturer Graph Traversal</span>
                   </div>
-                  <p className="text-xs text-[#413634] leading-relaxed italic">
+                  <p className="text-xs text-white leading-relaxed italic">
                     "{defectReport?.suspectedCause ||
                       'Stage 2 Machine DISP-04 thermal lamination thermocouple drift (+8.2°C) resulting in micro-delamination of Super AMOLED polarizer.'}"
                   </p>
-                  <div className="text-[11px] text-[#8b6c58] pt-1 border-t border-[#e5e5e5]">
-                    RMA Docket: <strong className="font-mono text-[#c5716d]">RMA-BLR-AAA12345678</strong> • Sent to Gumi Mega-Hub
+                  <div className="text-[11px] text-[#e89d7b] pt-1 border-t border-[#d9825b]/20">
+                    RMA Docket: <strong className="font-mono text-[#f0a887]">RMA-BLR-AAA12345678</strong> • Sent to Gumi Mega-Hub
                   </div>
                 </div>
               </div>
@@ -1077,20 +1013,20 @@ export const PassportPage: React.FC = () => {
 
           {/* TAB 6: Batch Recall & Customer Re-Delivery (Steps 13–15) */}
           {activeTab === 'recall_redelivery' && (
-            <div className="p-6 vintage-card bg-[#fffcf8] space-y-5 border-l-4 border-l-[#b84a44] animate-in fade-in duration-200">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#e5e5e5] pb-3">
+            <div className="p-6 bg-[#140c08]/92 border border-[#d9825b]/25 rounded-3xl space-y-5 border-l-4 border-l-rose-500 animate-in fade-in duration-200">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#d9825b]/20 pb-3">
                 <div className="flex items-center gap-2">
-                  <RotateCcw className="text-[#b84a44]" size={20} />
+                  <RotateCcw className="text-rose-400" size={20} />
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 bg-[#fdf2f1] text-[#b84a44] text-[10px] font-mono font-bold uppercase">
+                      <span className="px-2 py-0.5 bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-xl text-rose-400 text-[10px] font-mono font-bold uppercase">
                         Steps 13, 14 &amp; 15
                       </span>
-                      <h3 className="text-lg text-[#413634] font-medium">
+                      <h3 className="text-lg text-white font-medium">
                         Batch AAA Recall, Repair &amp; Customer Re-Delivery
                       </h3>
                     </div>
-                    <p className="text-xs text-[#666666] mt-0.5">
+                    <p className="text-xs text-[#cbb5aa] mt-0.5">
                       Manufacturer recalls all phones from Batch AAA; repairs unit and returns it to retailer; retailer delivers back to customer.
                     </p>
                   </div>
@@ -1098,7 +1034,7 @@ export const PassportPage: React.FC = () => {
 
                 <button
                   onClick={() => navigate('/company-defects')}
-                  className="btn-vintage-accent text-xs flex items-center gap-1.5"
+                  className="btn-sunset text-xs flex items-center gap-1.5"
                 >
                   <span>Corporate Recall Command Center</span>
                   <ArrowRight size={13} />
@@ -1107,32 +1043,32 @@ export const PassportPage: React.FC = () => {
 
               {/* 3 Action Columns */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                <div className="p-4 bg-[#fdf2f1] border border-[#b84a44] space-y-2">
-                  <div className="text-[10px] text-[#b84a44] uppercase font-bold">Step 13: Full Batch Recall</div>
-                  <div className="text-base font-mono font-bold text-[#b84a44]">
+                <div className="p-4 bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-xl border border-rose-500/30 space-y-2">
+                  <div className="text-[10px] text-rose-400 uppercase font-bold">Step 13: Full Batch Recall</div>
+                  <div className="text-base font-mono font-bold text-rose-400">
                     Batch AAA Recalled
                   </div>
-                  <p className="text-[#413634] leading-relaxed">
+                  <p className="text-white leading-relaxed">
                     Manufacturer verified DISP-04 defect signature across all sister units in Batch AAA. Emergency stop-sale transmitted.
                   </p>
                 </div>
 
-                <div className="p-4 bg-[#faf3dc] border border-[#e5e5e5] space-y-2">
-                  <div className="text-[10px] text-[#2e6b4d] uppercase font-bold">Step 14: Factory Repair</div>
-                  <div className="text-base font-mono font-bold text-[#2e6b4d]">
+                <div className="p-4 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 space-y-2">
+                  <div className="text-[10px] text-emerald-400 uppercase font-bold">Step 14: Factory Repair</div>
+                  <div className="text-base font-mono font-bold text-emerald-400">
                     Repaired &amp; Reshipped
                   </div>
-                  <p className="text-[#413634] leading-relaxed">
+                  <p className="text-white leading-relaxed">
                     Display module replaced with certified unit AAA-0042. Shipped back to Apex Retail Hub, Indiranagar.
                   </p>
                 </div>
 
-                <div className="p-4 bg-[#edf6f0] border border-[#2e6b4d] space-y-2">
-                  <div className="text-[10px] text-[#2e6b4d] uppercase font-bold">Step 15: Customer Handover</div>
-                  <div className="text-base font-mono font-bold text-[#2e6b4d]">
+                <div className="p-4 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-xl border border-emerald-500/30 space-y-2">
+                  <div className="text-[10px] text-emerald-400 uppercase font-bold">Step 15: Customer Handover</div>
+                  <div className="text-base font-mono font-bold text-emerald-400">
                     Re-Delivered to Vikram
                   </div>
-                  <p className="text-[#413634] leading-relaxed">
+                  <p className="text-white leading-relaxed">
                     Retailer contacts customer Vikram Malhotra (+91 98765 43210) and hands over the verified device.
                   </p>
                 </div>
@@ -1142,8 +1078,8 @@ export const PassportPage: React.FC = () => {
 
           {/* TAB 7: Third-Party Fake Part Lock (Security Step 16) */}
           {activeTab === 'antitamper_lock' && (
-            <div className="p-6 vintage-card bg-[#fffcf8] space-y-5 border-l-4 border-l-[#7c3aed] animate-in fade-in duration-200">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#e5e5e5] pb-3">
+            <div className="p-6 bg-[#140c08]/92 border border-[#d9825b]/25 rounded-3xl space-y-5 border-l-4 border-l-purple-500 animate-in fade-in duration-200">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#d9825b]/20 pb-3">
                 <div className="flex items-center gap-2">
                   <Lock className="text-[#7c3aed]" size={20} />
                   <div>
@@ -1151,11 +1087,11 @@ export const PassportPage: React.FC = () => {
                       <span className="px-2 py-0.5 bg-[#f5f3ff] text-[#7c3aed] text-[10px] font-mono font-bold uppercase">
                         Security Rule
                       </span>
-                      <h3 className="text-lg text-[#413634] font-medium">
+                      <h3 className="text-lg text-white font-medium">
                         Third-Party Repair Counterfeit Lockout
                       </h3>
                     </div>
-                    <p className="text-xs text-[#666666] mt-0.5">
+                    <p className="text-xs text-[#cbb5aa] mt-0.5">
                       If customer goes to a 3rd party center and replaces OEM parts with fake components, connecting to internet triggers cryptographic lock immediately.
                     </p>
                   </div>
@@ -1163,7 +1099,7 @@ export const PassportPage: React.FC = () => {
 
                 <button
                   onClick={() => navigate('/security')}
-                  className="btn-vintage-outline text-xs flex items-center gap-1.5"
+                  className="btn-glass text-xs flex items-center gap-1.5"
                 >
                   <Lock size={13} className="text-[#7c3aed]" />
                   <span>Open Hardware Lock Console</span>
@@ -1172,32 +1108,32 @@ export const PassportPage: React.FC = () => {
 
               {/* Compare Genuine vs Fake */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                <div className="p-4 bg-[#edf6f0] border border-[#2e6b4d] space-y-2">
+                <div className="p-4 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-xl border border-emerald-500/30 space-y-2">
                   <div className="flex items-center justify-between">
-                    <strong className="text-sm text-[#2e6b4d]">Genuine OEM Screen</strong>
+                    <strong className="text-sm text-emerald-400">Genuine OEM Screen</strong>
                     <span className="px-1.5 py-0.2 bg-[#2e6b4d] text-white font-mono text-[9px]">
                       VERIFIED PASS
                     </span>
                   </div>
-                  <div className="font-mono text-xs font-bold text-[#413634]">
+                  <div className="font-mono text-xs font-bold text-white">
                     Component Serial: AAA-0042
                   </div>
-                  <p className="text-[#666666]">
+                  <p className="text-[#cbb5aa]">
                     Matches Merkle DAG root. Hardware attestation passes on every internet heartbeat.
                   </p>
                 </div>
 
-                <div className="p-4 bg-[#fdf2f1] border border-[#b84a44] space-y-2">
+                <div className="p-4 bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-xl border border-rose-500/30 space-y-2">
                   <div className="flex items-center justify-between">
-                    <strong className="text-sm text-[#b84a44]">3rd-Party Fake Screen</strong>
+                    <strong className="text-sm text-rose-400">3rd-Party Fake Screen</strong>
                     <span className="px-1.5 py-0.2 bg-[#b84a44] text-white font-mono text-[9px]">
                       AUTO-LOCK TRIGGERED
                     </span>
                   </div>
-                  <div className="font-mono text-xs font-bold text-[#b84a44]">
+                  <div className="font-mono text-xs font-bold text-rose-400">
                     Component Serial: FAKE-DISP-9999
                   </div>
-                  <p className="text-[#b84a44]">
+                  <p className="text-rose-400">
                     Zero hash match! As soon as phone connects to Wi-Fi / 5G, device firmware executes remote cryptographic lock.
                   </p>
                 </div>

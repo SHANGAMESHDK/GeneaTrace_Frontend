@@ -1,35 +1,50 @@
 @import "tailwindcss";
 
+@theme {
+  --font-serif: "Times New Roman", Times, Baskerville, Georgia, serif;
+  --font-sans: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, "Courier New", monospace;
+}
+
 @layer base {
   :root {
-    --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
+    /* Times New Roman & Arial Luxury Typography Combination */
+    --font-serif: 'Times New Roman', Times, Baskerville, Georgia, serif;
+    --font-sans: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+    --font-mono: 'JetBrains Mono', Consolas, 'Courier New', monospace;
 
-    /* Modern Commercial SaaS Color Palette */
-    --color-bg: #f8fafc;
-    --color-bg-secondary: #f1f5f9;
-    --color-card: #ffffff;
-    --color-text: #0f172a;
-    --color-text-secondary: #475569;
-    --color-text-muted: #64748b;
-    --color-primary: #2563eb;
-    --color-primary-hover: #1d4ed8;
-    --color-border: #e2e8f0;
-    --color-border-dark: #cbd5e1;
+    /* Deep Warm Roasted Espresso & Luxury Copper/Bronze Palette */
+    --color-bg: #0b0705;
+    --color-bg-secondary: #120b08;
+    --color-card: rgba(24, 16, 12, 0.82);
+    --color-card-border: rgba(224, 148, 112, 0.22);
+    --color-text: #f9f6f3;
+    --color-text-secondary: #dcd0c8;
+    --color-text-muted: #a69489;
+    
+    /* Warm Bronze, Copper & Champagne Accents */
+    --color-primary: #e89d7b;
+    --color-primary-hover: #f0a887;
+    --color-accent-copper: #d9825b;
+    --color-accent-bronze: #b85d38;
+    --color-accent-champagne: #f7d5c5;
+    --color-border: rgba(255, 255, 255, 0.1);
+    --color-border-dark: rgba(224, 148, 112, 0.25);
 
     /* Status Accents */
-    --color-success: #059669;
-    --color-success-bg: #ecfdf5;
-    --color-warning: #d97706;
-    --color-warning-bg: #fffbeb;
-    --color-critical: #e11d48;
-    --color-critical-bg: #fff1f2;
-    --color-accent-blue: #0284c7;
-    --color-accent-blue-bg: #f0f9ff;
+    --color-success: #34d399;
+    --color-success-bg: rgba(52, 211, 153, 0.15);
+    --color-warning: #fbbf24;
+    --color-warning-bg: rgba(251, 191, 36, 0.15);
+    --color-critical: #ef4444;
+    --color-critical-bg: rgba(239, 68, 68, 0.15);
+    --color-accent-blue: #38bdf8;
+    --color-accent-blue-bg: rgba(56, 189, 248, 0.15);
   }
 
   * {
     border-color: var(--color-border);
+    box-sizing: border-box;
   }
 
   body {
@@ -37,175 +52,214 @@
     background-color: var(--color-bg);
     color: var(--color-text);
     overflow-x: hidden;
-    font-size: 13.5px;
+    font-size: 14px;
     line-height: 1.6;
     font-weight: 400;
-    letter-spacing: -0.01em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Editorial Headings in Warm Champagne Serif */
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-sans);
-    font-weight: 600;
-    color: var(--color-text);
-    letter-spacing: -0.02em;
+    font-family: var(--font-serif);
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
-  /* Sleek Modern Scrollbar */
+  h1 { font-size: 2.25rem; }
+  h2 { font-size: 1.65rem; }
+  h3 { font-size: 1.3rem; }
+  h4 { font-size: 1.1rem; }
+
+  /* Sleek Warm Bronze Scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: transparent;
+    background: #0b0705;
   }
   ::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: rgba(224, 148, 112, 0.35);
     border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    background: rgba(224, 148, 112, 0.7);
   }
 }
 
-.font-sans-modern {
-  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+/* Typography Classes - Times New Roman & Arial */
+.font-serif, .font-serif-vintage, .font-heading, .font-times {
+  font-family: 'Times New Roman', Times, Baskerville, Georgia, serif !important;
 }
 
-.font-mono-code {
-  font-family: 'JetBrains Mono', monospace;
+.font-sans, .font-sans-modern, .font-body, .font-arial {
+  font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif !important;
 }
 
-/* Backwards compatibility helper for existing pages */
-.font-serif-vintage {
-  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+.font-mono, .font-mono-code {
+  font-family: 'JetBrains Mono', Consolas, 'Courier New', monospace !important;
 }
 
-/* Modern Commercial Buttons */
-.btn-vintage-primary, .btn-modern-primary {
-  background: #ffffff;
-  color: #0f172a;
-  border-radius: 10px;
-  padding: 8px 18px;
-  font-size: 12.5px;
-  font-weight: 500;
-  border: 1px solid #e2e8f0;
-  cursor: pointer;
-  letter-spacing: -0.01em;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+/* Overlap & Truncation Guards */
+.prevent-overlap {
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.badge-pill {
+  white-space: nowrap;
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-}
-
-.btn-vintage-primary:hover, .btn-modern-primary:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.07);
-}
-
-.btn-vintage-accent, .btn-modern-accent {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  color: #ffffff;
-  border-radius: 10px;
-  padding: 8px 18px;
-  font-size: 12.5px;
-  font-weight: 500;
-  border: 1px solid #1d4ed8;
-  cursor: pointer;
-  letter-spacing: -0.01em;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 2px 4px 0 rgba(37, 99, 235, 0.2);
-}
-
-.btn-vintage-accent:hover, .btn-modern-accent:hover {
-  background: linear-gradient(135deg, #1d4ed8, #1e40af);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 12px 0 rgba(37, 99, 235, 0.25);
-}
-
-.btn-vintage-outline, .btn-modern-outline {
-  background: #ffffff;
-  color: #334155;
-  border-radius: 10px;
-  padding: 8px 16px;
-  font-size: 12.5px;
-  font-weight: 500;
-  border: 1px solid #e2e8f0;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-}
-
-.btn-vintage-outline:hover, .btn-modern-outline:hover {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
-  color: #0f172a;
-  transform: translateY(-1px);
-}
-
-/* Modern Rounded Cards */
-.vintage-card, .modern-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.vintage-card:hover, .modern-card:hover {
-  box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
-}
-
-.vintage-card-secondary, .modern-card-secondary {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-}
-
-/* Glassmorphism utilities */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-}
-
-.glass-badge {
-  background: rgba(241, 245, 249, 0.7);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  gap: 4px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
   border-radius: 9999px;
 }
 
-/* Animated Glow & Shimmer */
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+/* Warm Champagne & Copper Pill Buttons */
+.btn-sunset, .btn-vintage-accent, .btn-modern-accent {
+  font-family: var(--font-sans);
+  background: linear-gradient(135deg, #e89d7b 0%, #c67651 100%);
+  color: #120a07;
+  border-radius: 9999px;
+  padding: 9px 24px;
+  font-size: 13px;
+  font-weight: 700;
+  border: 1px solid rgba(255, 230, 215, 0.3);
+  cursor: pointer;
+  line-height: 1.4;
+  min-height: 40px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 20px -2px rgba(217, 130, 91, 0.4);
+  white-space: nowrap;
 }
 
-.animate-shimmer {
-  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
-  background-size: 200% 100%;
-  animation: shimmer 2.5s infinite;
+.btn-sunset:hover, .btn-vintage-accent:hover, .btn-modern-accent:hover {
+  background: linear-gradient(135deg, #f0a887 0%, #d4825d 100%);
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 26px -2px rgba(217, 130, 91, 0.6);
 }
 
-/* Universal Soft Rounded Corners Safeguard */
-.rounded-none {
-  border-radius: 12px !important;
+.btn-sunset:active, .btn-vintage-accent:active, .btn-modern-accent:active {
+  transform: translateY(0);
 }
 
-input, button, select, textarea {
-  border-radius: 10px;
+/* Translucent Smoked Bronze Glass Buttons */
+.btn-glass, .btn-vintage-outline, .btn-modern-outline {
+  font-family: var(--font-sans);
+  background: rgba(255, 255, 255, 0.05);
+  color: #f1f5f9;
+  border-radius: 9999px;
+  padding: 9px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid rgba(224, 148, 112, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  cursor: pointer;
+  line-height: 1.4;
+  min-height: 40px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.35);
+  white-space: nowrap;
+}
+
+.btn-glass:hover, .btn-vintage-outline:hover, .btn-modern-outline:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(232, 157, 123, 0.5);
+  color: #ffffff;
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 16px 0 rgba(217, 130, 91, 0.2);
+}
+
+.btn-vintage-primary, .btn-modern-primary {
+  font-family: var(--font-sans);
+  background: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid rgba(224, 148, 112, 0.2);
+  cursor: pointer;
+  min-height: 38px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-vintage-primary:hover, .btn-modern-primary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(232, 157, 123, 0.45);
+  transform: translateY(-1px);
+}
+
+/* Luxury Smoked Bronze Glassmorphic Cards */
+.vintage-card, .modern-card, .glass-panel {
+  background: rgba(24, 16, 12, 0.82);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(224, 148, 112, 0.2);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7), inset 0 1px 1px 0 rgba(255, 255, 255, 0.08);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vintage-card:hover, .modern-card:hover, .glass-panel:hover {
+  border-color: rgba(232, 157, 123, 0.4);
+  box-shadow: 0 16px 40px -5px rgba(0, 0, 0, 0.8), 0 0 35px -5px rgba(217, 130, 91, 0.2);
+}
+
+.vintage-card-secondary, .modern-card-secondary {
+  background: rgba(18, 11, 8, 0.75);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(224, 148, 112, 0.12);
+  border-radius: 14px;
+}
+
+/* Glass Badges & Pills */
+.glass-badge {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(224, 148, 112, 0.18);
+  border-radius: 9999px;
+  color: #f1f5f9;
+}
+
+/* Warm Copper / Bronze Glow Helpers */
+.glow-copper, .glow-orange {
+  box-shadow: 0 0 35px -5px rgba(217, 130, 91, 0.3);
+}
+
+.glow-bronze, .glow-amber {
+  box-shadow: 0 0 35px -5px rgba(184, 93, 56, 0.3);
+}
+
+.glow-champagne {
+  box-shadow: 0 0 35px -5px rgba(232, 157, 123, 0.28);
+}
+
+.glow-emerald {
+  box-shadow: 0 0 35px -5px rgba(52, 211, 153, 0.35);
 }
 
 /* Smooth Focus & Transition Classes */
@@ -213,3 +267,127 @@ button, a {
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Html5Qrcode Scanner Overrides */
+#shopkeeper-barcode-reader,
+#geneatrace-mobile-camera-reader {
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+  border: none !important;
+}
+
+#shopkeeper-barcode-reader video,
+#geneatrace-mobile-camera-reader video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 16px !important;
+}
+
+#shopkeeper-barcode-reader #qr-shaded-region,
+#geneatrace-mobile-camera-reader #qr-shaded-region {
+  border-radius: 16px !important;
+}
+
+#shopkeeper-barcode-reader img,
+#geneatrace-mobile-camera-reader img {
+  display: none !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   GLOBAL WARM BRONZE DARK GLASS OVERRIDES
+───────────────────────────────────────────────────────────── */
+.bg-white:not(#null-container-qr-svg *):not(#passport-qr-svg *) {
+  background-color: rgba(24, 16, 12, 0.88) !important;
+  color: #f9f6f3;
+}
+
+/* Vintage light parchment color overrides to Warm Bronze */
+[class*="#fffcf8"], [class*="#fffdf6"] {
+  background-color: rgba(20, 12, 8, 0.92) !important;
+  color: #ffffff !important;
+}
+
+[class*="#faf3dc"] {
+  background-color: rgba(28, 18, 13, 0.85) !important;
+  color: #ffffff !important;
+}
+
+[class*="#413634"] {
+  color: #ffffff !important;
+}
+
+[class*="#666666"] {
+  color: #cbb5aa !important;
+}
+
+[class*="#e5e5e5"] {
+  border-color: rgba(217, 130, 91, 0.22) !important;
+}
+
+.bg-slate-50, .bg-slate-50\/70, .bg-slate-50\/80, .bg-slate-50\/90 {
+  background-color: rgba(18, 11, 8, 0.72) !important;
+}
+
+.bg-slate-100, .bg-slate-100\/90, .bg-slate-100\/80 {
+  background-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+.text-slate-900 {
+  color: #ffffff !important;
+}
+
+.text-slate-800 {
+  color: #f7ede8 !important;
+}
+
+.text-slate-700 {
+  color: #e2d5ce !important;
+}
+
+.text-slate-600 {
+  color: #cbb5aa !important;
+}
+
+.text-slate-500 {
+  color: #a69489 !important;
+}
+
+.border-slate-200, .border-slate-100, .border-slate-200\/80, .border-slate-200\/60 {
+  border-color: rgba(224, 148, 112, 0.18) !important;
+}
+
+/* Global Input & Form Dark Overrides */
+input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+  background-color: rgba(18, 11, 8, 0.88) !important;
+  color: #ffffff !important;
+  border-color: rgba(224, 148, 112, 0.25) !important;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: rgba(232, 157, 123, 0.6) !important;
+  box-shadow: 0 0 15px rgba(217, 130, 91, 0.25) !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #7d6b62 !important;
+}
+
+/* Tables in Dark Glass */
+table {
+  color: #f9f6f3;
+}
+
+th {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+  color: #dcd0c8 !important;
+  border-color: rgba(224, 148, 112, 0.12) !important;
+}
+
+td {
+  border-color: rgba(224, 148, 112, 0.08) !important;
+}
+
+tr:hover td {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+}

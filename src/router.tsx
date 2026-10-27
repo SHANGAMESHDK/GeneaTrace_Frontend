@@ -77,6 +77,14 @@ export const router = createBrowserRouter([
         element: <ShopkeeperPortalPage />,
       },
       {
+        path: 'shopkeeper-portal',
+        element: <ShopkeeperPortalPage />,
+      },
+      {
+        path: 'analytics',
+        element: <ManufacturingLineagePage />,
+      },
+      {
         path: 'company-defects',
         element: <CompanyDefectHubPage />,
       },
