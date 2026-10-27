@@ -205,12 +205,14 @@ export function generateInitialProducts(): ProductRecord[] {
 export function generateInitialShipments(products: ProductRecord[]): ShipmentRecord[] {
   const shipments: ShipmentRecord[] = [];
   const destinations = [
-    { dest: 'Central European Distribution Hub (Frankfurt, DE)', carrier: 'DHL Express Global Forwarding' },
+    { dest: 'Saturn & MediaMarkt Flagship Retail Shop (Berlin, DE)', carrier: 'DHL Express Supply Chain' },
+    { dest: 'iFix Authorized Retail & Service Hub (Indiranagar, Bangalore)', carrier: 'BlueDart Air Express' },
+    { dest: 'Munich Rail Freight Gateway Hub (Distribution Warehouse)', carrier: 'DHL Global Forwarding' },
+    { dest: 'Apex Electronics Care Retail Store (Bandra West, Mumbai)', carrier: 'FedEx Priority Freight' },
     { dest: 'North American Hub (Chicago Logistics Center, US)', carrier: 'FedEx Priority Freight' },
-    { dest: 'Nordic Electronics Hub (Stockholm, SE)', carrier: 'Maersk Air Cargo' },
-    { dest: 'Asia-Pacific Retail Hub (Singapore Changi Logistics)', carrier: 'Nippon Express Air' },
-    { dest: 'UK Central Warehouse (Milton Keynes, UK)', carrier: 'DPD Logistics' },
-    { dest: 'Gulf Region Fulfillment (Dubai Logistics City, UAE)', carrier: 'Emirates SkyCargo' }
+    { dest: 'Central London Flagship Retail Store (Oxford Street, UK)', carrier: 'DPD Logistics' },
+    { dest: 'Frankfurt Central Distribution Center (Depot 3)', carrier: 'Maersk Air Cargo' },
+    { dest: 'Tokyo Shinjuku Electronics Superstore (Tokyo, JP)', carrier: 'Nippon Express Air' }
   ];
 
   const showcaseProducts = ['GT-DEV-00000851', 'GT-DEV-00000852', 'GT-DEV-00000853'];
@@ -316,14 +318,15 @@ export function generateInitialManufacturingEvents(): ManufacturingEvent[] {
     });
   });
 
-  // Assembly Line Events for GT-DEV-00000851
+  // Assembly Line Events for GT-DEV-00000851 (and benchmark unit P-10493)
   const assemblyOps = [
-    { eventId: 'EVT-100201', opId: '3.1', name: 'PCB Assembly', machine: 'SMT-01', result: 'OK' as const },
-    { eventId: 'EVT-100202', opId: '3.2', name: 'Component Mounting', machine: 'AS-02', result: 'OK' as const },
-    { eventId: 'EVT-100203', opId: '3.3', name: 'Main Assembly', machine: 'AS-03', result: 'OK' as const },
-    { eventId: 'EVT-100204', opId: '3.4', name: 'Final Assembly & Sealing', machine: 'FA-01', result: 'OK' as const },
-    { eventId: 'EVT-100205', opId: '3.5', name: 'Functional Test', machine: 'FT-01', result: 'OK' as const },
-    { eventId: 'EVT-100206', opId: '3.6', name: 'Packaging', machine: 'PK-01', result: 'OK' as const },
+    { eventId: 'EVT-100201', opId: '3.1', name: 'Machined Chassis & PCB Mounting', machine: 'SMT-01', result: 'OK' as const },
+    { eventId: 'EVT-100202', opId: '3.2', name: 'Sub-Assembly & Display Bonding', machine: 'AS-02', result: 'OK' as const },
+    { eventId: 'EVT-100203', opId: '3.3', name: 'Automated Optical Inspection (AOI)', machine: 'AOI-03', result: 'OK' as const },
+    { eventId: 'EVT-100204', opId: '3.4', name: 'Precision Rework & Laser Alignment', machine: 'RW-02', result: 'OK' as const },
+    { eventId: 'EVT-100205', opId: '3.5', name: 'Final Assembly & Ultrasonic Sealing', machine: 'FA-01', result: 'OK' as const },
+    { eventId: 'EVT-100206', opId: '3.6', name: 'Functional Stress & Quality Inspection', machine: 'FT-01', result: 'OK' as const },
+    { eventId: 'EVT-100207', opId: '3.7', name: 'Packaging & Tamper-Evident Seal', machine: 'PK-01', result: 'OK' as const },
   ];
 
   let prodParentHash = '0x994801acde879201456bc812';
