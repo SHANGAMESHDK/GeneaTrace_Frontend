@@ -17,23 +17,28 @@ import { ShopkeeperPortalPage } from './pages/ShopkeeperPortalPage';
 import { CompanyDefectHubPage } from './pages/CompanyDefectHubPage';
 import { LoginPage } from './pages/LoginPage';
 import { MobileScannerPage } from './pages/MobileScannerPage';
+import { RouteErrorBoundary } from './components/common/RouteErrorBoundary';
 
 export const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage />,
+    errorElement: <RouteErrorBoundary />,
   },
   {
     path: '/scanner',
     element: <MobileScannerPage />,
+    errorElement: <RouteErrorBoundary />,
   },
   {
     path: '/mobile',
     element: <MobileScannerPage />,
+    errorElement: <RouteErrorBoundary />,
   },
   {
     path: '/',
     element: <AppShell />,
+    errorElement: <RouteErrorBoundary />,
     children: [
       {
         index: true,

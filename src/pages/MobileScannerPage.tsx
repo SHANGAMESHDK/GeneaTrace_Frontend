@@ -107,9 +107,26 @@ export const MobileScannerPage: React.FC = () => {
     };
   };
 
+  const isMountedRef = useRef(true);
+  const isStartingRef = useRef(false);
+
   const startScanner = async () => {
+    if (isStartingRef.current || !isMountedRef.current) return;
+    isStartingRef.current = true;
+    setCameraError(null);
+
     try {
-      setCameraError(null);
+      // Safely tear down existing instance if any
+      const existing = html5QrCodeRef.current;
+      if (existing) {
+        try {
+          if (existing.isScanning) {
+            await existing.stop();
+          }
+          existing.clear();
+        } catch {}
+      }
+
       const html5QrCode = new Html5Qrcode(readerElementId);
       html5QrCodeRef.current = html5QrCode;
 
@@ -123,6 +140,7 @@ export const MobileScannerPage: React.FC = () => {
         { facingMode: 'environment' }, // Rear camera
         config,
         (decodedText) => {
+          if (!isMountedRef.current) return;
           const result = evaluateCode(decodedText);
           setScanResult(result);
         },
@@ -131,31 +149,66 @@ export const MobileScannerPage: React.FC = () => {
         }
       );
 
+      // In case component unmounted during start() await
+      if (!isMountedRef.current) {
+        try {
+          if (html5QrCode.isScanning) {
+            await html5QrCode.stop();
+          }
+          html5QrCode.clear();
+        } catch {}
+        return;
+      }
+
       setIsScanning(true);
     } catch (err: any) {
-      console.error('Camera start error:', err);
-      setCameraError(err?.message || 'Could not access camera. Please allow camera permissions.');
+      if (!isMountedRef.current) return;
+      console.warn('Camera start error:', err);
+      setCameraError(err?.message || 'Could not access camera. Please allow camera permissions or test via station buttons below.');
       setIsScanning(false);
+    } finally {
+      isStartingRef.current = false;
     }
   };
 
   const stopScanner = async () => {
-    if (html5QrCodeRef.current && isScanning) {
+    const scanner = html5QrCodeRef.current;
+    if (scanner) {
       try {
-        await html5QrCodeRef.current.stop();
-        html5QrCodeRef.current.clear();
+        if (scanner.isScanning) {
+          await scanner.stop();
+        }
+        scanner.clear();
       } catch (e) {
-        console.warn('Error stopping camera:', e);
+        console.debug('Error stopping camera (ignored):', e);
       }
       setIsScanning(false);
     }
   };
 
   useEffect(() => {
+    isMountedRef.current = true;
     startScanner();
+
     return () => {
-      if (html5QrCodeRef.current) {
-        html5QrCodeRef.current.stop().catch(() => {});
+      isMountedRef.current = false;
+      const scanner = html5QrCodeRef.current;
+      if (scanner) {
+        try {
+          if (scanner.isScanning) {
+            const p = scanner.stop();
+            if (p && typeof p.catch === 'function') {
+              p.catch(() => {}).finally(() => {
+                try { scanner.clear(); } catch {}
+              });
+            }
+          } else {
+            try { scanner.clear(); } catch {}
+          }
+        } catch (e) {
+          // Suppress synchronous "Cannot stop, scanner is not running or paused."
+          console.debug('Suppressed scanner unmount exception:', e);
+        }
       }
     };
   }, []);
