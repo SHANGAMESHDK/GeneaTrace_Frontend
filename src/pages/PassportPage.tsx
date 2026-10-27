@@ -27,7 +27,8 @@ import {
   Radio,
   Clock,
   ChevronRight,
-  RotateCcw
+  RotateCcw,
+  Download
 } from 'lucide-react';
 import { GeneaTraceStore } from '../services/dataStore';
 import { ProductRecord, ShopkeeperDefectReport } from '../types';
@@ -107,6 +108,124 @@ export const PassportPage: React.FC = () => {
     (product?.installedComponents ? Object.values(product.installedComponents)[0]?.split('-')[0] : 'AAA');
 
   const batchLocations = primaryBatchId ? GeneaTraceStore.getBatchLocations(primaryBatchId) : null;
+
+  // Download Pictorial DPP Label (PNG)
+  const downloadPictorialLabel = () => {
+    const serial = product?.productId || activeSearchedSerial || 'AAA12345678';
+    const model = product?.productModel || 'Samsung Galaxy A55 5G (Enterprise Edition)';
+    const batch = primaryBatchId || 'AAA';
+    const merkle = product?.merkleRoot || '0x9f3b8a1c4e72d05f88b14a2c91e3f706';
+    const qrSvg = document.getElementById('passport-qr-svg') as SVGSVGElement | null;
+    if (!qrSvg) return;
+
+    const svgXml = new XMLSerializer().serializeToString(qrSvg);
+    const qrImg = new Image();
+    qrImg.crossOrigin = 'anonymous';
+    qrImg.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 640;
+      canvas.height = 740;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // 1. Vintage Parchment Industrial Background
+      ctx.fillStyle = '#fffdf6';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Outer border
+      ctx.strokeStyle = '#413634';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(16, 16, canvas.width - 32, canvas.height - 32);
+
+      // Inner thin border
+      ctx.strokeStyle = '#c5716d';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(24, 24, canvas.width - 48, canvas.height - 48);
+
+      // Header Band
+      ctx.fillStyle = '#413634';
+      ctx.fillRect(24, 24, canvas.width - 48, 64);
+
+      // Header Text
+      ctx.fillStyle = '#fffdf6';
+      ctx.font = 'bold 17px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('GENEATRACE DIGITAL PRODUCT PASSPORT', canvas.width / 2, 52);
+      ctx.font = '11px monospace';
+      ctx.fillText('EU DPP DIRECTIVE (ESPR) • IMMUTABLE MERKLE ANCHOR', canvas.width / 2, 72);
+
+      // Product Title
+      ctx.fillStyle = '#413634';
+      ctx.font = 'bold 19px serif';
+      ctx.fillText(model, canvas.width / 2, 126);
+
+      // Batch & Container Serial Banner
+      ctx.fillStyle = '#faf3dc';
+      ctx.fillRect(40, 142, canvas.width - 80, 52);
+      ctx.strokeStyle = '#e5e5e5';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(40, 142, canvas.width - 80, 52);
+
+      ctx.fillStyle = '#c5716d';
+      ctx.font = 'bold 13px monospace';
+      ctx.fillText(`CRYPTOGRAPHIC SERIAL NO: ${serial}`, canvas.width / 2, 164);
+      ctx.fillStyle = '#413634';
+      ctx.font = '12px serif';
+      ctx.fillText(`Assigned Batch: ${batch}  •  Facility: Samsung Mega-Hub 4, Gumi`, canvas.width / 2, 182);
+
+      // Draw QR Code
+      const qrSize = 250;
+      const qrX = (canvas.width - qrSize) / 2;
+      const qrY = 210;
+
+      // QR Background Plate
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(qrX - 10, qrY - 10, qrSize + 20, qrSize + 20);
+      ctx.strokeStyle = '#413634';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(qrX - 10, qrY - 10, qrSize + 20, qrSize + 20);
+
+      ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
+
+      // Cryptographic Lineage Details below QR
+      ctx.fillStyle = '#413634';
+      ctx.font = 'bold 11px monospace';
+      ctx.fillText(`MERKLE DAG: ${merkle.slice(0, 32)}...`, canvas.width / 2, 502);
+
+      ctx.font = '11px serif';
+      ctx.fillStyle = '#2e6b4d';
+      ctx.fillText('✔ CRYPTOGRAPHIC BLOCKCHAIN CONTAINER SEALED (STEP 2 & 6)', canvas.width / 2, 526);
+
+      // Simulated Barcode Lines
+      const barcodeY = 550;
+      const barcodeWidth = canvas.width - 120;
+      const startX = 60;
+      ctx.fillStyle = '#413634';
+      for (let x = 0; x < barcodeWidth; x += 4) {
+        if ((x * 17) % 7 !== 0) {
+          ctx.fillRect(startX + x, barcodeY, (x % 3 === 0 ? 2.5 : 1.5), 36);
+        }
+      }
+
+      ctx.font = '10px monospace';
+      ctx.fillStyle = '#666666';
+      ctx.fillText(`*${serial}*`, canvas.width / 2, 604);
+
+      // Footer
+      ctx.fillStyle = '#8b6c58';
+      ctx.font = '10px serif';
+      ctx.fillText('Scan with GeneaTrace Edge Station or any standard QR scanner to verify DPP.', canvas.width / 2, 642);
+      ctx.fillText('https://geneatrace.vercel.app/passport/' + serial, canvas.width / 2, 658);
+
+      // Trigger file download
+      const link = document.createElement('a');
+      link.download = `GeneaTrace_${batch}_${serial}_Pictorial_Label.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    };
+
+    qrImg.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgXml)));
+  };
 
   return (
     <div className="space-y-6 font-serif-vintage max-w-5xl mx-auto pb-12">
@@ -250,11 +369,12 @@ export const PassportPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* QR Code Anchor */}
+              {/* QR Code Anchor & Pictorial Download */}
               <div className="flex items-center gap-3 bg-[#faf3dc] p-3 border border-[#e5e5e5]">
                 <QRCodeSVG
+                  id="passport-qr-svg"
                   value={`https://geneatrace.vercel.app/passport/${product?.productId || activeSearchedSerial}`}
-                  size={64}
+                  size={68}
                   level="M"
                 />
                 <div className="text-[10px] space-y-1">
@@ -265,6 +385,14 @@ export const PassportPage: React.FC = () => {
                   >
                     <Copy size={11} />
                     <span>{copied ? 'Copied URL!' : 'Copy Link'}</span>
+                  </button>
+                  <button
+                    onClick={downloadPictorialLabel}
+                    className="flex items-center gap-1 text-[#2e6b4d] font-bold hover:underline"
+                    title="Download newly generated cryptographic serial no. as PNG pictorial label"
+                  >
+                    <Download size={11} />
+                    <span>Download Label (PNG)</span>
                   </button>
                   <div className="text-[#666666] font-mono text-[9px]">Merkle Anchored</div>
                 </div>
