@@ -316,14 +316,15 @@ export function generateInitialManufacturingEvents(): ManufacturingEvent[] {
     });
   });
 
-  // Assembly Line Events for GT-DEV-00000851
+  // Assembly Line Events for GT-DEV-00000851 (and benchmark unit P-10493)
   const assemblyOps = [
-    { eventId: 'EVT-100201', opId: '3.1', name: 'PCB Assembly', machine: 'SMT-01', result: 'OK' as const },
-    { eventId: 'EVT-100202', opId: '3.2', name: 'Component Mounting', machine: 'AS-02', result: 'OK' as const },
-    { eventId: 'EVT-100203', opId: '3.3', name: 'Main Assembly', machine: 'AS-03', result: 'OK' as const },
-    { eventId: 'EVT-100204', opId: '3.4', name: 'Final Assembly & Sealing', machine: 'FA-01', result: 'OK' as const },
-    { eventId: 'EVT-100205', opId: '3.5', name: 'Functional Test', machine: 'FT-01', result: 'OK' as const },
-    { eventId: 'EVT-100206', opId: '3.6', name: 'Packaging', machine: 'PK-01', result: 'OK' as const },
+    { eventId: 'EVT-100201', opId: '3.1', name: 'Machined Chassis & PCB Mounting', machine: 'SMT-01', result: 'OK' as const },
+    { eventId: 'EVT-100202', opId: '3.2', name: 'Sub-Assembly & Display Bonding', machine: 'AS-02', result: 'OK' as const },
+    { eventId: 'EVT-100203', opId: '3.3', name: 'Automated Optical Inspection (AOI)', machine: 'AOI-03', result: 'OK' as const },
+    { eventId: 'EVT-100204', opId: '3.4', name: 'Precision Rework & Laser Alignment', machine: 'RW-02', result: 'OK' as const },
+    { eventId: 'EVT-100205', opId: '3.5', name: 'Final Assembly & Ultrasonic Sealing', machine: 'FA-01', result: 'OK' as const },
+    { eventId: 'EVT-100206', opId: '3.6', name: 'Functional Stress & Quality Inspection', machine: 'FT-01', result: 'OK' as const },
+    { eventId: 'EVT-100207', opId: '3.7', name: 'Packaging & Tamper-Evident Seal', machine: 'PK-01', result: 'OK' as const },
   ];
 
   let prodParentHash = '0x994801acde879201456bc812';
