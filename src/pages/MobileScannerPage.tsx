@@ -41,7 +41,27 @@ export const MobileScannerPage: React.FC = () => {
   const [edgeConnected, setEdgeConnected] = useState(false);
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const lastEdgeTimestampRef = useRef<number>(0);
+  const lastRecordedScanRef = useRef<{ code: string; timestamp: number }>({ code: '', timestamp: 0 });
   const readerElementId = 'geneatrace-mobile-camera-reader';
+
+  const recordScanToSupabase = (res: ScanResult, source = 'MOBILE_OPTICAL_VIEWFINDER') => {
+    const now = Date.now();
+    if (res.targetId !== lastRecordedScanRef.current.code || (now - lastRecordedScanRef.current.timestamp > 2500)) {
+      lastRecordedScanRef.current = { code: res.targetId, timestamp: now };
+      api.recordScanEvent({
+        target_id: res.targetId,
+        scan_source: source,
+        verdict: res.verdict,
+        is_valid: res.isValid,
+        merkle_root: res.hash,
+        scanner_location: 'Mobile Viewfinder Gate Alpha',
+        metadata: {
+          title: res.title,
+          userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'MobileClient'
+        }
+      }).catch(err => console.debug('Supabase scan audit note:', err));
+    }
+  };
 
   const extractCleanId = (raw: string): string => {
     let clean = raw.trim();
@@ -57,10 +77,16 @@ export const MobileScannerPage: React.FC = () => {
     return clean.trim();
   };
 
-  const evaluateCode = (decodedText: string): ScanResult => {
+  const evaluateCode = (decodedText: string, scanSource = 'MOBILE_OPTICAL_VIEWFINDER'): ScanResult => {
     const cleanId = extractCleanId(decodedText);
     const upper = cleanId.toUpperCase();
     const now = new Date().toLocaleTimeString();
+
+    const foundProduct = GeneaTraceStore.getProduct(cleanId);
+    const foundComponent = GeneaTraceStore.getComponentBySerial(cleanId);
+    const foundBatch = GeneaTraceStore.getBatch(cleanId);
+
+    let result: ScanResult;
 
     // 1. Counterfeit / Tampered Component
     if (upper.includes('FAKE') || upper.includes('TAMPER') || upper.includes('UNAUTH') || upper.includes('UNREGISTERED')) {
@@ -69,7 +95,7 @@ export const MobileScannerPage: React.FC = () => {
       }
       GeneaTraceStore.simulateTampering('AAA12345678', true);
 
-      return {
+      result = {
         targetId: cleanId,
         verdict: 'TAMPERED',
         title: 'ALERT: HARDWARE TAMPERING DETECTED',
@@ -78,17 +104,14 @@ export const MobileScannerPage: React.FC = () => {
         timestamp: now,
         isValid: false,
       };
-    }
-
-    // 2. Check in Central GeneaTrace Store for Finished Product
-    const foundProduct = GeneaTraceStore.getProduct(cleanId);
-    if (foundProduct && (foundProduct.productId.toUpperCase() === upper || upper.includes('AAA') || upper.includes('A55') || upper.includes('851') || upper.includes('12345678') || upper.includes('GT-DEV'))) {
+    } else if (foundProduct && (foundProduct.productId.toUpperCase() === upper || upper.includes('AAA') || upper.includes('A55') || upper.includes('851') || upper.includes('12345678') || upper.includes('GT-DEV'))) {
+      // 2. Check in Central GeneaTrace Store for Finished Product
       if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
         navigator.vibrate([80, 40, 80]);
       }
       GeneaTraceStore.recoverDevice(foundProduct.productId);
 
-      return {
+      result = {
         targetId: foundProduct.productId,
         verdict: 'GENUINE_PRODUCT',
         title: `VERIFIED: ${foundProduct.productModel.toUpperCase()}`,
@@ -97,15 +120,12 @@ export const MobileScannerPage: React.FC = () => {
         timestamp: now,
         isValid: true,
       };
-    }
-
-    // 3. Check in Central Store for Registered Component
-    const foundComponent = GeneaTraceStore.getComponentBySerial(cleanId);
-    if (foundComponent) {
+    } else if (foundComponent) {
+      // 3. Check in Central Store for Registered Component
       if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
         navigator.vibrate([60, 30, 60]);
       }
-      return {
+      result = {
         targetId: foundComponent.serialNumber,
         verdict: 'GENUINE_COMPONENT',
         title: `VERIFIED: ${foundComponent.type.toUpperCase()} (BATCH ${foundComponent.batchId})`,
@@ -114,15 +134,12 @@ export const MobileScannerPage: React.FC = () => {
         timestamp: now,
         isValid: true,
       };
-    }
-
-    // 4. Check if code matches an existing Batch
-    const foundBatch = GeneaTraceStore.getBatch(cleanId);
-    if (foundBatch) {
+    } else if (foundBatch) {
+      // 4. Check if code matches an existing Batch
       if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
         navigator.vibrate([60, 30, 60]);
       }
-      return {
+      result = {
         targetId: foundBatch.batchId,
         verdict: 'GENUINE_COMPONENT',
         title: `VERIFIED: BATCH ${foundBatch.batchId} (${foundBatch.componentType.toUpperCase()})`,
@@ -131,14 +148,12 @@ export const MobileScannerPage: React.FC = () => {
         timestamp: now,
         isValid: true,
       };
-    }
-
-    // 5. Check if part of Batch prefix (e.g. AAA-0042, ABC-0042, etc.)
-    if (upper.includes('0042') || upper.includes('CMP-DIS') || upper.startsWith('AAA-') || upper.startsWith('ABC-') || upper.startsWith('BTR-') || upper.startsWith('PCB-')) {
+    } else if (upper.includes('0042') || upper.includes('CMP-DIS') || upper.startsWith('AAA-') || upper.startsWith('ABC-') || upper.startsWith('BTR-') || upper.startsWith('PCB-')) {
+      // 5. Check if part of Batch prefix (e.g. AAA-0042, ABC-0042, etc.)
       if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
         navigator.vibrate([60, 30, 60]);
       }
-      return {
+      result = {
         targetId: cleanId,
         verdict: 'GENUINE_COMPONENT',
         title: 'VERIFIED: SUPER AMOLED DISPLAY (BATCH AAA)',
@@ -147,18 +162,22 @@ export const MobileScannerPage: React.FC = () => {
         timestamp: now,
         isValid: true,
       };
+    } else {
+      // 6. Default Unknown - Offer one-click registration
+      result = {
+        targetId: cleanId,
+        verdict: 'UNKNOWN',
+        title: 'UNREGISTERED IDENTIFIER',
+        subtitle: `Scanned code: ${cleanId}. Not yet registered in the GeneaTrace registry. Click below to register and anchor on-chain.`,
+        hash: '0xunknown000000000000000000000000',
+        timestamp: now,
+        isValid: false,
+      };
     }
 
-    // 6. Default Unknown - Offer one-click registration
-    return {
-      targetId: cleanId,
-      verdict: 'UNKNOWN',
-      title: 'UNREGISTERED IDENTIFIER',
-      subtitle: `Scanned code: ${cleanId}. Not yet registered in the GeneaTrace registry. Click below to register and anchor on-chain.`,
-      hash: '0xunknown000000000000000000000000',
-      timestamp: now,
-      isValid: false,
-    };
+    // Persist scan event in Supabase
+    recordScanToSupabase(result, scanSource);
+    return result;
   };
 
   const handleRegisterScanned = (targetId: string) => {

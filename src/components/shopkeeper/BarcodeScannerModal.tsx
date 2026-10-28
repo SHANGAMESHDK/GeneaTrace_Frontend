@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { Camera, X, Zap, CheckCircle2, QrCode, Barcode, Sparkles, Smartphone } from 'lucide-react';
+import { api } from '../../services/apiClient';
 
 interface BarcodeScannerModalProps {
   isOpen: boolean;
@@ -132,6 +133,16 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
       navigator.vibrate([100, 50, 100]);
     }
+
+    // Persist scan event directly into Supabase PostgreSQL
+    api.recordScanEvent({
+      target_id: extracted,
+      scan_source: 'SHOPKEEPER_POS_MODAL',
+      verdict: 'VERIFIED',
+      is_valid: true,
+      scanner_location: 'Retail Storefront - POS Terminal 1',
+      metadata: { rawCode }
+    }).catch(e => console.debug('Shopkeeper scan audit note:', e));
 
     stopCamera();
     onScan(extracted);

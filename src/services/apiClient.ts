@@ -270,6 +270,26 @@ class ApiClient {
       body: JSON.stringify(commandData),
     });
   }
+
+  // QR & Hardware Scan Persistence (Supabase PostgreSQL)
+  async recordScanEvent(scanData: {
+    target_id: string;
+    scan_source?: string;
+    verdict?: string;
+    is_valid?: boolean;
+    merkle_root?: string;
+    scanner_location?: string;
+    metadata?: any;
+  }): Promise<any> {
+    return this.request<any>('/security/scans', {
+      method: 'POST',
+      body: JSON.stringify(scanData),
+    });
+  }
+
+  async getRecentScans(limit = 50): Promise<any[]> {
+    return this.request<any[]>(`/security/scans?limit=${limit}`);
+  }
 }
 
 export const api = new ApiClient();
