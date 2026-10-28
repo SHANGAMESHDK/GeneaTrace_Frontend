@@ -537,7 +537,47 @@ export const GeneaTraceStore = {
   },
 
   getComponentBySerial(serial: string): ComponentRecord | undefined {
-    return currentState.components.find(c => c.serialNumber.toUpperCase() === serial.toUpperCase());
+    if (!serial) return undefined;
+    const clean = serial.trim().toUpperCase();
+    return currentState.components.find(c => c.serialNumber.toUpperCase() === clean);
+  },
+
+  registerComponent(comp: {
+    serialNumber: string;
+    batchId?: string;
+    type?: ComponentCategory;
+    supplier?: string;
+    location?: string;
+  }): ComponentRecord {
+    const cleanSerial = comp.serialNumber.trim().toUpperCase();
+    const existing = currentState.components.find(c => c.serialNumber.toUpperCase() === cleanSerial);
+    if (existing) {
+      return existing;
+    }
+    const batchId = comp.batchId?.trim().toUpperCase() || cleanSerial.split('-')[0] || 'AAA';
+    const type: ComponentCategory = comp.type || 'Display';
+    const assignedSector: IndustrySector = 'Consumer Electronics';
+
+    const newComp: ComponentRecord = {
+      componentId: `CMP-${type.slice(0, 3).toUpperCase()}-${Date.now().toString().slice(-6)}`,
+      serialNumber: cleanSerial,
+      batchId,
+      type,
+      sector: assignedSector,
+      manufacturer: comp.supplier || 'GeneaTrace Verified Supplier',
+      supplier: comp.supplier || 'GeneaTrace Verified Supplier',
+      location: comp.location || 'Industrial Smart Cleanroom Facility Alpha',
+      mfgDate: new Date().toISOString().split('T')[0],
+      status: 'Registered',
+      qualityStatus: 'Passed',
+      verificationStatus: 'Demo Verified',
+      cryptographicHash: pseudoHash(`COMPONENT-${cleanSerial}-${Date.now()}`)
+    };
+
+    currentState.components.push(newComp);
+    this.saveState();
+    window.dispatchEvent(new Event('componentRegistered'));
+    return newComp;
   },
 
   // Products

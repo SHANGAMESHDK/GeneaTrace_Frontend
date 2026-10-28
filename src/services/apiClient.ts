@@ -213,6 +213,13 @@ class ApiClient {
     return this.request<any>(`/components/${serial}`);
   }
 
+  async registerComponent(compData: any): Promise<any> {
+    return this.request<any>('/components', {
+      method: 'POST',
+      body: JSON.stringify(compData),
+    });
+  }
+
   // Products
   async getProducts(page = 1, pageSize = 50): Promise<any> {
     return this.request<any>(`/products?page=${page}&page_size=${pageSize}`);

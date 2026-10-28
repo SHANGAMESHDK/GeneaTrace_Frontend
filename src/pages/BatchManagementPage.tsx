@@ -141,10 +141,26 @@ export const BatchManagementPage: React.FC = () => {
       setIsCreateModalOpen(false);
       setNewBatchId('');
 
-      // Dispatch to FastAPI backend on Azure
+      // Dispatch to FastAPI backend with normalized enum type
+      const backendTypeMap: Record<string, string> = {
+        'Display': 'DISPLAY',
+        'Battery': 'BATTERY',
+        'Main PCB': 'PCB',
+        'Camera Module': 'CAMERA',
+        'Frame': 'FRAME',
+        'Prismatic Cell': 'BATTERY',
+        'BMS Module': 'PCB',
+        'Thermal Cooling Plate': 'FRAME',
+        'Biocompatible Housing': 'FRAME',
+        'Telemetry ASIC': 'PCB',
+        'Radiation-Tolerant MCU': 'PCB',
+        'Other': 'FRAME',
+      };
+      const normalizedType = backendTypeMap[newType] || 'DISPLAY';
+
       api.createBatch({
         batch_code: newBatchId.trim().toUpperCase(),
-        component_type: newType.toUpperCase(),
+        component_type: normalizedType,
         planned_quantity: Number(newBatchSize) || 100,
         supplier_id: newSupplier.trim() || 'SUP-DEFAULT',
         facility_id: newFacility.trim() || 'FAC-FAB-01',
