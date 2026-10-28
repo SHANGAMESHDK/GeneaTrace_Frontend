@@ -634,7 +634,7 @@ export const PhoneViewer3D: React.FC<PhoneViewer3DProps> = ({
     const gltfLoader = new GLTFLoader();
     gltfLoader.load(
       `/s25ultra.glb?t=${Date.now()}`,
-      (gltf) => {
+      (gltf: any) => {
         const model = gltf.scene;
 
         // Auto-fit & normalize dimensions so it stands gracefully on the pedestal
@@ -650,7 +650,7 @@ export const PhoneViewer3D: React.FC<PhoneViewer3DProps> = ({
         model.position.y += 0.15;
 
         // Traverse mesh children: apply screen texture and hide blank 3D texts
-        model.traverse((child) => {
+        model.traverse((child: any) => {
           // Hide any extruded plain text (e.g. Front_Screen_GeneaTrace_Text)
           if (
             child.name.includes('Text') ||
@@ -698,7 +698,7 @@ export const PhoneViewer3D: React.FC<PhoneViewer3DProps> = ({
         setLoaded(true);
       },
       undefined,
-      (err) => {
+      (err: any) => {
         console.error('Failed to load s25ultra.glb:', err);
       }
     );
