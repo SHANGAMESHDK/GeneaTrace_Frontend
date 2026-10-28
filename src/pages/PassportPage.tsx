@@ -64,13 +64,95 @@ export const PassportPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<WorkflowTab>('genesis');
   const [copied, setCopied] = useState(false);
 
+  // Sync route param with search state
+  useEffect(() => {
+    const target = paramProductId ? paramProductId.trim() : defaultShowcaseId;
+    setSearchInput(target);
+    setActiveSearchedSerial(target);
+  }, [paramProductId]);
+
   // Query passport and any linked shopkeeper defect report upon search
   useEffect(() => {
     if (activeSearchedSerial && activeSearchedSerial.trim()) {
       const clean = activeSearchedSerial.trim().toUpperCase();
-      const foundProduct = GeneaTraceStore.getProduct(clean) ||
-        GeneaTraceStore.getProducts().find(p => p.productId.toUpperCase() === clean || p.imeiMasked.toUpperCase() === clean);
       
+      // 1. Direct product match
+      let foundProduct: ProductRecord | undefined = GeneaTraceStore.getProduct(clean) ||
+        GeneaTraceStore.getProducts().find(p => p.productId.toUpperCase() === clean || p.imeiMasked.toUpperCase() === clean);
+
+      // 2. Component match (e.g. AAA-0042, ABC-0042, CMP-DIS-8801)
+      if (!foundProduct) {
+        const comp = GeneaTraceStore.getComponentBySerial(clean);
+        if (comp) {
+          // Look for finished product with this component
+          foundProduct = GeneaTraceStore.getProducts().find(p =>
+            Object.values(p.installedComponents || {}).some(s => s.toUpperCase() === clean) ||
+            p.productId.toUpperCase() === comp.serialNumber.toUpperCase()
+          );
+
+          if (!foundProduct) {
+            // Synthesize dedicated Component DPP
+            foundProduct = {
+              productId: comp.serialNumber,
+              productModel: `${comp.type} Component (${comp.batchId})`,
+              sector: comp.sector || 'Consumer Electronics',
+              productTypeDisplay: `${comp.type} High-Precision Module`,
+              imeiMasked: `SN-${comp.serialNumber}`,
+              installedComponents: { [comp.type]: comp.serialNumber },
+              installedBatches: { [comp.type]: comp.batchId },
+              assemblyDate: comp.mfgDate,
+              assemblyFacility: comp.location,
+              status: (comp.status === 'Quality Failed' || comp.status === 'Recalled') ? 'Recall Flagged' : 'Delivered',
+              passportStatus: 'Active',
+              shipmentId: 'GT-SHP-00000326',
+              blockchainTx: comp.cryptographicHash,
+              merkleRoot: comp.cryptographicHash,
+              isTampered: false,
+              isLocked: false,
+              complianceStandards: ['EU DPP Directive (ESPR)', 'RoHS-3 Compliant'],
+              carbonFootprintKg: 12.4,
+              recycledContentPct: 35.0,
+              esgScore: 'A (92/100)'
+            };
+          }
+        }
+      }
+
+      // 3. Batch match (e.g. AAA, ABC, MB-0021)
+      if (!foundProduct) {
+        const batch = GeneaTraceStore.getBatch(clean);
+        if (batch) {
+          foundProduct = GeneaTraceStore.getProducts().find(p =>
+            Object.values(p.installedBatches || {}).some(b => b.toUpperCase() === clean)
+          );
+
+          if (!foundProduct) {
+            foundProduct = {
+              productId: `BATCH-${batch.batchId}`,
+              productModel: `Manufacturing Batch ${batch.batchId} (${batch.componentType})`,
+              sector: batch.sector,
+              productTypeDisplay: `${batch.componentType} Batch Container`,
+              imeiMasked: `LOT-${batch.batchId}`,
+              installedComponents: {},
+              installedBatches: { [batch.componentType]: batch.batchId },
+              assemblyDate: batch.productionDate,
+              assemblyFacility: batch.facility,
+              status: batch.status === 'Recalled' || batch.status === 'Defective' ? 'Recall Flagged' : 'Delivered',
+              passportStatus: 'Active',
+              shipmentId: 'GT-SHP-00000326',
+              blockchainTx: batch.blockchainCheckpointTx || '0x4e72d05f88b14a2c91e3f7069f3b8a1c',
+              merkleRoot: '0x4e72d05f88b14a2c91e3f7069f3b8a1c',
+              isTampered: false,
+              isLocked: false,
+              complianceStandards: ['EU DPP Directive (ESPR)', 'RoHS-3 Compliant'],
+              carbonFootprintKg: 28.0,
+              recycledContentPct: 30.0,
+              esgScore: 'A (90/100)'
+            };
+          }
+        }
+      }
+
       setProduct(foundProduct || null);
 
       // Search if a shopkeeper reported a defect for this unit
@@ -79,13 +161,47 @@ export const PassportPage: React.FC = () => {
 
       setHasSearched(true);
 
-      // Fetch live passport verification from Azure FastAPI backend
+      // Fetch live passport verification from backend API
       api.getPublicPassport(clean)
         .then(res => {
-          console.log(`Live backend passport for ${clean}:`, res);
+          if (res && res.product_id) {
+            setProduct(prev => {
+              if (prev) {
+                return {
+                  ...prev,
+                  merkleRoot: res.merkle_root || prev.merkleRoot,
+                  passportStatus: (res.passport_status as any) || prev.passportStatus,
+                  status: res.recall_affected ? 'Recall Flagged' : prev.status,
+                  isTampered: !res.is_authentic,
+                };
+              }
+              return {
+                productId: res.product_id,
+                productModel: res.product_type || clean,
+                sector: 'Consumer Electronics',
+                productTypeDisplay: res.product_type || 'Digital Product Passport',
+                imeiMasked: `ID-${res.product_id}`,
+                installedComponents: {},
+                installedBatches: { 'Primary': 'AAA' },
+                assemblyDate: res.assembly_date ? new Date(res.assembly_date).toISOString().split('T')[0] : '2026-10-02',
+                assemblyFacility: 'Samsung Smart Mega-Hub 4, Gumi',
+                status: res.recall_affected ? 'Recall Flagged' : 'Delivered',
+                passportStatus: (res.passport_status as any) || 'Active',
+                shipmentId: 'GT-SHP-00000326',
+                blockchainTx: '0xa45b98cf120194bc87123985',
+                merkleRoot: res.merkle_root || '0x9f3b8a1c4e72d05f88b14a2c91e3f706',
+                isTampered: !res.is_authentic,
+                isLocked: false,
+                complianceStandards: ['EU DPP Directive (ESPR)', 'RoHS-3 Compliant'],
+                carbonFootprintKg: 42.8,
+                recycledContentPct: 28.5,
+                esgScore: 'A+ (95/100)'
+              };
+            });
+          }
         })
         .catch(err => {
-          console.warn('Backend public passport fallback:', err);
+          console.debug('Backend public passport query note:', err);
         });
     } else {
       setProduct(null);
@@ -411,20 +527,30 @@ export const PassportPage: React.FC = () => {
 
       {/* NOT FOUND: Error State */}
       {hasSearched && !product && !defectReport && (
-        <div className="p-8 text-center space-y-3 bg-[#160e0a] border border-[#d9825b]/20 rounded-xl border border-rose-500/30">
-          <div className="w-10 h-10 mx-auto rounded-none bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-xl text-rose-400 border border-rose-500/30 flex items-center justify-center">
-            <AlertTriangle size={20} />
+        <div className="p-8 text-center space-y-3 bg-[#160e0a] border border-rose-500/30 rounded-2xl shadow-xl">
+          <div className="w-12 h-12 mx-auto rounded-xl bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center justify-center">
+            <AlertTriangle size={22} />
           </div>
-          <h3 className="text-base text-white font-medium">No Record Found</h3>
+          <h3 className="text-base text-white font-medium">No Verified Passport Found</h3>
           <p className="text-xs text-[#cbb5aa]">
-            No verified digital passport found for serial <strong className="font-mono text-rose-400">"{searchInput}"</strong>.
+            No cryptographic digital passport found matching identifier <strong className="font-mono text-rose-400">"{searchInput}"</strong>.
           </p>
-          <div className="pt-2">
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={() => {
+                setSearchInput('AAA12345678');
+                setActiveSearchedSerial('AAA12345678');
+                navigate('/passport/AAA12345678', { replace: true });
+              }}
+              className="btn-sunset text-xs"
+            >
+              Load Showcase Unit (AAA12345678)
+            </button>
             <button
               onClick={() => navigate('/shop-portal')}
               className="btn-glass text-xs"
             >
-              Log New Defect Incident for this Serial as Service Technician
+              Log Incident in Service Portal
             </button>
           </div>
         </div>
@@ -551,7 +677,7 @@ export const PassportPage: React.FC = () => {
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#d9825b]/20 pb-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 bg-[#e89d7b]/15 text-[#f0a887] border border-[#e89d7b]/30 rounded-xl text-[#e89d7b] text-[10px] font-mono font-bold uppercase">
+                    <span className="px-2 py-0.5 bg-[#e89d7b]/15 text-[#f0a887] border border-[#e89d7b]/30 rounded-lg text-[10px] font-mono font-bold uppercase">
                       Steps 1, 2 &amp; 3
                     </span>
                     <h3 className="text-lg text-white font-medium">
@@ -559,13 +685,13 @@ export const PassportPage: React.FC = () => {
                     </h3>
                   </div>
                   <p className="text-xs text-[#cbb5aa] mt-1">
-                    Done in Manufacturer Login: Batch AAA assigned, cryptographic serial created with a null container.
+                    Done in Manufacturer Login: Batch {primaryBatchId} assigned, cryptographic serial {product?.productId || 'AAA12345678'} created with a null container.
                   </p>
                 </div>
 
                 <button
                   onClick={downloadNullContainerQr}
-                  className="btn-sunset text-xs flex items-center gap-1.5 shadow-sm"
+                  className="btn-sunset text-xs flex items-center gap-1.5 shadow-sm cursor-pointer"
                   title="Download Null Container QR code as PNG for scanning demonstration"
                 >
                   <Download size={13} />
@@ -576,31 +702,31 @@ export const PassportPage: React.FC = () => {
               {/* The 3 Steps Explanatory Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
                 {/* Step 1 */}
-                <div className="p-4 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 space-y-2">
+                <div className="p-4 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-gradient-to-tr from-[#e89d7b] to-[#b85d38] text-[#120a07] text-white flex items-center justify-center font-bold text-[10px]">
+                    <span className="w-5 h-5 rounded-full bg-gradient-to-tr from-[#e89d7b] to-[#b85d38] text-[#120a07] flex items-center justify-center font-bold text-[10px]">
                       1
                     </span>
                     <strong className="text-sm text-white">Step 1: Batch Assigned</strong>
                   </div>
                   <div className="text-base text-[#e89d7b] font-mono font-bold">
-                    Batch: AAA
+                    Batch: {primaryBatchId}
                   </div>
                   <p className="text-[#cbb5aa] leading-relaxed">
-                    Manufacturer registers the production batch (Samsung Display Corp, Cleanroom Complex Alpha Line 3).
+                    Manufacturer registers the production batch ({product?.assemblyFacility || 'Cleanroom Complex Alpha Line 3'}).
                   </p>
                 </div>
 
                 {/* Step 2 */}
-                <div className="p-4 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 space-y-2">
+                <div className="p-4 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-gradient-to-tr from-[#e89d7b] to-[#b85d38] text-[#120a07] text-white flex items-center justify-center font-bold text-[10px]">
+                    <span className="w-5 h-5 rounded-full bg-gradient-to-tr from-[#e89d7b] to-[#b85d38] text-[#120a07] flex items-center justify-center font-bold text-[10px]">
                       2
                     </span>
                     <strong className="text-sm text-white">Step 2: Cryptographic Serial</strong>
                   </div>
-                  <div className="text-base text-[#f0a887] font-mono font-bold">
-                    AAA12345678
+                  <div className="text-base text-[#f0a887] font-mono font-bold break-all">
+                    {product?.productId || 'AAA12345678'}
                   </div>
                   <p className="text-[#cbb5aa] leading-relaxed">
                     A unique Blockchain Cryptographic serial number is generated to act as the unit's digital identity container.
@@ -608,9 +734,9 @@ export const PassportPage: React.FC = () => {
                 </div>
 
                 {/* Step 3 */}
-                <div className="p-4 bg-[#e89d7b]/15 text-[#f0a887] border border-[#e89d7b]/30 rounded-xl border border-[#d9825b]/40 space-y-2">
+                <div className="p-4 bg-[#e89d7b]/10 border border-[#d9825b]/30 rounded-2xl space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-gradient-to-tr from-[#e89d7b] to-[#b85d38] text-[#120a07] text-white flex items-center justify-center font-bold text-[10px]">
+                    <span className="w-5 h-5 rounded-full bg-gradient-to-tr from-[#e89d7b] to-[#b85d38] text-[#120a07] flex items-center justify-center font-bold text-[10px]">
                       3
                     </span>
                     <strong className="text-sm text-[#e89d7b]">Step 3: Container is NULL</strong>
@@ -744,30 +870,30 @@ export const PassportPage: React.FC = () => {
                   return (
                     <div
                       key={stage.stageIndex}
-                      className={`p-4 border text-xs space-y-2 ${
+                      className={`p-4 border text-xs space-y-2 rounded-2xl ${
                         isFlagged
-                          ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-xl border-rose-500/30'
-                          : 'bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border-[#d9825b]/20'
+                          ? 'bg-rose-500/10 border-rose-500/30'
+                          : 'bg-[#1c120d]/80 border-[#d9825b]/20'
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className={`w-5 h-5 flex items-center justify-center font-bold font-mono text-[11px] ${
-                            isFlagged ? 'bg-[#b84a44] text-white' : 'bg-[#413634] text-white'
+                          <span className={`w-5 h-5 flex items-center justify-center font-bold font-mono text-[11px] rounded ${
+                            isFlagged ? 'bg-rose-600 text-white' : 'bg-slate-700 text-white'
                           }`}>
                             {stage.stageIndex}
                           </span>
                           <strong className="text-sm text-white">{stage.name}</strong>
                           {isFlagged && (
-                            <span className="px-1.5 py-0.2 bg-[#b84a44] text-white text-[9px] font-mono">
+                            <span className="px-1.5 py-0.5 bg-rose-600 text-white text-[9px] font-mono rounded">
                               ROOT CAUSE STAGE (MACHINE DISP-04)
                             </span>
                           )}
                         </div>
-                        <span className={`font-mono text-[10px] px-2 py-0.5 border ${
+                        <span className={`font-mono text-[10px] px-2 py-0.5 rounded-lg border ${
                           isFlagged
-                            ? 'bg-white text-rose-400 border-rose-500/30'
-                            : 'bg-white text-emerald-400 border-emerald-500/30'
+                            ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
+                            : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
                         }`}>
                           {stage.status}
                         </span>
@@ -793,18 +919,18 @@ export const PassportPage: React.FC = () => {
               </div>
 
               {/* Step 6 Callout */}
-              <div className="p-3.5 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-xl border border-emerald-500/30 text-xs flex items-center justify-between">
+              <div className="p-3.5 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-2xl text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>
                   <strong className="text-emerald-400 block font-mono">
-                    Step 6 Sealed Container: AAA12345678
+                    Step 6 Sealed Container: {product?.productId || 'AAA12345678'}
                   </strong>
                   <span className="text-[#cbb5aa]">
-                    Merkle DAG Root Hash: <strong>{product?.merkleRoot || '0x9f3b8a1c4e72d05f88b14a2c91e3f706'}</strong>
+                    Merkle DAG Root Hash: <strong className="font-mono">{product?.merkleRoot || '0x9f3b8a1c4e72d05f88b14a2c91e3f706'}</strong>
                   </span>
                 </div>
                 <button
                   onClick={downloadPictorialLabel}
-                  className="btn-sunset text-xs flex items-center gap-1"
+                  className="btn-sunset text-xs flex items-center gap-1 cursor-pointer"
                 >
                   <Download size={12} />
                   <span>Download Sealed Label (PNG)</span>
@@ -819,7 +945,7 @@ export const PassportPage: React.FC = () => {
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#d9825b]/20 pb-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 bg-amber-500/15 text-amber-300 border border-amber-500/30 rounded-xl text-[#b87428] text-[10px] font-mono font-bold uppercase">
+                    <span className="px-2 py-0.5 bg-amber-500/15 text-amber-300 border border-amber-500/30 rounded-lg text-[10px] font-mono font-bold uppercase">
                       Step 7
                     </span>
                     <h3 className="text-lg text-white font-medium">
@@ -827,7 +953,7 @@ export const PassportPage: React.FC = () => {
                     </h3>
                   </div>
                   <p className="text-xs text-[#cbb5aa] mt-1">
-                    Done in Manufacturer Login: Packing ➔ Warehouse Clearance ➔ Dispatched Air Corridor ➔ Delivered to Retail.
+                    Chain of custody for container {product?.productId || 'AAA12345678'}: Factory Packing ➔ Outbound Clearance ➔ Dispatched Air Corridor ➔ Delivered to Retail.
                   </p>
                 </div>
                 <button
@@ -840,38 +966,38 @@ export const PassportPage: React.FC = () => {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
-                <div className="p-3 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 space-y-1">
+                <div className="p-3 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl space-y-1">
                   <div className="text-[10px] text-[#cbb5aa] uppercase font-semibold">1. Factory Packing</div>
                   <strong className="text-white block">Packaging &amp; Seal</strong>
-                  <div className="text-[10px] text-[#e89d7b]">Gumi Mega-Hub Cleanroom</div>
-                  <span className="inline-block mt-1 px-1.5 py-0.2 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-xl text-emerald-400 font-mono text-[9px]">
+                  <div className="text-[10px] text-[#e89d7b]">{product?.assemblyFacility || 'Gumi Mega-Hub Cleanroom'}</div>
+                  <span className="inline-block mt-1 px-2 py-0.5 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-lg font-mono text-[9px]">
                     COMPLETED
                   </span>
                 </div>
 
-                <div className="p-3 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 space-y-1">
+                <div className="p-3 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl space-y-1">
                   <div className="text-[10px] text-[#cbb5aa] uppercase font-semibold">2. Factory Warehouse</div>
                   <strong className="text-white block">Outbound Clearance</strong>
-                  <div className="text-[10px] text-[#e89d7b]">Gumi Logistics Bay 2</div>
-                  <span className="inline-block mt-1 px-1.5 py-0.2 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-xl text-emerald-400 font-mono text-[9px]">
+                  <div className="text-[10px] text-[#e89d7b]">Logistics Bay 2</div>
+                  <span className="inline-block mt-1 px-2 py-0.5 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-lg font-mono text-[9px]">
                     CLEARED
                   </span>
                 </div>
 
-                <div className="p-3 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 space-y-1">
+                <div className="p-3 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl space-y-1">
                   <div className="text-[10px] text-[#cbb5aa] uppercase font-semibold">3. Dispatched</div>
                   <strong className="text-white block">Air Freight Corridor</strong>
-                  <div className="text-[10px] text-[#e89d7b]">Incheon ➔ Bangalore Airport</div>
-                  <span className="inline-block mt-1 px-1.5 py-0.2 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-xl text-emerald-400 font-mono text-[9px]">
+                  <div className="text-[10px] text-[#e89d7b]">Intercontinental Air Cargo</div>
+                  <span className="inline-block mt-1 px-2 py-0.5 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-lg font-mono text-[9px]">
                     DISPATCHED
                   </span>
                 </div>
 
-                <div className="p-3 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-xl border border-emerald-500/30 space-y-1">
+                <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl space-y-1">
                   <div className="text-[10px] text-emerald-400 uppercase font-semibold">4. Retail Store</div>
-                  <strong className="text-white block">Delivered to Retail</strong>
-                  <div className="text-[10px] text-emerald-400">Indiranagar Hub, Bangalore</div>
-                  <span className="inline-block mt-1 px-1.5 py-0.2 bg-[#2e6b4d] text-white font-mono text-[9px]">
+                  <strong className="text-white block">Delivered to Destination</strong>
+                  <div className="text-[10px] text-emerald-400">Retail Distribution Hub</div>
+                  <span className="inline-block mt-1 px-2 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-lg font-mono text-[9px]">
                     DELIVERED (STEP 8)
                   </span>
                 </div>
@@ -885,7 +1011,7 @@ export const PassportPage: React.FC = () => {
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#d9825b]/20 pb-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl text-white text-[10px] font-mono font-bold uppercase">
+                    <span className="px-2 py-0.5 bg-[#e89d7b]/15 text-[#f0a887] border border-[#e89d7b]/30 rounded-lg text-[10px] font-mono font-bold uppercase">
                       Steps 8 &amp; 9
                     </span>
                     <h3 className="text-lg text-white font-medium">
@@ -896,13 +1022,13 @@ export const PassportPage: React.FC = () => {
                     Once delivered to retail, retail login takes over. Selling details uploaded in retail login page.
                   </p>
                 </div>
-                <span className="px-2.5 py-1 text-xs border bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-xl text-emerald-400 border-emerald-500/30 font-mono">
+                <span className="px-2.5 py-1 text-xs bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-lg font-mono">
                   {product?.customerSale?.status || 'Active Customer Ownership'}
                 </span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 space-y-2">
+                <div className="p-4 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl space-y-2">
                   <span className="text-[10px] text-[#cbb5aa] uppercase block font-semibold">Step 9: Customer Information</span>
                   <div className="text-base text-white font-medium">
                     {product?.customerSale?.customerName || 'Vikram Malhotra'}
@@ -915,7 +1041,7 @@ export const PassportPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="p-4 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 space-y-2">
+                <div className="p-4 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl space-y-2">
                   <span className="text-[10px] text-[#cbb5aa] uppercase block font-semibold">Retail Sale Record (Retailer Login)</span>
                   <div className="text-xs text-white">
                     Retail Store: <strong>{product?.customerSale?.retailerShop || 'Apex Retail & Service Hub - Indiranagar'}</strong>
@@ -929,7 +1055,7 @@ export const PassportPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="pt-2 flex items-center justify-between text-xs">
+              <div className="pt-2 flex flex-wrap items-center justify-between gap-2 text-xs">
                 <span className="text-[#cbb5aa]">
                   Retailers can update customer invoice and sales data via the Retail Portal:
                 </span>
@@ -952,7 +1078,7 @@ export const PassportPage: React.FC = () => {
                   <AlertOctagon className="text-rose-400" size={20} />
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-xl text-rose-400 text-[10px] font-mono font-bold uppercase">
+                      <span className="px-2 py-0.5 bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-lg text-[10px] font-mono font-bold uppercase">
                         Steps 10, 11 &amp; 12
                       </span>
                       <h3 className="text-lg text-white font-medium">
@@ -965,7 +1091,7 @@ export const PassportPage: React.FC = () => {
                   </div>
                 </div>
 
-                <span className="px-2.5 py-1 text-xs border bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-xl text-rose-400 border-rose-500/30 font-mono">
+                <span className="px-2.5 py-1 text-xs bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-lg font-mono">
                   {defectReport?.status || 'Defect Incident Logged'}
                 </span>
               </div>
@@ -973,7 +1099,7 @@ export const PassportPage: React.FC = () => {
               {/* 2 Primary Informations Given by the Shopkeeper */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* 1. What is the Reported Defect */}
-                <div className="p-4 bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-xl border border-rose-500/30 space-y-2">
+                <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs uppercase tracking-wider text-rose-400 font-semibold flex items-center gap-1.5">
                       <AlertTriangle size={14} />
@@ -985,26 +1111,26 @@ export const PassportPage: React.FC = () => {
                     {defectReport?.problemDescription ||
                       'Customer Vikram Malhotra returned device after 2 weeks: Screen flickering and persistent green vertical line post-unboxing.'}
                   </p>
-                  <div className="text-[11px] text-[#e89d7b] pt-1 border-t border-[#f5c6cb]">
+                  <div className="text-[11px] text-[#e89d7b] pt-1 border-t border-rose-500/20">
                     Category: <strong>{defectReport?.problemCategory || 'Screen & Display'}</strong> • Serial: <span className="font-mono">{product?.productId}</span>
                   </div>
                 </div>
 
                 {/* 2. What May Be the Cause (Suspected Cause & RMA) */}
-                <div className="p-4 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 space-y-2">
+                <div className="p-4 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs uppercase tracking-wider text-[#b87428] font-semibold flex items-center gap-1.5">
+                    <span className="text-xs uppercase tracking-wider text-[#e89d7b] font-semibold flex items-center gap-1.5">
                       <Wrench size={14} />
                       <span>Step 11 &amp; 12: Root Cause Backtrace</span>
                     </span>
-                    <span className="text-[10px] text-[#cbb5aa]">Manufacturer Graph Traversal</span>
+                    <span className="text-[10px] text-[#cbb5aa]">Graph Traversal</span>
                   </div>
                   <p className="text-xs text-white leading-relaxed italic">
                     "{defectReport?.suspectedCause ||
                       'Stage 2 Machine DISP-04 thermal lamination thermocouple drift (+8.2°C) resulting in micro-delamination of Super AMOLED polarizer.'}"
                   </p>
                   <div className="text-[11px] text-[#e89d7b] pt-1 border-t border-[#d9825b]/20">
-                    RMA Docket: <strong className="font-mono text-[#f0a887]">RMA-BLR-AAA12345678</strong> • Sent to Gumi Mega-Hub
+                    RMA Docket: <strong className="font-mono text-[#f0a887]">RMA-BLR-{product?.productId || 'AAA12345678'}</strong> • Sent to Mega-Hub
                   </div>
                 </div>
               </div>
@@ -1019,15 +1145,15 @@ export const PassportPage: React.FC = () => {
                   <RotateCcw className="text-rose-400" size={20} />
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-xl text-rose-400 text-[10px] font-mono font-bold uppercase">
+                      <span className="px-2 py-0.5 bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-lg text-[10px] font-mono font-bold uppercase">
                         Steps 13, 14 &amp; 15
                       </span>
                       <h3 className="text-lg text-white font-medium">
-                        Batch AAA Recall, Repair &amp; Customer Re-Delivery
+                        Batch {primaryBatchId} Recall, Repair &amp; Customer Re-Delivery
                       </h3>
                     </div>
                     <p className="text-xs text-[#cbb5aa] mt-0.5">
-                      Manufacturer recalls all phones from Batch AAA; repairs unit and returns it to retailer; retailer delivers back to customer.
+                      Manufacturer recalls all units from Batch {primaryBatchId}; repairs unit and returns it to retailer; retailer delivers back to customer.
                     </p>
                   </div>
                 </div>
@@ -1043,33 +1169,33 @@ export const PassportPage: React.FC = () => {
 
               {/* 3 Action Columns */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                <div className="p-4 bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-xl border border-rose-500/30 space-y-2">
+                <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl space-y-2">
                   <div className="text-[10px] text-rose-400 uppercase font-bold">Step 13: Full Batch Recall</div>
                   <div className="text-base font-mono font-bold text-rose-400">
-                    Batch AAA Recalled
+                    Batch {primaryBatchId} Recalled
                   </div>
                   <p className="text-white leading-relaxed">
-                    Manufacturer verified DISP-04 defect signature across all sister units in Batch AAA. Emergency stop-sale transmitted.
+                    Manufacturer verified DISP-04 defect signature across sister units in Batch {primaryBatchId}. Emergency stop-sale transmitted.
                   </p>
                 </div>
 
-                <div className="p-4 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl border border-[#d9825b]/20 space-y-2">
+                <div className="p-4 bg-[#1c120d]/80 border border-[#d9825b]/20 rounded-2xl space-y-2">
                   <div className="text-[10px] text-emerald-400 uppercase font-bold">Step 14: Factory Repair</div>
                   <div className="text-base font-mono font-bold text-emerald-400">
                     Repaired &amp; Reshipped
                   </div>
                   <p className="text-white leading-relaxed">
-                    Display module replaced with certified unit AAA-0042. Shipped back to Apex Retail Hub, Indiranagar.
+                    Display module replaced with certified genuine component. Shipped back to Retail Hub.
                   </p>
                 </div>
 
-                <div className="p-4 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-xl border border-emerald-500/30 space-y-2">
+                <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl space-y-2">
                   <div className="text-[10px] text-emerald-400 uppercase font-bold">Step 15: Customer Handover</div>
                   <div className="text-base font-mono font-bold text-emerald-400">
-                    Re-Delivered to Vikram
+                    Re-Delivered to Customer
                   </div>
                   <p className="text-white leading-relaxed">
-                    Retailer contacts customer Vikram Malhotra (+91 98765 43210) and hands over the verified device.
+                    Retailer contacts customer {product?.customerSale?.customerName || 'Vikram Malhotra'} and hands over the verified device.
                   </p>
                 </div>
               </div>
@@ -1081,10 +1207,10 @@ export const PassportPage: React.FC = () => {
             <div className="p-6 bg-[#140c08]/92 border border-[#d9825b]/25 rounded-3xl space-y-5 border-l-4 border-l-purple-500 animate-in fade-in duration-200">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#d9825b]/20 pb-3">
                 <div className="flex items-center gap-2">
-                  <Lock className="text-[#7c3aed]" size={20} />
+                  <Lock className="text-purple-400" size={20} />
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 bg-[#f5f3ff] text-[#7c3aed] text-[10px] font-mono font-bold uppercase">
+                      <span className="px-2 py-0.5 bg-purple-500/15 text-purple-300 border border-purple-500/30 rounded-lg text-[10px] font-mono font-bold uppercase">
                         Security Rule
                       </span>
                       <h3 className="text-lg text-white font-medium">
@@ -1101,17 +1227,17 @@ export const PassportPage: React.FC = () => {
                   onClick={() => navigate('/security')}
                   className="btn-glass text-xs flex items-center gap-1.5"
                 >
-                  <Lock size={13} className="text-[#7c3aed]" />
+                  <Lock size={13} className="text-purple-400" />
                   <span>Open Hardware Lock Console</span>
                 </button>
               </div>
 
               {/* Compare Genuine vs Fake */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                <div className="p-4 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-xl border border-emerald-500/30 space-y-2">
+                <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl space-y-2">
                   <div className="flex items-center justify-between">
                     <strong className="text-sm text-emerald-400">Genuine OEM Screen</strong>
-                    <span className="px-1.5 py-0.2 bg-[#2e6b4d] text-white font-mono text-[9px]">
+                    <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded font-mono text-[9px]">
                       VERIFIED PASS
                     </span>
                   </div>
@@ -1123,10 +1249,10 @@ export const PassportPage: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="p-4 bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-xl border border-rose-500/30 space-y-2">
+                <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl space-y-2">
                   <div className="flex items-center justify-between">
                     <strong className="text-sm text-rose-400">3rd-Party Fake Screen</strong>
-                    <span className="px-1.5 py-0.2 bg-[#b84a44] text-white font-mono text-[9px]">
+                    <span className="px-2 py-0.5 bg-rose-500/20 text-rose-300 border border-rose-500/30 rounded font-mono text-[9px]">
                       AUTO-LOCK TRIGGERED
                     </span>
                   </div>

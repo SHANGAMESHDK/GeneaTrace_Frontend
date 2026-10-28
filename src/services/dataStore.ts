@@ -90,6 +90,17 @@ function loadInitialState(): AppState {
     try {
       const parsed = JSON.parse(stored);
       if (parsed.defectReports && parsed.currentUser) {
+        // Ensure showcase products exist even if browser has an older localStorage
+        const defaultProds = generateInitialProducts();
+        if (parsed.products) {
+          for (const dp of defaultProds) {
+            if (!parsed.products.some((ep: any) => ep.productId === dp.productId)) {
+              parsed.products.push(dp);
+            }
+          }
+        } else {
+          parsed.products = defaultProds;
+        }
         return parsed;
       }
     } catch (e) {
@@ -591,17 +602,14 @@ export const GeneaTraceStore = {
   },
 
   getProduct(productId: string): ProductRecord | undefined {
-    if (!productId) return currentState.products[0];
+    if (!productId) return undefined;
     const clean = productId.trim().toUpperCase();
     return currentState.products.find(
       p => p.productId.toUpperCase() === clean ||
            p.imeiMasked.toUpperCase() === clean ||
-           clean.includes('AAA') ||
-           clean.includes('A55') ||
-           clean.includes('851') ||
-           clean === 'GT-DEV-00000851' ||
-           clean === 'AAA12345678'
-    ) || currentState.products[0];
+           (p.productId === 'AAA12345678' && (clean === 'AAA' || clean === 'A55' || clean === 'AAA12345678' || clean === 'SAMSUNG-A55')) ||
+           (p.productId === 'GT-DEV-00000851' && (clean === '851' || clean === 'GT-DEV' || clean === 'GT-DEV-00000851' || clean === 'S25' || clean === 'SM-S928'))
+    );
   },
 
   // 1. Ingest Assembly Stage into Cryptographic Container (pushed via /scanner)

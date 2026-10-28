@@ -134,6 +134,236 @@ export function generateInitialProducts(): ProductRecord[] {
           hash: '0x4d5c6b7a993184ef'
         }
       ]
+    },
+    {
+      productId: 'GT-DEV-00000851',
+      productModel: 'Galaxy S25 Ultra Titanium (SM-S928 DPP Edition)',
+      sector: 'Consumer Electronics',
+      productTypeDisplay: 'Flagship Smartphone (Snapdragon 8 Gen 4)',
+      imeiMasked: '359812048821901',
+      installedComponents: {
+        'Display Module': 'CMP-DIS-8801',
+        'Battery Cell': 'BTR-5000-A2',
+        'Mainboard': 'PCB-MB-S25U'
+      },
+      installedBatches: {
+        'Display Module': 'DISP-Q4',
+        'Battery Cell': 'CELL-2026-09',
+        'Mainboard': 'SMT-ALPHA-01'
+      },
+      assemblyDate: '2026-10-04',
+      assemblyFacility: 'Samsung Smart Mega-Hub 4, Gumi',
+      status: 'Delivered',
+      passportStatus: 'Active',
+      shipmentId: 'GT-SHP-00000326',
+      blockchainTx: pseudoHash('PASSPORT-TX-GT-DEV-00000851'),
+      merkleRoot: '0x8f2c3d4e5a6b7c8d9e0f1a2b3c4d5e6f',
+      isTampered: false,
+      isLocked: false,
+      complianceStandards: ['EU DPP Directive (ESPR)', 'RoHS-3 Compliant', 'CE Certified'],
+      carbonFootprintKg: 46.2,
+      recycledContentPct: 32.0,
+      esgScore: 'A+ (97/100)',
+      customerSale: {
+        customerName: 'Ananya Deshmukh',
+        phone: '+91 98201 55432',
+        saleDate: '2026-10-18',
+        invoiceNo: 'INV-BLR-2026-9041',
+        retailerShop: 'Samsung Experience Store - Phoenix Mall, Bangalore',
+        status: 'Sold'
+      },
+      assemblyStages: [
+        {
+          stageIndex: 1,
+          name: 'Grade-5 Titanium Frame CNC Milling',
+          machineId: 'CNC-TITAN-01',
+          timestamp: '2026-10-04 07:15:00 UTC',
+          operator: 'Dae-Jung Kim',
+          status: 'Completed',
+          hash: '0x7a8b9c0d1e2f3a4b'
+        },
+        {
+          stageIndex: 2,
+          name: 'Dynamic AMOLED 2X Display Optical Bonding',
+          machineId: 'DISP-02',
+          timestamp: '2026-10-04 08:30:00 UTC',
+          operator: 'Min-Soo Park',
+          status: 'Completed',
+          hash: '0x8b9c0d1e2f3a4b5c'
+        },
+        {
+          stageIndex: 3,
+          name: 'Secure Enclave & Knox Cryptographic Fusion',
+          machineId: 'SEC-01',
+          timestamp: '2026-10-04 09:45:00 UTC',
+          operator: 'Automated Enclave Gate',
+          status: 'Completed',
+          hash: '0x9c0d1e2f3a4b5c6d'
+        },
+        {
+          stageIndex: 4,
+          name: 'Hermetic IP68 Pressure Seal & Merkle Root Anchor',
+          machineId: 'SEAL-04',
+          timestamp: '2026-10-04 10:20:00 UTC',
+          operator: 'QC Gate Alpha',
+          status: 'Sealed & Merkle Root Anchored',
+          hash: '0xad0e1f2a3b4c5d6e'
+        }
+      ]
+    },
+    {
+      productId: 'GT-EVB-00094120',
+      productModel: '800V High-Density NMC EV Battery Pack (102 kWh)',
+      sector: 'Automotive & EV Battery',
+      productTypeDisplay: 'High-Voltage Traction Battery (EU Battery DPP 2023/1542)',
+      imeiMasked: 'UDI-EVB-800V-94120',
+      installedComponents: {
+        'Battery Management System (BMS)': 'BMS-800V-0041',
+        'Prismatic Cell Module Array': 'MOD-NMC-0881',
+        'Thermal Cooling Plate': 'THM-COOL-102'
+      },
+      installedBatches: {
+        'Battery Management System (BMS)': 'BMS-LOT-12',
+        'Prismatic Cell Module Array': 'NMC-811-Q3',
+        'Thermal Cooling Plate': 'THM-ALUM-04'
+      },
+      assemblyDate: '2026-09-28',
+      assemblyFacility: 'Cleanroom Gigafactory 1, Salzgitter',
+      status: 'Delivered',
+      passportStatus: 'Active',
+      shipmentId: 'GT-SHP-00000326',
+      blockchainTx: pseudoHash('PASSPORT-TX-GT-EVB-00094120'),
+      merkleRoot: '0x7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2b',
+      isTampered: false,
+      isLocked: false,
+      complianceStandards: ['EU Battery Regulation (2023/1542)', 'ISO 26262 ASIL-D', 'UN 38.3 Certified'],
+      carbonFootprintKg: 58.4,
+      recycledContentPct: 44.5,
+      esgScore: 'A++ (99/100)',
+      batteryChemistry: 'NMC 811 (Nickel-Manganese-Cobalt)',
+      stateOfHealth: 100,
+      customerSale: {
+        customerName: 'Volvo Car Mobility Fleet',
+        phone: '+46 31 590 000',
+        saleDate: '2026-10-12',
+        invoiceNo: 'INV-EU-2026-4410',
+        retailerShop: 'Direct OEM Assembly Delivery - Torslanda Plant',
+        status: 'Sold'
+      },
+      assemblyStages: [
+        {
+          stageIndex: 1,
+          name: 'Prismatic Cell Stacking & Laser Tab Welding',
+          machineId: 'WELD-CELL-08',
+          timestamp: '2026-09-28 06:30:00 UTC',
+          operator: 'Hans Gruber',
+          status: 'Completed',
+          hash: '0x1b2c3d4e5f6a7b8c'
+        },
+        {
+          stageIndex: 2,
+          name: 'Dielectric Thermal Gap Filler Ingestion',
+          machineId: 'DISP-THM-01',
+          timestamp: '2026-09-28 07:45:00 UTC',
+          operator: 'Lukas Meyer',
+          status: 'Completed',
+          hash: '0x2c3d4e5f6a7b8c9d'
+        },
+        {
+          stageIndex: 3,
+          name: 'High-Voltage Insulation & ASIL-D BMS Attestation',
+          machineId: 'BMS-TEST-02',
+          timestamp: '2026-09-28 09:10:00 UTC',
+          operator: 'Automated Hi-Pot Station',
+          status: 'Completed',
+          hash: '0x3d4e5f6a7b8c9d0e'
+        },
+        {
+          stageIndex: 4,
+          name: 'EU Battery DPP Cloud Seal & Merkle Blockchain Anchor',
+          machineId: 'DPP-ANCHOR-01',
+          timestamp: '2026-09-28 10:00:00 UTC',
+          operator: 'Automated Certification Gate',
+          status: 'Sealed & Merkle Root Anchored',
+          hash: '0x4e5f6a7b8c9d0e1f'
+        }
+      ]
+    },
+    {
+      productId: 'GT-MED-00041289',
+      productModel: 'Titanium Cardiac Bio-Telemetry Pacemaker (Class III)',
+      sector: 'Medical Technology',
+      productTypeDisplay: 'Class III Active Implantable Medical Device (EU MDR)',
+      imeiMasked: 'UDI-DI-008401928341',
+      installedComponents: {
+        'Bio-Compatible Lead Sensor': 'MED-SEN-412',
+        'Solid-State Micro Battery': 'MED-BAT-990',
+        'Encrypted RF Telemetry Transceiver': 'RF-MED-771'
+      },
+      installedBatches: {
+        'Bio-Compatible Lead Sensor': 'MED-LOT-A',
+        'Solid-State Micro Battery': 'BAT-SOL-02',
+        'Encrypted RF Telemetry Transceiver': 'RF-ISO-09'
+      },
+      assemblyDate: '2026-09-20',
+      assemblyFacility: 'Cleanroom Class 100 Precision Bio-Facility, Zurich',
+      status: 'Delivered',
+      passportStatus: 'Active',
+      shipmentId: 'GT-SHP-00000326',
+      blockchainTx: pseudoHash('PASSPORT-TX-GT-MED-00041289'),
+      merkleRoot: '0x5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a0f',
+      isTampered: false,
+      isLocked: false,
+      complianceStandards: ['EU MDR (2017/745) Class III', 'ISO 13485:2016 Certified', 'FDA 21 CFR Part 820'],
+      carbonFootprintKg: 3.8,
+      recycledContentPct: 15.0,
+      esgScore: 'A+ (98/100)',
+      customerSale: {
+        customerName: 'St. Jude Heart Institute - Cardiology Wing',
+        phone: '+41 44 255 11 11',
+        saleDate: '2026-10-05',
+        invoiceNo: 'INV-MED-2026-1102',
+        retailerShop: 'Direct Hospital Medical Distribution - Zurich Center',
+        status: 'Sold'
+      },
+      assemblyStages: [
+        {
+          stageIndex: 1,
+          name: 'Laser Beam Hermetic Titanium Canister Micro-Welding',
+          machineId: 'LASER-BIO-01',
+          timestamp: '2026-09-20 07:00:00 UTC',
+          operator: 'Dr. Beatrix Keller',
+          status: 'Completed',
+          hash: '0x9a8b7c6d5e4f3a2b'
+        },
+        {
+          stageIndex: 2,
+          name: 'Helium Leak Micro-Torr Mass Spectrometry Inspection',
+          machineId: 'SPECTRO-HE-02',
+          timestamp: '2026-09-20 08:30:00 UTC',
+          operator: 'Marco Vane',
+          status: 'Completed',
+          hash: '0x8b7c6d5e4f3a2b1c'
+        },
+        {
+          stageIndex: 3,
+          name: 'Ethylene Oxide (EtO) Medical Terminal Sterilization',
+          machineId: 'STERIL-ETO-04',
+          timestamp: '2026-09-20 10:15:00 UTC',
+          operator: 'Automated Sterilization Chamber',
+          status: 'Completed',
+          hash: '0x7c6d5e4f3a2b1c0d'
+        },
+        {
+          stageIndex: 4,
+          name: 'EUDAMED UDI-DI Anchoring & Merkle Sealing',
+          machineId: 'EUDAMED-GATE-01',
+          timestamp: '2026-09-20 11:00:00 UTC',
+          operator: 'Quality Assurance Officer',
+          status: 'Sealed & Merkle Root Anchored',
+          hash: '0x6d5e4f3a2b1c0d9e'
+        }
+      ]
     }
   ];
 }
