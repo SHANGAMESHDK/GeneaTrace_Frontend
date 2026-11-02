@@ -41,12 +41,19 @@ export default function BatchDetail() {
       />
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Stat label="Minted" value={`${batch.minted} / ${batch.quantity.toLocaleString()}`} icon={Icon} />
-        <Stat label="Units traced (incl. downstream)" value={trace.units} icon={GitBranch} tone="purple" hint={trace.dependents.length ? `${trace.dependents.length} product batch(es) use this lot` : undefined} />
+        {trace
+          ? <Stat label="Units traced (incl. downstream)" value={trace.units} icon={GitBranch} tone="purple" hint={trace.dependents.length ? `${trace.dependents.length} product batch(es) use this lot` : undefined} />
+          : <Stat label="Your units in this batch" value={data.units.length} icon={GitBranch} tone="purple" hint={`Made by ${data.manufacturer?.name}`} />}
         <Stat label="Manufactured" value={fmtDate(batch.mfg_date)} icon={Truck} tone="gray" />
         <Stat label="Expiry" value={batch.expiry_date ? fmtDate(batch.expiry_date) : 'n/a'} icon={Bell} tone={batch.expiry_date && batch.expiry_date < new Date().toISOString().slice(0, 10) ? 'red' : 'gray'} />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
+        {!trace ? (
+          <Card title="Where are the units now?" className="lg:col-span-2" icon={MapPin}>
+            <p className="text-sm text-ink-600">You can see only the units of this batch that your company holds or has handled. The full network-wide trace is visible to {data.manufacturer?.name} and regulators.</p>
+          </Card>
+        ) : (
         <Card title="Where are the units now?" subtitle="Forward trace – for recalls and stock audits" className="lg:col-span-2" icon={MapPin} bodyClass="overflow-x-auto">
           {trace.dependents.length > 0 && (
             <p className="px-5 pt-3 text-sm text-ink-600">This lot is a component in: {trace.dependents.map((d) => <Link key={d.id} to={`/app/batches/${d.id}`} className="mr-2 font-mono text-brand-700 hover:underline">{d.id}</Link>)}</p>
@@ -66,6 +73,7 @@ export default function BatchDetail() {
             </tbody>
           </table>
         </Card>
+        )}
         <div className="space-y-6">
           <Card title="Bill of materials" icon={GitBranch}><ComponentTree nodes={data.components} linkBatches /></Card>
           {attrs.length > 0 && (
