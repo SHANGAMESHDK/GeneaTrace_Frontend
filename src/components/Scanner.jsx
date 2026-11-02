@@ -33,6 +33,9 @@ const scanConfig = { fps: 10, qrbox: (w, h) => ({ width: Math.min(w, h) * 0.7, h
  */
 export default function Scanner({ onScan, continuous = false, height = 280 }) {
   const last = useRef({ text: '', at: 0 });
+  // The camera callback is registered once, so read the latest onScan through a ref.
+  const onScanRef = useRef(onScan);
+  onScanRef.current = onScan;
   const scannerRef = useRef(null);
   const fileRef = useRef(null);
   const [state, setState] = useState('starting'); // starting | live | error
@@ -48,7 +51,7 @@ export default function Scanner({ onScan, continuous = false, height = 280 }) {
     const now = Date.now();
     if (text === last.current.text && now - last.current.at < 2500) return;
     last.current = { text, at: now };
-    onScan(text);
+    onScanRef.current(text);
   };
 
   const start = async (source) => {

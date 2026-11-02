@@ -32,7 +32,9 @@ const savePref = (v) => {
 export default function ScannerStation() {
   const { actor, facilities } = useAuth();
   const [machines, setMachines] = useState([]);
-  const [pref, setPref] = useState(() => ({ result: 'pass', auto: false, ...loadPref() }));
+  const [pref, setPref] = useState(() => ({ auto: false, ...loadPref() }));
+  const [result, setResult] = useState('pass');
+  const [notice, setNotice] = useState(null);
   const [camera, setCamera] = useState(false);
   const [serial, setSerial] = useState('');
   const [partInput, setPartInput] = useState('');
@@ -43,7 +45,7 @@ export default function ScannerStation() {
   const partRef = useRef(null);
   const serialRef = useRef(null);
   const set = (k, v) => setPref((p) => {
-    const n = { ...p, [k]: v };
+    const { result: _r, ...n } = { ...p, [k]: v };
     savePref(n);
     return n;
   });
@@ -53,26 +55,44 @@ export default function ScannerStation() {
   }, []);
   const machine = machines.find((m) => m.id === pref.machine_id);
   const stationMachines = machines.filter((m) => !pref.facility_id || m.facility_id === pref.facility_id);
-  const process = pref.process || machine?.processes?.[0] || '';
+  // A remembered process only counts if the selected machine is qualified for it.
+  const process = machine?.processes?.length ? (machine.processes.includes(pref.process) ? pref.process : machine.processes[0]) : pref.process || '';
   const needsPart = !!pref.with_part;
 
   const push = async (u = unit, part = partInput) => {
     if (!u || !machine || !process) return;
+    if (needsPart && !parseScan(part).id) return setError(new Error('Scan the part serial before pushing this step.'));
     setBusy(true);
     setError(null);
+    setNotice(null);
     try {
       const r = await api('/events', {
         method: 'POST',
-        body: { type: 'PROCESS_STEP', product_ids: [u.product.id], part_ids: needsPart ? [parseScan(part).id] : undefined, data: { process, machine_id: machine.id, result: pref.result, operator: actor.name } },
+        body: { type: 'PROCESS_STEP', product_ids: [u.product.id], part_ids: needsPart ? [parseScan(part).id] : undefined, data: { process, machine_id: machine.id, result, operator: actor.name } },
       });
       const okItem = r.accepted.length > 0;
       setLog((l) => [{ id: u.product.id, process, machine: machine.id, ok: okItem, reason: r.rejected[0]?.reason, block: r.block?.height, part: needsPart ? parseScan(part).id : null, at: new Date().toISOString() }, ...l].slice(0, 50));
       if (okItem) {
+        setResult('pass');
         setUnit(await api(`/scanner/${u.product.id}`));
         setPartInput('');
         setSerial('');
         serialRef.current?.focus();
       } else setError(new Error(r.rejected[0]?.reason));
+    } catch (e) {
+      setError(e);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const complete = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const r = await api('/events', { method: 'POST', body: { type: 'PRODUCTION_COMPLETE', product_ids: [unit.product.id] } });
+      if (!r.accepted.length) throw new Error(r.rejected[0]?.reason);
+      setUnit(await api(`/scanner/${unit.product.id}`));
     } catch (e) {
       setError(e);
     } finally {
@@ -86,10 +106,18 @@ export default function ScannerStation() {
     setError(null);
     try {
       const u = await api(`/scanner/${id}`);
+      const switched = u.product.id !== unit?.product.id;
       setUnit(u);
       setSerial(id);
+      setNotice(null);
+      if (switched) setPartInput('');
       if (needsPart) setTimeout(() => partRef.current?.focus(), 50);
-      else if (pref.auto) await push(u);
+      else if (pref.auto) {
+        // A unit left under the camera is re-read every few seconds; don't record the step twice.
+        const last = u.steps.at(-1);
+        if (result === 'pass' && last?.process === process && last.machine_id === machine?.id && last.result === 'pass') setNotice(`“${process}” is already recorded on ${u.product.id} – not pushed again.`);
+        else await push(u);
+      }
     } catch (e) {
       setUnit(null);
       setError(e);
@@ -114,7 +142,7 @@ export default function ScannerStation() {
             <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-ink-400">Station setup</p>
             <div className="space-y-3 [&_.label]:text-ink-300">
               <Field label="Facility">
-                <select className="input" value={pref.facility_id || ''} onChange={(e) => set('facility_id', e.target.value)}>
+                <select className="input" value={pref.facility_id || ''} onChange={(e) => { set('facility_id', e.target.value); if (machine && e.target.value && machine.facility_id !== e.target.value) set('machine_id', ''); }}>
                   <option value="">All my facilities</option>
                   {facilities.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
                 </select>
@@ -138,7 +166,7 @@ export default function ScannerStation() {
               </div>
               <div className="flex gap-2">
                 {['pass', 'fail'].map((r) => (
-                  <button key={r} onClick={() => set('result', r)} className={cx('flex-1 rounded-lg py-2 text-sm font-semibold ring-1', pref.result === r ? (r === 'pass' ? 'bg-brand-600 ring-brand-500' : 'bg-red-600 ring-red-500') : 'ring-white/15 text-ink-300')}>
+                  <button key={r} onClick={() => setResult(r)} className={cx('flex-1 rounded-lg py-2 text-sm font-semibold ring-1', result === r ? (r === 'pass' ? 'bg-brand-600 ring-brand-500' : 'bg-red-600 ring-red-500') : 'ring-white/15 text-ink-300')}>
                     Result: {r}
                   </button>
                 ))}
@@ -169,6 +197,7 @@ export default function ScannerStation() {
 
         <section className="space-y-4 lg:col-span-3">
           <ErrorBox error={error} />
+          {notice && <p className="rounded-xl bg-amber-500/10 px-4 py-2 text-sm text-amber-200 ring-1 ring-amber-400/30">{notice}</p>}
           {unit ? (
             <div className="rounded-2xl bg-white p-5 text-ink-900">
               <div className="flex flex-wrap items-start justify-between gap-3">
@@ -193,9 +222,9 @@ export default function ScannerStation() {
               )}
               <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center">
                 <Button icon={Send} loading={busy} onClick={() => push()} disabled={!ready || (needsPart && !partInput)} className="sm:flex-1">
-                  Push “{process}” on {machine?.id || '—'} ({pref.result})
+                  Push “{process}” on {machine?.id || '—'} ({result})
                 </Button>
-                {unit.progress.complete && unit.product.status === 'in_production' && <span className="text-xs text-brand-700">Route complete – mark “Production complete” from the batch page.</span>}
+                {unit.progress.complete && unit.product.status === 'in_production' && <Button variant="secondary" icon={CheckCircle2} loading={busy} onClick={complete}>Production complete</Button>}
               </div>
               <div className="mt-5">
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-500">Recorded in this serial ({unit.steps.length})</p>
