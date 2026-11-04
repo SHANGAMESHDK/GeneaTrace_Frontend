@@ -104,3 +104,51 @@ export function DeviceCheckin({ productId, parts, onDone }) {
     </Card>
   );
 }
+
+/** Manufacturer: pair an NFC chip with this passport and get what the tag writer needs. */
+export function NfcCard({ product, onDone }) {
+  const [uid, setUid] = useState('');
+  const [keys, setKeys] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
+  const run = async (fn) => {
+    setBusy(true);
+    setError(null);
+    try {
+      await fn();
+    } catch (e) {
+      setError(e);
+    } finally {
+      setBusy(false);
+    }
+  };
+  const bind = () => run(async () => {
+    setKeys(await api(`/products/${product.id}/nfc`, { method: 'POST', body: { uid } }));
+    onDone();
+  });
+  const tap = () => run(async () => {
+    const r = await api(`/products/${product.id}/nfc/simulate`, { method: 'POST' });
+    window.open(r.url, '_blank', 'noopener');
+  });
+  const paired = product.attributes?.nfc_uid;
+  return (
+    <Card title="NFC tag" subtitle="NTAG 424 DNA: a new signed code on every tap">
+      {paired ? <p className="font-mono text-sm text-ink-700">{paired}</p> : (
+        <div className="flex gap-2">
+          <input className="input font-mono" placeholder="Tag UID, e.g. 04AABBCCDDEE01" value={uid} onChange={(e) => setUid(e.target.value)} maxLength={20} />
+          <Button loading={busy} disabled={!uid} onClick={bind}>Pair</Button>
+        </div>
+      )}
+      {keys && (
+        <div className="mt-3 space-y-1 break-all rounded-lg bg-ink-50 p-3 font-mono text-xs text-ink-700">
+          <p className="font-sans font-semibold text-amber-700">Write these to the tag now and keep them private.</p>
+          <p>URL: {keys.url_template}</p>
+          <p>Meta read key: {keys.meta_read_key}</p>
+          <p>File read key: {keys.file_read_key}</p>
+        </div>
+      )}
+      {paired && <Button className="mt-3" variant="secondary" size="sm" loading={busy} onClick={tap}>Simulate a tap (demo)</Button>}
+      <div className="mt-2"><ErrorBox error={error} /></div>
+    </Card>
+  );
+}

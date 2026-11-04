@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { ShieldCheck, ShieldX, ShieldAlert, Factory, Calendar, Boxes, MapPin, Flag, ScanLine, AlertTriangle } from 'lucide-react';
 import { publicApi } from '../lib/api';
 import { categoryMeta, fmtDate, ROLE_LABEL, VERDICT_META, humanize, STATUS_META, INTERNAL_ATTRS } from '../lib/format';
@@ -40,6 +40,7 @@ export default function Verify() {
   const [error, setError] = useState(null);
   const [report, setReport] = useState(false);
   const { lang, choose, t } = useLang();
+  const nfc = useLocation().state?.nfc;
 
   useEffect(() => {
     let live = true;
@@ -85,6 +86,7 @@ export default function Verify() {
                 <p className="text-xs font-semibold uppercase tracking-widest text-white/70">{t.result}</p>
                 <h1 className="text-2xl font-bold sm:text-3xl">{t.verdict[res.verdict] || res.headline}</h1>
                 <ul className="mt-1 space-y-0.5 text-sm text-white/90">{res.reasons.slice(0, 4).map((r) => <li key={r}>{r}</li>)}</ul>
+                {nfc && <p className="mt-2 text-sm font-semibold text-white">{t.nfcOk}</p>}
                 {res.verdict === 'GENUINE' && <p className="mt-2 text-sm font-medium text-white">{t.sealNote}</p>}
               </div>
               {p && <div className="rounded-2xl bg-white p-2"><TrustRing score={p.trust.score} size={84} /></div>}

@@ -7,7 +7,7 @@ import { Badge, Button, Card, ErrorBox, Loading, PageHeader, StatusBadge, useAsy
 import { QrImage, TrustRing } from '../../components/domain';
 import PassportTabs from '../../components/PassportTabs';
 import EventComposer from '../../components/EventComposer';
-import { ProductionCard, PartsCard, DeviceCheckin } from '../../components/ProductionPanels';
+import { ProductionCard, PartsCard, DeviceCheckin, NfcCard } from '../../components/ProductionPanels';
 import BacktracePanel from '../../components/Backtrace';
 
 const HIDE = INTERNAL_ATTRS;
@@ -76,6 +76,7 @@ export default function ProductDetail() {
             </Card>
           )}
           <PartsCard parts={p.parts} />
+          {p.manufacturer?.id === actor.id && p.product.category !== 'component' && <NfcCard product={p.product} onDone={reload} />}
           {p.product.category === 'electronics' && p.parts.length > 0 && ['sold', 'locked'].includes(p.product.status) && <DeviceCheckin productId={p.product.id} parts={p.parts} onDone={reload} />}
           <Card title="QR label" action={<Link to={`/app/batches/${p.batch.id}/labels?ids=${p.product.id}`}><Button variant="ghost" size="sm" icon={Printer}>Print</Button></Link>}>
             <div className="flex flex-col items-center text-center">

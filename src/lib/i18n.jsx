@@ -16,6 +16,7 @@ const STRINGS = {
     todo1: 'Do not consume, use or resell this item.',
     todo2: 'Keep the packaging and the receipt; report it below so regulators can trace the source.',
     todo3: 'Buy only from sellers whose products verify on GeneaTrace.',
+    nfcOk: 'The NFC chip on this pack is genuine.',
     sealNote: 'Also check that the seal on the pack is unbroken. A genuine code on an opened pack is not proof the contents are genuine.',
     verdict: {},
   },
@@ -33,6 +34,7 @@ const STRINGS = {
     todo1: 'इस वस्तु का सेवन, उपयोग या पुनर्विक्रय न करें।',
     todo2: 'पैकेजिंग और रसीद संभालकर रखें; नीचे रिपोर्ट करें ताकि नियामक स्रोत का पता लगा सकें।',
     todo3: 'केवल उन्हीं विक्रेताओं से खरीदें जिनके उत्पाद GeneaTrace पर सत्यापित होते हैं।',
+    nfcOk: 'इस पैक की NFC चिप असली है।',
     sealNote: 'यह भी देखें कि पैक की सील टूटी न हो। खुले पैक पर असली कोड होना इस बात का प्रमाण नहीं कि अंदर का सामान असली है।',
     verdict: {
       GENUINE: 'असली उत्पाद', COUNTERFEIT: 'नकली लेबल', TAMPERED: 'रिकॉर्ड से छेड़छाड़ हुई है', SUSPECTED_CLONE: 'संभावित नकली लेबल',
@@ -53,6 +55,7 @@ const STRINGS = {
     todo1: 'இந்தப் பொருளை உட்கொள்ளவோ, பயன்படுத்தவோ, மறுவிற்பனை செய்யவோ வேண்டாம்.',
     todo2: 'பொட்டலத்தையும் ரசீதையும் பாதுகாத்து வைக்கவும்; ஒழுங்குமுறை அதிகாரிகள் மூலத்தைக் கண்டறிய கீழே புகாரளிக்கவும்.',
     todo3: 'GeneaTrace-இல் சரிபார்க்கப்படும் பொருட்களை விற்பவர்களிடம் மட்டுமே வாங்கவும்.',
+    nfcOk: 'இந்தப் பொட்டலத்தில் உள்ள NFC சிப் உண்மையானது.',
     sealNote: 'பொட்டலத்தின் முத்திரை உடையாமல் உள்ளதா என்றும் பார்க்கவும். திறந்த பொட்டலத்தில் உண்மையான குறியீடு இருப்பது உள்ளே இருப்பது உண்மையானது என்பதற்கான சான்று அல்ல.',
     verdict: {
       GENUINE: 'உண்மையான பொருள்', COUNTERFEIT: 'போலி லேபிள்', TAMPERED: 'பதிவுகள் மாற்றப்பட்டுள்ளன', SUSPECTED_CLONE: 'போலி லேபிளாக இருக்கலாம்',

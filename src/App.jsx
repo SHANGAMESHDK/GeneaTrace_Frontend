@@ -5,6 +5,7 @@ import AppLayout from './components/AppLayout';
 import Landing from './pages/Landing';
 import Verify from './pages/Verify';
 import Scan from './pages/Scan';
+import NfcTap from './pages/NfcTap';
 import Login from './pages/Login';
 import Dashboard from './pages/app/Dashboard';
 import Products from './pages/app/Products';
@@ -41,6 +42,7 @@ export default function App() {
       <Route path="/v/:id" element={<Verify />} />
       <Route path="/01/:gtin/10/:lot/21/:serial" element={<DigitalLink />} />
       <Route path="/01/:gtin/21/:serial" element={<DigitalLink />} />
+      <Route path="/n" element={<NfcTap />} />
       <Route path="/scan" element={<Scan />} />
       <Route path="/login" element={<Login />} />
       <Route path="/scanner" element={<Protected><ScannerStation /></Protected>} />
