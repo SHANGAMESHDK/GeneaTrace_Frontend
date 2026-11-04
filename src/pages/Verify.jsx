@@ -6,6 +6,7 @@ import { categoryMeta, fmtDate, ROLE_LABEL, VERDICT_META, humanize, STATUS_META,
 import { Logo, TrustRing } from '../components/domain';
 import { Badge, Button, cx, ErrorBox, Field, Loading, Modal, StatusBadge } from '../components/ui';
 import PassportTabs from '../components/PassportTabs';
+import { LangPicker, useLang } from '../lib/i18n';
 
 const getPosition = () =>
   new Promise((resolve) => {
@@ -38,6 +39,7 @@ export default function Verify() {
   const [res, setRes] = useState(null);
   const [error, setError] = useState(null);
   const [report, setReport] = useState(false);
+  const { lang, choose, t } = useLang();
 
   useEffect(() => {
     let live = true;
@@ -66,26 +68,30 @@ export default function Verify() {
       <header className="border-b border-ink-200 bg-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
           <Link to="/"><Logo /></Link>
-          <Link to="/scan"><Button variant="secondary" size="sm" icon={ScanLine}>Scan another</Button></Link>
+          <div className="flex items-center gap-2">
+            <LangPicker lang={lang} choose={choose} className="rounded-lg border border-ink-200 bg-white px-2 py-1.5 text-sm" />
+            <Link to="/scan"><Button variant="secondary" size="sm" icon={ScanLine}>{t.scanAnother}</Button></Link>
+          </div>
         </div>
       </header>
       <main className="mx-auto max-w-5xl space-y-5 px-4 py-6">
-        {!res && !error && <Loading text="Verifying against the ledger…" />}
+        {!res && !error && <Loading text={t.checking} />}
         <ErrorBox error={error} />
         {res && (
           <div className={cx('overflow-hidden rounded-2xl bg-gradient-to-br text-white shadow-lg', vm.bg)}>
             <div className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center">
               <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/15"><Icon className="h-8 w-8" /></span>
               <div className="flex-1">
-                <p className="text-xs font-semibold uppercase tracking-widest text-white/70">Verification result</p>
-                <h1 className="text-2xl font-bold sm:text-3xl">{res.headline}</h1>
+                <p className="text-xs font-semibold uppercase tracking-widest text-white/70">{t.result}</p>
+                <h1 className="text-2xl font-bold sm:text-3xl">{t.verdict[res.verdict] || res.headline}</h1>
                 <ul className="mt-1 space-y-0.5 text-sm text-white/90">{res.reasons.slice(0, 4).map((r) => <li key={r}>{r}</li>)}</ul>
+                {res.verdict === 'GENUINE' && <p className="mt-2 text-sm font-medium text-white">{t.sealNote}</p>}
               </div>
               {p && <div className="rounded-2xl bg-white p-2"><TrustRing score={p.trust.score} size={84} /></div>}
             </div>
             <div className="flex flex-wrap items-center justify-between gap-2 bg-black/10 px-6 py-2.5 text-xs text-white/80">
               <span className="font-mono">{id}</span>
-              <button onClick={() => setReport(true)} className="inline-flex items-center gap-1 font-semibold text-white hover:underline"><Flag className="h-3.5 w-3.5" /> Report a problem</button>
+              <button onClick={() => setReport(true)} className="inline-flex items-center gap-1 font-semibold text-white hover:underline"><Flag className="h-3.5 w-3.5" /> {t.report}</button>
             </div>
           </div>
         )}
@@ -95,11 +101,11 @@ export default function Verify() {
             <div className="flex items-start gap-3">
               <AlertTriangle className="h-5 w-5 shrink-0 text-red-600" />
               <div>
-                <p className="font-semibold">What to do</p>
+                <p className="font-semibold">{t.whatToDo}</p>
                 <ul className="mt-1 list-disc space-y-1 pl-5">
-                  <li>Do not consume, use or resell this item.</li>
-                  <li>Keep the packaging and the receipt; report it below so regulators can trace the source.</li>
-                  <li>Buy only from sellers whose products verify on GeneaTrace.</li>
+                  <li>{t.todo1}</li>
+                  <li>{t.todo2}</li>
+                  <li>{t.todo3}</li>
                 </ul>
               </div>
             </div>

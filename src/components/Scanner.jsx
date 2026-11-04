@@ -8,9 +8,15 @@ export function parseScan(text) {
     const u = new URL(t);
     const m = u.pathname.match(/\/v\/([^/?#]+)/);
     if (m) return { id: decodeURIComponent(m[1]).toUpperCase(), s: u.searchParams.get('s') || undefined };
+    // GS1 Digital Link: /01/<gtin>/10/<lot>/21/<serial>
+    const dl = u.pathname.match(/\/01\/\d{8,14}(?:\/10\/[^/]+)?\/21\/([^/?#]+)/);
+    if (dl) return { id: decodeURIComponent(dl[1]).toUpperCase(), s: u.searchParams.get('s') || undefined };
   } catch {
     /* not a URL */
   }
+  // GS1 element string: (01)…(21)SERIAL, or the raw 01…21… form read from a DataMatrix.
+  const el = t.match(/\(21\)([^()]+)/) || t.match(/^01\d{14}(?:17\d{6})?(?:10[^\x1d]*\x1d)?21([^\x1d]+)/);
+  if (el) return { id: el[1].trim().toUpperCase() };
   return { id: t.toUpperCase() };
 }
 

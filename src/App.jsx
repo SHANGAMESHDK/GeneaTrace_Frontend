@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom';
 import { useAuth } from './lib/auth';
 import { Loading } from './components/ui';
 import AppLayout from './components/AppLayout';
@@ -21,6 +21,13 @@ import ScannerStation from './pages/ScannerStation';
 import Retail from './pages/app/Retail';
 import Cases from './pages/app/Cases';
 
+// A GS1 Digital Link on a label opens the same passport page.
+function DigitalLink() {
+  const { serial } = useParams();
+  const { search } = useLocation();
+  return <Navigate to={`/v/${serial}${search}`} replace />;
+}
+
 function Protected({ children }) {
   const { actor, loading } = useAuth();
   if (loading) return <Loading text="Connecting to the ledger…" />;
@@ -32,6 +39,8 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/v/:id" element={<Verify />} />
+      <Route path="/01/:gtin/10/:lot/21/:serial" element={<DigitalLink />} />
+      <Route path="/01/:gtin/21/:serial" element={<DigitalLink />} />
       <Route path="/scan" element={<Scan />} />
       <Route path="/login" element={<Login />} />
       <Route path="/scanner" element={<Protected><ScannerStation /></Protected>} />

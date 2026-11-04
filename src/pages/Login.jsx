@@ -14,6 +14,8 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [show, setShow] = useState(false);
+  const [code, setCode] = useState('');
+  const [needCode, setNeedCode] = useState(false);
   const [key, setKey] = useState('');
   const [demo, setDemo] = useState([]);
   const [busy, setBusy] = useState(null);
@@ -33,12 +35,13 @@ export default function Login() {
       await fn();
       nav('/app');
     } catch (e) {
+      if (e.details?.mfa_required) setNeedCode(true);
       setError(e);
     } finally {
       setBusy(null);
     }
   };
-  const signIn = (u, p) => run(u, () => loginWithPassword(u, p));
+  const signIn = (u, p, c) => run(u, () => loginWithPassword(u, p, c));
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
@@ -57,7 +60,7 @@ export default function Login() {
           <p className="mt-1 text-sm text-ink-500">Use the username and password from your network administrator.</p>
 
           {mode === 'password' ? (
-            <form className="mt-6 space-y-3" onSubmit={(e) => { e.preventDefault(); signIn(username, password); }}>
+            <form className="mt-6 space-y-3" onSubmit={(e) => { e.preventDefault(); signIn(username, password, code); }}>
               <Field label="Username"><input className="input" value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" autoFocus /></Field>
               <Field label="Password">
                 <div className="relative">
@@ -67,6 +70,7 @@ export default function Login() {
                   </button>
                 </div>
               </Field>
+              {needCode && <Field label="Authenticator code"><input className="input font-mono" inputMode="numeric" maxLength={6} value={code} onChange={(e) => setCode(e.target.value)} autoComplete="one-time-code" autoFocus /></Field>}
               <ErrorBox error={error} />
               <Button type="submit" icon={LogIn} className="w-full" loading={busy === username && !!username} disabled={!username || !password}>Sign in</Button>
               <button type="button" onClick={() => { setMode('key'); setError(null); }} className="w-full text-center text-xs font-medium text-ink-500 hover:text-ink-800">Sign in with an API key instead</button>

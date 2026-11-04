@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Printer, Plus, MapPin, GitBranch, Truck, Bell, Undo2, CheckSquare } from 'lucide-react';
+import { Printer, Plus, MapPin, GitBranch, Truck, Bell, Undo2, CheckSquare, FileDown, ClipboardCheck } from 'lucide-react';
 import { api } from '../../lib/api';
 import { useAuth } from '../../lib/auth';
 import { categoryMeta, fmtDate, humanize, ROLE_LABEL, STATUS_META, timeAgo } from '../../lib/format';
@@ -34,6 +34,7 @@ export default function BatchDetail() {
         title={batch.name}
         subtitle={<span className="flex flex-wrap items-center gap-2"><span className="font-mono">{batch.id}</span>· {batch.sku} · by {data.manufacturer?.name}{batch.status === 'recalled' && <Badge tone="red">Recalled</Badge>}</span>}
         actions={<>
+          {data.units.length > 0 && <Button variant="secondary" icon={FileDown} onClick={() => exportEpcis(batch.id)}>EPCIS export</Button>}
           {data.units.length > 0 && <Link to={`/app/batches/${batch.id}/labels`}><Button variant="secondary" icon={Printer}>Print labels</Button></Link>}
           {mine && batch.minted < batch.quantity && <Button variant="secondary" icon={Plus} onClick={() => setMint(true)}>Mint more</Button>}
           {can('RECALL') && batch.status !== 'recalled' && data.units.length > 0 && (mine || actor.role === 'regulator') && <Button variant="danger" icon={Undo2} onClick={() => setAction({ type: 'RECALL', batch: true })}>Recall batch</Button>}
@@ -76,6 +77,7 @@ export default function BatchDetail() {
         )}
         <div className="space-y-6">
           <Card title="Bill of materials" icon={GitBranch}><ComponentTree nodes={data.components} linkBatches /></Card>
+          {mine && batch.category === 'medicine' && <LabelCheck batchId={batch.id} />}
           {attrs.length > 0 && (
             <Card title="Batch attributes">
               <dl className="space-y-1.5 text-sm">{attrs.map(([k, v]) => <div key={k} className="flex justify-between gap-3"><dt className="text-ink-500">{humanize(k)}</dt><dd className="text-right font-medium">{String(v)}</dd></div>)}</dl>
@@ -129,6 +131,30 @@ export default function BatchDetail() {
       </Modal>
       <MintMore open={mint} onClose={() => setMint(false)} batch={batch} onDone={(r) => { toast(`${r.minted.length} passports minted in block #${r.block.height}`); setMint(false); reload(); }} />
     </>
+  );
+}
+
+async function exportEpcis(batchId) {
+  const doc = await api(`/epcis?batch_id=${batchId}`);
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(doc, null, 2)], { type: 'application/ld+json' }));
+  a.download = `${batchId}-epcis.jsonld`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function LabelCheck({ batchId }) {
+  const { data } = useAsync(() => api(`/batches/${batchId}/label-check`), [batchId]);
+  if (!data) return null;
+  return (
+    <Card title="QR label data" icon={ClipboardCheck}>
+      {data.ready ? <p className="text-sm text-brand-700">All label fields are filled in.</p> : (
+        <>
+          <p className="text-sm text-ink-600">Still missing:</p>
+          <ul className="mt-1 list-disc pl-5 text-sm text-ink-700">{data.missing.map((m) => <li key={m}>{humanize(m)}</li>)}</ul>
+        </>
+      )}
+    </Card>
   );
 }
 

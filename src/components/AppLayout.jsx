@@ -6,6 +6,7 @@ import { api, publicApi } from '../lib/api';
 import { ROLE_LABEL } from '../lib/format';
 import { Logo, ethStatus } from './domain';
 import { cx, Button, ErrorBox, Field, Modal, useToast } from './ui';
+import SecurityPanel from './SecurityPanel';
 
 // roles: who sees the item (omitted = everyone)
 const NAV = [
@@ -29,6 +30,7 @@ export default function AppLayout() {
   const [tip, setTip] = useState(null);
   const [q, setQ] = useState('');
   const [pw, setPw] = useState(false);
+  const [security, setSecurity] = useState(false);
   const loc = useLocation();
   const nav = useNavigate();
 
@@ -111,6 +113,9 @@ export default function AppLayout() {
             <div className="text-xs text-ink-500">{ROLE_LABEL[actor.role]} · <span className="font-mono">{actor.id}</span></div>
           </div>
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-sm font-bold text-brand-800">{actor.name.slice(0, 1)}</span>
+          <button onClick={() => setSecurity(true)} className="rounded-lg p-2 text-ink-500 hover:bg-ink-100 hover:text-ink-800" title="Security" aria-label="Security">
+            <ShieldCheck className="h-4 w-4" />
+          </button>
           {actor.username && (
             <button onClick={() => setPw(true)} className="rounded-lg p-2 text-ink-500 hover:bg-ink-100 hover:text-ink-800" title="Change password" aria-label="Change password">
               <KeyRound className="h-4 w-4" />
@@ -125,6 +130,7 @@ export default function AppLayout() {
         <Outlet />
       </main>
       {pw && <ChangePassword onClose={() => setPw(false)} />}
+      {security && <SecurityPanel onClose={() => setSecurity(false)} />}
     </div>
   );
 }

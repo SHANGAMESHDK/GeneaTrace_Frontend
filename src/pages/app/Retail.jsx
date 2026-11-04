@@ -112,7 +112,7 @@ export default function Retail() {
                     <td className="table-cell">{s.product_name} <StatusBadge status={s.product_status} /></td>
                     <td className="table-cell">{s.invoice || '—'}</td>
                     <td className="table-cell text-ink-500">{fmtDateTime(s.created_at)}</td>
-                    <td className="table-cell mono text-ink-400">{s.customer_ref}</td>
+                    <td className="table-cell mono text-ink-400">{s.customer_ref}{!s.erased_at && (s.customer_name || s.customer_phone || s.customer_email) && <button className="ml-2 font-sans text-xs font-medium text-red-600 hover:underline" onClick={() => { if (confirm('Permanently erase this customer\'s name, phone and email?')) api(`/sales/${s.id}/erase`, { method: 'POST' }).then(sales.reload); }}>Erase</button>}</td>
                   </tr>
                 ))}
               </tbody>
@@ -137,7 +137,7 @@ function SellModal({ product, facilityId, onClose, onDone }) {
     setBusy(true);
     setErr(null);
     try {
-      const r = await api('/events', { method: 'POST', body: { type: 'SOLD', product_ids: [product.id], facility_id: facilityId || undefined, data: { invoice: f.invoice || undefined }, customer: { name: f.name, phone: f.phone || undefined, email: f.email || undefined, price: f.price ? Number(f.price) : undefined } } });
+      const r = await api('/events', { method: 'POST', body: { type: 'SOLD', product_ids: [product.id], facility_id: facilityId || undefined, data: { invoice: f.invoice || undefined }, customer: { consent: !!f.consent, name: f.name, phone: f.phone || undefined, email: f.email || undefined, price: f.price ? Number(f.price) : undefined } } });
       if (!r.accepted.length) throw new Error(r.rejected[0]?.reason);
       toast(`Sold to ${f.name} · block #${r.block.height}`);
       onDone();
@@ -157,7 +157,8 @@ function SellModal({ product, facilityId, onClose, onDone }) {
           <Field label="Price (₹)"><input className="input" type="number" value={f.price || ''} onChange={set('price')} /></Field>
         </div>
         <Field label="Invoice / prescription no."><input className="input" value={f.invoice || ''} onChange={set('invoice')} /></Field>
-        <p className="text-xs text-ink-500">Stored off-chain. Warranty starts today and is recorded on the passport.</p>
+        <label className="flex items-start gap-2 text-sm text-ink-700"><input type="checkbox" className="mt-0.5" checked={!!f.consent} onChange={(e) => setF((x) => ({ ...x, consent: e.target.checked }))} /> Customer agrees to be contacted about recalls and safety notices</label>
+        <p className="text-xs text-ink-500">Stored off-chain and can be erased on request. Warranty starts today and is recorded on the passport.</p>
         <ErrorBox error={err} />
       </div>
     </Modal>

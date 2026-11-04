@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { api, getKey, setKey, publicApi } from './api';
+import { api, getKey, setKey, setSigner, publicApi } from './api';
 
 const AuthCtx = createContext(null);
 
@@ -20,6 +20,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     load();
   }, [load]);
+  useEffect(() => setSigner(state.actor?.id || null), [state.actor?.id]);
 
   const login = async (key) => {
     setKey(key.trim());
@@ -31,8 +32,8 @@ export function AuthProvider({ children }) {
     return me;
   };
   // Username + password → short-lived session token, stored where the API key used to be.
-  const loginWithPassword = async (username, password) => {
-    const r = await publicApi('/login', { method: 'POST', body: { username: username.trim(), password } });
+  const loginWithPassword = async (username, password, code) => {
+    const r = await publicApi('/login', { method: 'POST', body: { username: username.trim(), password, code: code || undefined } });
     return login(r.token);
   };
   const logout = () => {

@@ -92,6 +92,7 @@ function NewBatch({ onClose, onCreated }) {
     const attributes = {};
     for (const [k, v] of Object.entries(extra)) if (v !== '' && presets.some((p) => p[0] === k)) attributes[k] = /^-?\d+(\.\d+)?$/.test(v) ? Number(v) : v;
     for (const c of custom) if (c.k && c.v) attributes[c.k] = c.v;
+    for (const k of ['gtin', 'generic_name', 'part_policy']) if (f[k]) attributes[k] = f[k];
     try {
       const r = await api('/batches', {
         method: 'POST',
@@ -132,6 +133,18 @@ function NewBatch({ onClose, onCreated }) {
           <Field label="Mint now" hint="max 2000 per request"><input type="number" className="input" value={f.mint} onChange={set('mint')} /></Field>
           <Field label="Mfg date"><input type="date" className="input" value={f.mfg_date} onChange={set('mfg_date')} /></Field>
           <Field label="Expiry"><input type="date" className="input" value={f.expiry_date || ''} onChange={set('expiry_date')} /></Field>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Field label="GTIN" hint="Optional. Labels then use the GS1 Digital Link format"><input className="input font-mono" value={f.gtin || ''} onChange={set('gtin')} placeholder="08901234567890" inputMode="numeric" /></Field>
+          {f.category === 'medicine' && <Field label="Generic name"><input className="input" value={f.generic_name || ''} onChange={set('generic_name')} placeholder="Amoxicillin" /></Field>}
+          {f.category === 'electronics' && (
+            <Field label="If a fake part is found" hint="Choose Warn where repair laws restrict locking">
+              <select className="input" value={f.part_policy || 'lock'} onChange={set('part_policy')}>
+                <option value="lock">Lock the device</option>
+                <option value="warn">Warn on the passport, keep working</option>
+              </select>
+            </Field>
+          )}
         </div>
         <div>
           <span className="label flex items-center gap-1"><Cog className="h-3.5 w-3.5" />Process route: each step is scanned at its machine (in this order)</span>

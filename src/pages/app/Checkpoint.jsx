@@ -65,7 +65,7 @@ export default function Checkpoint() {
       setResult(r);
       if (r.accepted.length) {
         toast(`${r.accepted.length} ${mode.toLowerCase()} record(s) sealed in block #${r.block.height}`);
-        setIds((cur) => cur.filter((x) => !r.accepted.some((a) => a.product_id === x)));
+        setIds((cur) => cur.filter((x) => !x.startsWith('CTN-') && !r.accepted.some((a) => a.product_id === x)));
       }
       log.reload();
     } catch (e) {
@@ -110,7 +110,7 @@ export default function Checkpoint() {
               ) : ['ENTRY', 'CHECKPOINT'].includes(mode) ? (
                 <Field label="Temperature °C (optional)"><input className="input" type="number" step="0.1" value={temp} onChange={(e) => setTemp(e.target.value)} /></Field>
               ) : (
-                <Field label={{ PACKED: 'Carton / pallet ID', STORED: 'Bin / rack location', DELIVERED: 'Received by (name)' }[mode]}><input className="input" value={extra} onChange={(e) => setExtra(e.target.value)} /></Field>
+                <Field hint={mode === 'PACKED' ? 'Start with CTN- and one scan of it moves every unit inside' : undefined} label={{ PACKED: 'Carton / pallet ID', STORED: 'Bin / rack location', DELIVERED: 'Received by (name)' }[mode]}><input className="input" value={extra} onChange={(e) => setExtra(e.target.value)} /></Field>
               )}
             </div>
             <div className="mt-4">
